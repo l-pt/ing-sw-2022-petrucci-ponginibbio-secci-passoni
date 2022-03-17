@@ -32,7 +32,19 @@ public class Island {
         this.noEntry = noEntry;
     }
 
-    //public int getInfluence(Team team)
+    public int getInfluence(Team team) {
+        int result = 0;
+
+        if (towers.size() > 0 && towers.get(0).getColor() == team.getTowerColor())
+            result += towers.size();
+        for (Student student : students)
+            for (Player player : team.getPlayers())
+                for (Professor professor : player.getSchool().getProfessors())
+                    if (professor.getColor() == student.getColor())
+                        ++result;
+
+        return result;
+    }
 
     public void addTower(Tower tower) {
         towers.add(tower);

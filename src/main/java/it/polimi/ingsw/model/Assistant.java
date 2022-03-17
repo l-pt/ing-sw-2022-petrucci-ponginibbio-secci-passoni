@@ -5,6 +5,12 @@ public class Assistant {
     private int moves;
     private int type;
 
+    public Assistant(int value, int moves, int type) {
+        this.value = value;
+        this.moves = moves;
+        this.type = type;
+    }
+
     public int getValue() {
         return value;
     }

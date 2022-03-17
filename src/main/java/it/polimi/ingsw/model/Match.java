@@ -17,37 +17,41 @@ public class Match {
     private int id;
 
     public Match(List<Team> teams, List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
-        Random randomGenerator = new Random();
+        this.teams=teams;
 
         islands = new ArrayList<>();
-        int motherNaturePos = randomGenerator.nextInt(12);
-        for (int i = 0; i < 12; ++i) {
-            islands.add(new Island(i == motherNaturePos));
-        }
 
-        clouds = new ArrayList<>();
-        for (int i = 0; i < playerOrder.size(); ++i) {
-            clouds.add(new Cloud());
-        }
+        Random randomGenerator = new Random();
+        int motherNaturePos = randomGenerator.nextInt(12);
 
         studentBag = new ArrayList<>();
-        for (PawnColor color : PawnColor.values()) {
-            for (int i = 1; i <= 26; ++i) {
+        for (PawnColor color : PawnColor.values())
+            for (int i = 0; i < 2; ++i)
                 studentBag.add(new Student(color));
-            }
+
+        for (int i = 0; i < 12; ++i) {
+            islands.add(new Island(i == motherNaturePos));
+            if(i!=motherNaturePos && i!=(motherNaturePos + 6) % 12)
+                islands.get(i).addStudent(extractStudent(1).get(0));
         }
 
+        for (PawnColor color : PawnColor.values())
+            for (int i = 0; i < 24; ++i)
+                studentBag.add(new Student(color));
+
+        clouds = new ArrayList<>();
+        for (int i = 0; i < playerOrder.size(); ++i)
+            clouds.add(new Cloud());
+
         professors = new ArrayList<>();
-        for (PawnColor color : PawnColor.values()) {
+        for (PawnColor color : PawnColor.values())
             professors.add(new Professor(color));
-        }
 
         characters = new ArrayList<>(3);
         while (characters.size() != 3) {
             int randomIndex = randomGenerator.nextInt(allCharacters.size());
-            if (!characters.contains(allCharacters.get(randomIndex))) {
+            if (!characters.contains(allCharacters.get(randomIndex)))
                 characters.add(allCharacters.get(randomIndex));
-            }
         }
 
         coinsReserve = 20 - playerOrder.size();
@@ -60,7 +64,9 @@ public class Match {
     }
 
     public void orderPlayers() {
-        //TODO
+        playerOrder.sort((Player p1, Player p2) -> {
+            return p1.getCurrentAssistant().getValue() - p2.getCurrentAssistant().getValue();
+        });
     }
 
     public List<Island> getIslands() {
@@ -72,8 +78,14 @@ public class Match {
     }
 
     public List<Student> extractStudent(int n) {
-        //TODO
-        return null;
+        List<Student> result = new ArrayList<>(n);
+        for (int i = 0; i < n; ++i) {
+            Random randomGenerator = new Random();
+            int randomIndex = randomGenerator.nextInt(studentBag.size());
+            result.add(studentBag.get(randomIndex));
+            studentBag.remove(studentBag.get(randomIndex));
+        }
+        return result;
     }
 
     public void removeProfessor(Professor professor) {
