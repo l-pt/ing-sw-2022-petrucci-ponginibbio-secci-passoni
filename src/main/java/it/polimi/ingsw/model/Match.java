@@ -16,6 +16,11 @@ public class Match {
     private int id;
     private int posMotherNature;
     private boolean drawAllowed;
+    private int additionalsMoves;
+    private boolean noTowersCount;
+    private boolean noMotherNatureMoves;
+    private int additionalsInfuence;
+    private PawnColor noStudentsCount;
 
     public Match(List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
         this.expert = expert;
@@ -57,15 +62,75 @@ public class Match {
                     characters.add(allCharacters.get(randomIndex));
             }
             coinsReserve = 20 - playerOrder.size();
-            drawAllowed = false;
         }else coinsReserve = 0;
+        drawAllowed = false;
+        additionalsMoves = 0;
+        noTowersCount = false;
+        additionalsInfuence=0;
 
         this.id = id;
     }
 
-    /*public void useCharacter(int index){
-        if(index)
-    }*/
+    public void useAbility (int id){
+        switch (id){
+            case 0:
+                //TO DO
+                break;
+            case 1:
+                drawAllowed=true;
+                break;
+            case 2:
+                noMotherNatureMoves=true;
+                // TO DO islandInfluence();
+                noMotherNatureMoves=false;
+                break;
+            case 3:
+                additionalsMoves=2;
+                break;
+            case 4:
+                //TO DO
+                break;
+            case 5:
+                noTowersCount=true;
+                break;
+            case 6:
+                // TO DO
+                break;
+            case 7:
+                additionalsInfuence=2;
+                //TO DO
+                break;
+            case 8:
+                // TO DO noStudentsCount=;
+                break;
+            case 9:
+                // TO DO swapStudent();
+                break;
+            case 10:
+                //TO DO
+                break;
+            case 11:
+                //TO DO removeStudents();
+                break;
+        }
+    }
+
+    public void resetAbility(){
+        drawAllowed=false;
+        additionalsMoves=0;
+        noTowersCount=false;
+        additionalsInfuence=0;
+        noStudentsCount=null;
+    }
+
+    public void useCharacter(int index, Player player){
+        if(index<3 && index>=0)
+            if(player.getCoins()>=characters.get(index).getCost()) {
+                useAbility(characters.get(index).getId());
+                player.removeCoins(characters.get(index).getCost());
+                coinsReserve+=characters.get(index).getCost();
+            }
+    }
 
     public void orderPlayers() {
         playerOrder.sort((Player p1, Player p2) -> {
@@ -163,11 +228,11 @@ public class Match {
         boolean draw=false;
         int max=-1, pos=0;
         for(int i=0; i<playerOrder.size(); ++i){
-            if(islands.get(index).getInfluence(playerOrder.get(i))>max){
-                max=islands.get(index).getInfluence(playerOrder.get(i));
+            if(islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount)>max){
+                max=islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount);
                 pos=i;
                 draw=false;
-            }else if(islands.get(index).getInfluence(playerOrder.get(i))==max)
+            }else if(islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount)==max)
                 draw=true;
         }
         if(!draw && max>0 && playerOrder.get(pos).getSchool().getTowers().get(0).getColor()!=islands.get(index).getTowers().get(0).getColor()) {
@@ -198,8 +263,8 @@ public class Match {
     }
 
     public void moveMotherNature(int moves, Player player) throws Exception {
-        if (player.getCurrentAssistant().getMoves() >= moves && moves >=1)
-            posMotherNature = (posMotherNature + moves) % 12;
+        if (player.getCurrentAssistant().getMoves() + additionalsMoves >= moves && moves >=1)
+            posMotherNature = (posMotherNature + moves) % islands.size();
         else throw new Exception();
     }
 }

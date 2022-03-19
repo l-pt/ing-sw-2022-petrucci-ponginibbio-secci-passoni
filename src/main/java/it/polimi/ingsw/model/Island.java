@@ -22,12 +22,16 @@ public class Island {
         this.noEntry = noEntry;
     }
 
-    public int getInfluence(Player player) {
+    public int getInfluence(Player player, boolean noTowersCount, PawnColor noStudentCount) {
         int result = 0;
-        if (towers.size() > 0 && towers.get(0).getColor() == player.getSchool().getTowers().get(0).getColor())
+        if (towers.size() > 0 && towers.get(0).getColor() == player.getSchool().getTowers().get(0).getColor() && !noTowersCount)
             result += towers.size();
-        for (Professor professor : player.getSchool().getProfessors())
-            result += player.getSchool().getTableCount(professor.getColor());
+        for (Professor professor : player.getSchool().getProfessors()) {
+            if (noStudentCount == null)
+                result += player.getSchool().getTableCount(professor.getColor());
+            else if (noStudentCount != professor.getColor())
+                result += player.getSchool().getTableCount(professor.getColor());
+        }
         return result;
     }
 
@@ -40,12 +44,9 @@ public class Island {
     }
 
     public List<Tower> removeAllTowers(){
-        List<Tower> t = new ArrayList<>(towers.size());
-        for(Tower tower: towers){
-            t.add(tower);
-            towers.remove(tower);
-        }
-        return t;
+        List<Tower> result = new ArrayList<>(towers);
+        towers.clear();
+        return result;
     }
 
     public void addStudent(Student student) {
