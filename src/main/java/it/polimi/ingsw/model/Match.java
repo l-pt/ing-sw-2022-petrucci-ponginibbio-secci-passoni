@@ -15,6 +15,7 @@ public class Match {
     private List<Player> playerOrder;
     private int id;
     private int posMotherNature;
+    private boolean drawAllowed;
 
     public Match(List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
         this.expert = expert;
@@ -56,10 +57,15 @@ public class Match {
                     characters.add(allCharacters.get(randomIndex));
             }
             coinsReserve = 20 - playerOrder.size();
+            drawAllowed = false;
         }else coinsReserve = 0;
 
         this.id = id;
     }
+
+    /*public void useCharacter(int index){
+        if(index)
+    }*/
 
     public void orderPlayers() {
         playerOrder.sort((Player p1, Player p2) -> {
@@ -112,7 +118,7 @@ public class Match {
         return expert;
     }
 
-    public List<Player> getPlayerOrder() {
+    public List<Player> getPlayersOrder() {
         return playerOrder;
     }
 
@@ -146,6 +152,8 @@ public class Match {
         if(!player.getSchool().isColoredProfessor(color)){
             if(whoHaveProfessor(color)==null)
                 player.getSchool().addProfessor(removeProfessor(color));
+            else if(player.getSchool().getTableCount(color)==whoHaveProfessor(color).getSchool().getTableCount(color) && drawAllowed)
+                player.getSchool().addProfessor(whoHaveProfessor(color).getSchool().removeProfessor(color));
             else if(player.getSchool().getTableCount(color)>whoHaveProfessor(color).getSchool().getTableCount(color))
                 player.getSchool().addProfessor(whoHaveProfessor(color).getSchool().removeProfessor(color));
         }

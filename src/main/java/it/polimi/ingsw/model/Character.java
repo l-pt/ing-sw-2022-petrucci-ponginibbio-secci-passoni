@@ -26,7 +26,11 @@ public class Character {
     }
 
     public void useAbility() {
-        //TODO
+        switch(id){
+            case 0:
+
+                break;
+        }
     }
 
     public void incrementCost() {
