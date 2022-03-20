@@ -25,16 +25,10 @@ public class Character {
         return id;
     }
 
-    public void useAbility() {
-        switch(id){
-            case 0:
-
-                break;
-        }
-    }
-
     public void incrementCost() {
-        coin = true;
-        ++cost;
+        if(!coin) {
+            coin = true;
+            ++cost;
+        }
     }
 }

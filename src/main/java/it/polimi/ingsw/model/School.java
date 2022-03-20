@@ -28,8 +28,12 @@ public class School {
         professors.add(professor);
     }
 
-    public void removeStudent(Student student) {
+    public void removeStudent(Student student){
         entrance.remove(student);
+    }
+
+    public void removeStudents(List<Student> students) {
+        entrance.removeAll(students);
     }
 
     public Professor removeProfessor(PawnColor color) {
@@ -70,7 +74,7 @@ public class School {
         return tables.get(color).size();
     }
 
-    public void addStudentToTable(Student student) {
+    public void addStudentsToTable(Student student) {
         Student s=student;
         removeStudent(student);
         tables.get(s.getColor()).add(s);
@@ -89,5 +93,12 @@ public class School {
 
     public List<Tower> getTowers() {
         return towers;
+    }
+
+    public List<Student> removeStudentsFromColor(PawnColor color, int n){
+        List<Student> result = new ArrayList<>(n);
+        for(int i=0; i<n; ++i)
+            result.add(tables.get(color).remove(tables.get(color).size()-1));
+        return result;
     }
 }

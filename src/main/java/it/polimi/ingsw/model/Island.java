@@ -26,13 +26,10 @@ public class Island {
         int result = 0;
         if (towers.size() > 0 && towers.get(0).getColor() == player.getSchool().getTowers().get(0).getColor() && !noTowersCount)
             result += towers.size();
-        for (Professor professor : player.getSchool().getProfessors()) {
-            if (noStudentCount == null)
+        for (Professor professor : player.getSchool().getProfessors())
+            if (noStudentCount == null || noStudentCount != professor.getColor())
                 result += player.getSchool().getTableCount(professor.getColor());
-            else if (noStudentCount != professor.getColor())
-                result += player.getSchool().getTableCount(professor.getColor());
-        }
-        return result;
+        return result + player.getAdditionalInfluence();
     }
 
     public void addTower(Tower tower) {
@@ -55,5 +52,13 @@ public class Island {
 
     public List<Tower> getTowers() {
         return towers;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void addStudents(List<Student> students){
+        this.students.addAll(students);
     }
 }

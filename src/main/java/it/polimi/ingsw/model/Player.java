@@ -10,6 +10,7 @@ public class Player {
     private Assistant discardPile;
     private int id;
     private String name;
+    private int additionalInfluence;
 
     public Player(List<Assistant> assistants, School school, int id, String name) {
         this.coins = 1;
@@ -19,6 +20,7 @@ public class Player {
         this.discardPile = null;
         this.id = id;
         this.name = name;
+        this.additionalInfluence=0;
     }
 
     public int getCoins() {
@@ -56,5 +58,13 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    public int getAdditionalInfluence() {
+        return additionalInfluence;
+    }
+
+    public void setAdditionalInfluence(int additionalInfluence) {
+        this.additionalInfluence = additionalInfluence;
     }
 }
