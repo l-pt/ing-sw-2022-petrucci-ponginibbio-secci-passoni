@@ -1,16 +1,19 @@
 package it.polimi.ingsw.model;
 
 public class Character {
+    private int id;
     private int cost;
     private String description;
-    private int id;
     private boolean coin;
 
     public Character(int cost, String description, int id) {
+        this.id = id;
         this.cost = cost;
         this.description = description;
-        this.id = id;
         coin = false;
+    }
+    public int getId() {
+        return id;
     }
 
     public int getCost() {
@@ -19,10 +22,6 @@ public class Character {
 
     public String getDescription() {
         return description;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public void incrementCost() {

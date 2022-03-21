@@ -6,34 +6,28 @@ import java.util.List;
 public class Island {
     private List<Student> students;
     private List<Tower> towers;
-    private boolean noEntry;
+    private int noEntry;
 
     public Island() {
         students = new ArrayList<>();
         towers = new ArrayList<>();
-        noEntry = false;
+        noEntry = 0;
     }
 
-    public boolean isNoEntry() {
-        return noEntry;
+    public List<Student> getStudents() {
+        return students;
     }
 
-    public void setNoEntry(boolean noEntry) {
-        this.noEntry = noEntry;
+    public void addStudent(Student student) {
+        students.add(student);
     }
 
-    public int getInfluence(Player player, boolean noTowersCount, PawnColor noStudentCount) {
-        int result = 0;
-        if (towers.size() > 0 && towers.get(0).getColor() == player.getSchool().getTowers().get(0).getColor() && !noTowersCount)
-            result += towers.size();
-        for (Professor professor : player.getSchool().getProfessors())
-            if (noStudentCount == null || noStudentCount != professor.getColor())
-                result += player.getSchool().getTableCount(professor.getColor());
-        return result + player.getAdditionalInfluence();
+    public void addStudents(List<Student> students){
+        this.students.addAll(students);
     }
 
-    public void addTower(Tower tower) {
-        towers.add(tower);
+    public List<Tower> getTowers() {
+        return towers;
     }
 
     public void addTowers(List<Tower> towers){
@@ -46,19 +40,21 @@ public class Island {
         return result;
     }
 
-    public void addStudent(Student student) {
-        students.add(student);
+    public int getNoEntry() {
+        return noEntry;
     }
 
-    public List<Tower> getTowers() {
-        return towers;
-    }
+    public void addNoEntry(int n){noEntry += n;}
 
-    public List<Student> getStudents() {
-        return students;
-    }
+    public void removeNoEntry(){--noEntry;}
 
-    public void addStudents(List<Student> students){
-        this.students.addAll(students);
+    public int getInfluence(Player player, boolean noTowersCount, PawnColor noStudentCount) {
+        int result = 0;
+        if (towers.size() > 0 && towers.get(0).getColor() == player.getSchool().getTowers().get(0).getColor() && !noTowersCount)
+            result += towers.size();
+        for (Professor professor : player.getSchool().getProfessors())
+            if (noStudentCount == null || noStudentCount != professor.getColor())
+                result += player.getSchool().getTableCount(professor.getColor());
+        return result + player.getAdditionalInfluence();
     }
 }

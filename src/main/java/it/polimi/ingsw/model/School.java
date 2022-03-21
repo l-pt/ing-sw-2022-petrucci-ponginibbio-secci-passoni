@@ -24,43 +24,69 @@ public class School {
         entrance.addAll(students);
     }
 
-    public void addProfessor(Professor professor) {
-        professors.add(professor);
+    public void addStudentToTable(Student student) {
+        Student s = student;
+        removeStudent(student);
+        tables.get(s.getColor()).add(s);
+    }
+
+    public void addStudents(List<Student> students){
+        for (Student student : students)
+            addStudentToTable(student);
     }
 
     public void removeStudent(Student student){
         entrance.remove(student);
     }
 
-    public void removeStudents(List<Student> students) {
-        entrance.removeAll(students);
+    public void removeStudentsFromTable(List<Student> students){
+        for (Student student : students)
+            tables.get(student.getColor()).remove(tables.get(student.getColor()).size()-1);
+    }
+
+    public List<Student> removeStudentsFromColor(PawnColor color, int n){
+        List<Student> result = new ArrayList<>(n);
+        for(int i=0; i<n; ++i)
+            result.add(tables.get(color).remove(tables.get(color).size()-1));
+        return result;
+    }
+
+    public List<Professor> getProfessors() {
+        return professors;
+    }
+
+    public void addProfessor(Professor professor) {
+        professors.add(professor);
     }
 
     public Professor removeProfessor(PawnColor color) {
-        Professor professor=null;
-        for(int i=0; i<professors.size(); ++i)
-            if(professors.get(i).getColor()==color) {
-                professor=professors.get(i);
+        Professor professor = null;
+        for(int i = 0; i < professors.size(); ++i)
+            if(professors.get(i).getColor().equals(color)) {
+                professor = professors.get(i);
                 professors.remove(professors.get(i));
             }
         return professor;
     }
 
-    public void addTower(Tower tower) {
-        towers.add(tower);
+    public boolean isColoredProfessor(PawnColor color){
+        for(int i=  0; i < professors.size(); ++i)
+            if(professors.get(i).getColor().equals(color))
+                return true;
+        return false;
+    }
+
+    public List<Tower> getTowers() {
+        return towers;
     }
 
     public void addTowers(List<Tower>towers){
         this.towers.addAll(towers);
     }
 
-    public void removeTower(Tower tower) {
-        towers.remove(tower);
-    }
-
     public List<Tower> removeTowers(int n){
         List<Tower> t = new ArrayList<>(n);
-        if(towers.size()>n) {
+        if(towers.size() > n) {
             for (Tower tower : towers){
                 t.add(tower);
                 towers.remove(tower);
@@ -72,33 +98,5 @@ public class School {
 
     public int getTableCount(PawnColor color) {
         return tables.get(color).size();
-    }
-
-    public void addStudentsToTable(Student student) {
-        Student s=student;
-        removeStudent(student);
-        tables.get(s.getColor()).add(s);
-    }
-
-    public List<Professor> getProfessors() {
-        return professors;
-    }
-
-    public boolean isColoredProfessor(PawnColor color){
-        for(int i=0; i<professors.size(); ++i)
-            if(professors.get(i).getColor()==color)
-                return true;
-        return false;
-    }
-
-    public List<Tower> getTowers() {
-        return towers;
-    }
-
-    public List<Student> removeStudentsFromColor(PawnColor color, int n){
-        List<Student> result = new ArrayList<>(n);
-        for(int i=0; i<n; ++i)
-            result.add(tables.get(color).remove(tables.get(color).size()-1));
-        return result;
     }
 }

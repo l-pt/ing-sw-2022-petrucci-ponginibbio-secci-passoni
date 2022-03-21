@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Random;
 
 public class Match {
+    private int id;
+    private List<Player> playerOrder;
+    private int posMotherNature;
     private List<Island> islands;
     private List<Cloud> clouds;
     private List<Student> studentBag;
     private List<Professor> professors;
-    private List<Character> characters;
-    private int coinsReserve;
     private boolean expert;
-    private List<Player> playerOrder;
-    private int id;
-    private int posMotherNature;
+    private int coinsReserve;
+    private List<Character> characters;
     private boolean drawAllowed;
     private int additionalMoves;
     private boolean noTowersCount;
@@ -22,7 +22,7 @@ public class Match {
     private PawnColor noStudentsCount;
 
     public Match(List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
-        this.expert = expert;
+        this.id = id;
 
         this.playerOrder = playerOrder;
 
@@ -52,104 +52,37 @@ public class Match {
         for (PawnColor color : PawnColor.values())
             professors.add(new Professor(color));
 
+        this.expert = expert;
+
         if(expert) {
+            coinsReserve = 20 - playerOrder.size();
             characters = new ArrayList<>(3);
             while (characters.size() != 3) {
                 int randomIndex = new Random().nextInt(allCharacters.size());
                 if (!characters.contains(allCharacters.get(randomIndex)))
                     characters.add(allCharacters.get(randomIndex));
             }
-            coinsReserve = 20 - playerOrder.size();
         }else coinsReserve = 0;
         drawAllowed = false;
+        noMotherNatureMoves = false;
         additionalMoves = 0;
         noTowersCount = false;
         noStudentsCount = null;
-
-        this.id = id;
     }
 
-    public void useCharacter(int num, Player player, int index, List<Student> studentsIn, List<Student> studentsOut, PawnColor color){
-        if(num < 3 && num >= 0 && player.getCoins() >= characters.get(num).getCost()) {
-            switch (characters.get(num).getId()) {
-                case 0:
-                    /* TO DO
-                    islands.get(index).addStudents(characters.get(num).getStudent());
-                    characters.get(num).removeStudents();
-                    characters.get(num).addStudents(extractStudent(1));
-                    */
-                    break;
-                case 1:
-                    drawAllowed = true;
-                    break;
-                case 2:
-                    noMotherNatureMoves = true;
-                    islandInfluence(index);
-                    noMotherNatureMoves = false;
-                    break;
-                case 3:
-                    additionalMoves = 2;
-                    break;
-                case 4:
-                    /* TO DO
-                    if(characters.get(num).getNoEntry() > 0) {
-                        islands.get(index).setNoEntry(true);
-                        characters.get(num).removeNoEntry();
-                    }
-                     */
-                    break;
-                case 5:
-                    noTowersCount = true;
-                    break;
-                case 6:
-                    /* TO DO
-                    characters.get(num).addStudents(studentsOut);
-                    player.getSchool().removeStudents(studentsOut);
-                    player.getSchool().addStudentsToEntrance(studentsIn);
-                     */
-                    break;
-                case 7:
-                    player.setAdditionalInfluence(2);
-                    break;
-                case 8:
-                    noStudentsCount = color;
-                    break;
-                case 9:
-                    // TO DO swapStudent();
-                    break;
-                case 10:
-                    /* TO DO
-                    player.getSchool().addStudent(studentsIn);
-                    characters.get(num).removeStudents(studentsIn);
-                    characters.get(num).addStudents(extractStudent(1));
-                     */
-                    break;
-                case 11:
-                    removeStudents(color);
-                    break;
-            }
-            player.removeCoins(characters.get(num).getCost());
-            coinsReserve += characters.get(num).getCost();
-        }
+    public int getId() {
+        return id;
     }
 
-    public void resetAbility(){
-        drawAllowed = false;
-        additionalMoves = 0;
-        noTowersCount = false;
-        noStudentsCount = null;
+    public Player getPlayerFromColor(TowerColor color){
         for(Player player : playerOrder)
-            player.setAdditionalInfluence(0);
+            if(player.getSchool().getTowers().get(0).getColor().equals(color))
+                return player;
+        return null;
     }
 
-    public void removeStudents(PawnColor color){
-        for (Player player : playerOrder)
-            if(player.getSchool().getTableCount(color) != 0)
-                addStudents(player.getSchool().removeStudentsFromColor(color, Math.min(3, player.getSchool().getTableCount(color))));
-    }
-
-    public void addStudents(List<Student> students){
-        studentBag.addAll(students);
+    public List<Player> getPlayersOrder() {
+        return playerOrder;
     }
 
     public void orderPlayers() {
@@ -158,12 +91,26 @@ public class Match {
         });
     }
 
+    public int getPosMotherNature() {
+        return posMotherNature;
+    }
+
     public List<Island> getIslands() {
         return islands;
     }
 
     public List<Cloud> getClouds() {
         return clouds;
+    }
+
+    public void addStudents(List<Student> students){
+        studentBag.addAll(students);
+    }
+
+    public void removeStudents(PawnColor color){
+        for (Player player : playerOrder)
+            if(player.getSchool().getTableCount(color) != 0)
+                addStudents(player.getSchool().removeStudentsFromColor(color, Math.min(3, player.getSchool().getTableCount(color))));
     }
 
     public List<Student> extractStudent(int n) {
@@ -187,33 +134,6 @@ public class Match {
         return professor;
     }
 
-    public int getCoins() {
-        return coinsReserve;
-    }
-
-    public boolean isExpert() {
-        return expert;
-    }
-
-    public List<Player> getPlayersOrder() {
-        return playerOrder;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getPosMotherNature() {
-        return posMotherNature;
-    }
-
-    public Player getPlayerFromColor(TowerColor color){
-        for(Player player : playerOrder)
-            if(player.getSchool().getTowers().get(0).getColor().equals(color))
-                return player;
-            return null;
-    }
-
     public Player whoHaveProfessor(PawnColor color){
         for(int i=0; i<playerOrder.size(); ++i)
             if(playerOrder.get(i).getSchool().isColoredProfessor(color))
@@ -222,12 +142,10 @@ public class Match {
     }
 
     public void addStudent(Student student, Player player){
-        player.getSchool().addStudentsToTable(student);
-        PawnColor color=student.getColor();
-        if(expert && (player.getSchool().getTableCount(color) == 3 || player.getSchool().getTableCount(color) == 6 || player.getSchool().getTableCount(color) == 9)) {
-            player.addCoin();
-            --coinsReserve;
-        }
+        player.getSchool().addStudentToTable(student);
+        PawnColor color = student.getColor();
+        if(expert)
+            checkNumberStudents(color, player);
         if(!player.getSchool().isColoredProfessor(color)){
             if(whoHaveProfessor(color) == null)
                 player.getSchool().addProfessor(removeProfessor(color));
@@ -238,10 +156,17 @@ public class Match {
         }
     }
 
+    public void checkNumberStudents(PawnColor color, Player player){
+        if(player.getSchool().getTableCount(color) == 3 || player.getSchool().getTableCount(color) == 6 || player.getSchool().getTableCount(color) == 9) {
+            player.addCoin();
+            --coinsReserve;
+        }
+    }
+
     public void islandInfluence(int index){
         boolean draw = false;
         int max = -1, pos = 0;
-        if(!islands.get(index).isNoEntry()) {
+        if(islands.get(index).getNoEntry() == 0) {
             for (int i = 0; i < playerOrder.size(); ++i) {
                 if (islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount) > max) {
                     max = islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount);
@@ -257,7 +182,7 @@ public class Match {
                 checkIslands(index);
             }
         }else {
-            islands.get(index).setNoEntry(false);
+            islands.get(index).removeNoEntry();
             /* TO DO
             for (Character character : characters)
                 if(character.getId() == 4)
@@ -275,6 +200,7 @@ public class Match {
     public void uniteIslands(int min, int max) {
         islands.get(min).addStudents(islands.get(max).getStudents());
         islands.get(min).addTowers(islands.get(max).getTowers());
+        islands.get(min).addNoEntry(islands.get(max).getNoEntry());
         islands.remove(max);
         if(!noMotherNatureMoves)
             posMotherNature = min;
@@ -300,5 +226,90 @@ public class Match {
         if (player.getCurrentAssistant().getMoves() + additionalMoves >= moves && moves >= 1)
             posMotherNature = (posMotherNature + moves) % islands.size();
         else throw new Exception();
+    }
+
+    public boolean isExpert() {
+        return expert;
+    }
+
+    public int getCoins() {
+        return coinsReserve;
+    }
+
+    public void useCharacter(int num, Player player, int indexIsland, List<Student> studentsIn, List<Student> studentsOut, PawnColor color){
+        if(num < 3 && num >= 0 && player.getCoins() >= characters.get(num).getCost()) {
+            switch (characters.get(num).getId()) {
+                case 0:
+                    /* TO DO
+                    islands.get(indexIsland).addStudents(characters.get(num).getStudent());
+                    characters.get(num).removeStudents();
+                    characters.get(num).addStudents(extractStudent(1));
+                    */
+                    break;
+                case 1:
+                    drawAllowed = true;
+                    break;
+                case 2:
+                    noMotherNatureMoves = true;
+                    islandInfluence(indexIsland);
+                    noMotherNatureMoves = false;
+                    break;
+                case 3:
+                    additionalMoves = 2;
+                    break;
+                case 4:
+                    /* TO DO
+                    if(characters.get(num).getNoEntry() > 0) {
+                        islands.get(indexIsland).addNoEntry();
+                        characters.get(num).removeNoEntry();
+                    }
+                     */
+                    break;
+                case 5:
+                    noTowersCount = true;
+                    break;
+                case 6:
+                    /* TO DO
+                    characters.get(num).addStudents(studentsOut);
+                    player.getSchool().removeStudents(studentsOut);
+                    player.getSchool().addStudentsToEntrance(studentsIn);
+                     */
+                    break;
+                case 7:
+                    player.setAdditionalInfluence(2);
+                    break;
+                case 8:
+                    noStudentsCount = color;
+                    break;
+                case 9:
+                    player.getSchool().addStudents(studentsIn);
+                    player.getSchool().removeStudentsFromTable(studentsOut);
+                    player.getSchool().addStudentsToEntrance(studentsOut);
+                    break;
+                case 10:
+                    /* TO DO
+                    player.getSchool().addStudent(studentsIn);
+                    checkNumberStudents();
+                    characters.get(num).removeStudents(studentsIn);
+                    characters.get(num).addStudents(extractStudent(1));
+                     */
+                    break;
+                case 11:
+                    removeStudents(color);
+                    break;
+            }
+            player.removeCoins(characters.get(num).getCost());
+            coinsReserve += characters.get(num).getCost();
+            characters.get(num).incrementCost();
+        }
+    }
+
+    public void resetAbility(){
+        drawAllowed = false;
+        additionalMoves = 0;
+        noTowersCount = false;
+        noStudentsCount = null;
+        for(Player player : playerOrder)
+            player.setAdditionalInfluence(0);
     }
 }

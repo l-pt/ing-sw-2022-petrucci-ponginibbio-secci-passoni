@@ -3,24 +3,49 @@ package it.polimi.ingsw.model;
 import java.util.List;
 
 public class Player {
-    private int coins;
-    private List<Assistant> assistants;
-    private School school;
-    private Assistant currentAssistant;
-    private Assistant discardPile;
     private int id;
     private String name;
+    private School school;
+    private List<Assistant> assistants;
+    private Assistant currentAssistant;
+    private Assistant discardPile;
+    private int coins;
     private int additionalInfluence;
 
-    public Player(List<Assistant> assistants, School school, int id, String name) {
-        this.coins = 1;
-        this.assistants = assistants;
-        this.school = school;
-        this.currentAssistant = null;
-        this.discardPile = null;
+    public Player(int id, String name, School school, List<Assistant> assistants) {
         this.id = id;
         this.name = name;
-        this.additionalInfluence=0;
+        this.school = school;
+        this.assistants = assistants;
+        this.currentAssistant = null;
+        this.discardPile = null;
+        this.coins = 1;
+        this.additionalInfluence = 0;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public School getSchool() {
+        return school;
+    }
+
+    public Assistant getCurrentAssistant() {
+        return currentAssistant;
+    }
+
+    public void setCurrentAssistant(Assistant assistant) {
+        discardPile = currentAssistant;
+        currentAssistant = assistant;
+    }
+
+    public Assistant getDiscardPile() {
+        return discardPile;
     }
 
     public int getCoins() {
@@ -33,31 +58,6 @@ public class Player {
 
     public void removeCoins(int coins) {
         this.coins -= coins;
-    }
-
-    public Assistant getCurrentAssistant() {
-        return currentAssistant;
-    }
-
-    public School getSchool() {
-        return school;
-    }
-
-    public void setCurrentAssistant(Assistant assistant) {
-        discardPile = currentAssistant;
-        currentAssistant = assistant;
-    }
-
-    public Assistant getDiscardPile() {
-        return discardPile;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getAdditionalInfluence() {

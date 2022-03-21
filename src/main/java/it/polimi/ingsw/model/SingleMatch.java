@@ -7,7 +7,7 @@ public class SingleMatch extends Match{
 
     public SingleMatch (List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id, List<Player> players){
         super(allCharacters, expert, playerOrder, id);
-        this.players=players;
+        this.players = players;
     }
 
     public List<Player> getPlayers() {
