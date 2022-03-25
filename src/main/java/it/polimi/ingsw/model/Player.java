@@ -6,16 +6,18 @@ public class Player {
     private int id;
     private String name;
     private School school;
+    private TowerColor towerColor;
     private List<Assistant> assistants;
     private Assistant currentAssistant;
     private Assistant discardPile;
     private int coins;
     private int additionalInfluence;
 
-    public Player(int id, String name, School school, List<Assistant> assistants) {
+    public Player(int id, String name, School school, TowerColor towerColor, List<Assistant> assistants) {
         this.id = id;
         this.name = name;
         this.school = school;
+        this.towerColor = towerColor;
         this.assistants = assistants;
         this.currentAssistant = null;
         this.discardPile = null;
@@ -33,6 +35,10 @@ public class Player {
 
     public School getSchool() {
         return school;
+    }
+
+    public TowerColor getTowerColor() {
+        return towerColor;
     }
 
     public Assistant getCurrentAssistant() {

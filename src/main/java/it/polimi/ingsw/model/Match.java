@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Match {
+public abstract class Match {
     private int id;
     private List<Player> playerOrder;
     private int posMotherNature;
-    private List<Island> islands;
+    protected List<Island> islands;
     private List<Cloud> clouds;
     private List<Student> studentBag;
     private List<Professor> professors;
@@ -204,6 +204,9 @@ public class Match {
         islands.remove(max);
         if(!noMotherNatureMoves)
             posMotherNature = min;
+        if (islands.size() == 3) {
+            endGame();
+        }
     }
 
     public void populateClouds() {
@@ -311,5 +314,16 @@ public class Match {
         noStudentsCount = null;
         for(Player player : playerOrder)
             player.setAdditionalInfluence(0);
+    }
+
+    protected int getTowersByColor(TowerColor color) {
+        return (int) islands.stream().flatMap(island -> island.getTowers().stream()).filter(t -> t.getColor() == color).count();
+    }
+
+    abstract List<Player> getWinningPlayers();
+
+    public void endGame() {
+        List<Player> winners = getWinningPlayers();
+        //TODO
     }
 }
