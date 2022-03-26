@@ -1,8 +1,11 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.character;
 
-public class Character {
+import it.polimi.ingsw.model.IllegalMoveException;
+import it.polimi.ingsw.model.Player;
+
+public abstract class Character {
     private int id;
-    private int cost;
+    protected int cost;
     private String description;
     private boolean coin;
 
@@ -12,6 +15,7 @@ public class Character {
         this.description = description;
         coin = false;
     }
+
     public int getId() {
         return id;
     }
@@ -24,10 +28,16 @@ public class Character {
         return description;
     }
 
-    public void incrementCost() {
+    protected void incrementCost() {
         if(!coin) {
             coin = true;
             ++cost;
+        }
+    }
+
+    protected void checkCost(Player player) throws IllegalMoveException {
+        if (player.getCoins() < cost) {
+            throw new IllegalMoveException("Insufficient coins");
         }
     }
 }

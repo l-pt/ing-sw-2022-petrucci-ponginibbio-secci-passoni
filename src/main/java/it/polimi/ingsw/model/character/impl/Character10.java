@@ -1,0 +1,41 @@
+package it.polimi.ingsw.model.character.impl;
+
+import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.character.Character;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class Character10 extends Character {
+    public Character10() {
+        super(9, 1, "You may exchange up to 2 students between your entrance and your dining room.");
+    }
+
+    public void use(Match match, int playerId, Map<PawnColor, Integer> entranceStudentsMap, Map<PawnColor, Integer> diningRoomStudentsMap) throws IllegalMoveException {
+        Player player = match.getPlayerFromId(playerId);
+        checkCost(player);
+
+        List<Student> diningRoomStudents = new ArrayList<>();
+        for (Map.Entry<PawnColor, Integer> entry : diningRoomStudentsMap.entrySet()) {
+            if (player.getSchool().getTableCount(entry.getKey()) < entry.getValue()) {
+                throw new IllegalMoveException("There are not enough students with color " + entry.getKey().name() + " in the dining room");
+            }
+            diningRoomStudents.addAll(player.getSchool().removeStudentsFromColor(entry.getKey(), entry.getValue()));
+        }
+
+        List<Student> entranceStudents = new ArrayList<>();
+        for (Map.Entry<PawnColor, Integer> entry : entranceStudentsMap.entrySet()) {
+            if (player.getSchool().getEntranceCount(entry.getKey()) < entry.getValue()) {
+                throw new IllegalMoveException("There are not enough students with color " + entry.getKey().name() + " in the entrance");
+            }
+            List<Student> extracted = player.getSchool().removeEntranceStudentsByColor(entry.getKey(), entry.getValue());
+            entranceStudents.addAll(extracted);
+        }
+
+        player.getSchool().addStudentsToEntrance(diningRoomStudents);
+        player.getSchool().addStudents(entranceStudents);
+        player.removeCoins(cost);
+        incrementCost();
+    }
+}

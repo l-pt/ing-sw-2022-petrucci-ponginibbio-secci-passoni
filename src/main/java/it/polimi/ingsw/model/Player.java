@@ -12,6 +12,7 @@ public class Player {
     private Assistant discardPile;
     private int coins;
     private int additionalInfluence;
+    private int additionalMoves;
 
     public Player(int id, String name, TowerColor towerColor, List<Assistant> assistants) {
         this.id = id;
@@ -23,6 +24,7 @@ public class Player {
         this.discardPile = null;
         this.coins = 1;
         this.additionalInfluence = 0;
+        this.additionalMoves = 0;
     }
 
     public int getId() {
@@ -84,5 +86,13 @@ public class Player {
 
     public void setAdditionalInfluence(int additionalInfluence) {
         this.additionalInfluence = additionalInfluence;
+    }
+
+    public int getAdditionalMoves() {
+        return additionalMoves;
+    }
+
+    public void setAdditionalMoves(int additionalMoves) {
+        this.additionalMoves = additionalMoves;
     }
 }

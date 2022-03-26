@@ -1,9 +1,6 @@
 package it.polimi.ingsw.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class School {
     private List<Student> entrance;
@@ -36,8 +33,44 @@ public class School {
             addStudentToTable(student.getColor());
     }
 
+    public void addStudentsToTable(List<Student> students) {
+        for (Student student : students) {
+            tables.get(student.getColor()).add(student);
+        }
+    }
+
     public void removeStudent(Student student){
         entrance.remove(student);
+    }
+
+    /**
+     * @return A list of n students of the given color
+     * @throws IllegalArgumentException if there are not enough students of the given color
+     */
+    public List<Student> removeEntranceStudentsByColor(PawnColor color, int n) throws IllegalArgumentException {
+        List<Student> result = new ArrayList<>(n);
+        Iterator<Student> it = entrance.iterator();
+        while (it.hasNext()) {
+            Student student = it.next();
+            if (student.getColor() == color) {
+                result.add(student);
+                it.remove();
+                if (result.size() == n) {
+                    return result;
+                }
+            }
+        }
+        throw new IllegalArgumentException("There are not enough students with color " + color.name() + " in the entrance");
+    }
+
+    public int getEntranceCount(PawnColor color) {
+        int count = 0;
+        for (Student student : entrance) {
+            if (student.getColor() == color) {
+                ++count;
+            }
+        }
+        return count;
     }
 
     public void removeStudentsFromTable(List<Student> students){
