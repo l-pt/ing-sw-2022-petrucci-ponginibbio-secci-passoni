@@ -10,8 +10,8 @@ public class Cloud {
         students = new ArrayList<>();
     }
 
-    public void addStudent(Student student) {
-        students.add(student);
+    public void addStudents(List<Student> students) {
+        this.students.addAll(students);
     }
 
     public List<Student> removeStudents() {

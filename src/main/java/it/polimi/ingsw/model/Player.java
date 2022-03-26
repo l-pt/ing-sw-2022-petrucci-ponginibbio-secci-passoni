@@ -13,10 +13,10 @@ public class Player {
     private int coins;
     private int additionalInfluence;
 
-    public Player(int id, String name, School school, TowerColor towerColor, List<Assistant> assistants) {
+    public Player(int id, String name, TowerColor towerColor, List<Assistant> assistants) {
         this.id = id;
         this.name = name;
-        this.school = school;
+        this.school = new School();
         this.towerColor = towerColor;
         this.assistants = assistants;
         this.currentAssistant = null;
@@ -41,13 +41,25 @@ public class Player {
         return towerColor;
     }
 
+    public List<Assistant> getAssistants() {
+        return assistants;
+    }
+
     public Assistant getCurrentAssistant() {
         return currentAssistant;
+    }
+
+    public Assistant getAssistantFromValue(int value){
+        for (Assistant assistant : assistants)
+            if (assistant.getValue() == value)
+                return assistant;
+            return null;
     }
 
     public void setCurrentAssistant(Assistant assistant) {
         discardPile = currentAssistant;
         currentAssistant = assistant;
+        assistants.remove(assistant);
     }
 
     public Assistant getDiscardPile() {

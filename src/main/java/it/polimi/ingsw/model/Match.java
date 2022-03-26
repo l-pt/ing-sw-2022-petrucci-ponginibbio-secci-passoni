@@ -6,12 +6,14 @@ import java.util.Random;
 
 public abstract class Match {
     private int id;
+    private List<Team> teams;
     private List<Player> playerOrder;
     private int posMotherNature;
     protected List<Island> islands;
     private List<Cloud> clouds;
     private List<Student> studentBag;
     private List<Professor> professors;
+    public boolean lastTurn;
     private boolean expert;
     private int coinsReserve;
     private List<Character> characters;
@@ -20,6 +22,7 @@ public abstract class Match {
     private boolean noTowersCount;
     private boolean noMotherNatureMoves;
     private PawnColor noStudentsCount;
+
 
     public Match(List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
         this.id = id;
@@ -52,6 +55,8 @@ public abstract class Match {
         for (PawnColor color : PawnColor.values())
             professors.add(new Professor(color));
 
+        lastTurn = false;
+
         this.expert = expert;
 
         if(expert) {
@@ -74,11 +79,37 @@ public abstract class Match {
         return id;
     }
 
-    public Player getPlayerFromColor(TowerColor color){
-        for(Player player : playerOrder)
-            if(player.getSchool().getTowers().get(0).getColor().equals(color))
-                return player;
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public Team getTeamFromColor(TowerColor color){
+        for(Team team : teams)
+            if(team.getTowers().get(0).getColor().equals(color))
+                return team;
         return null;
+    }
+
+    public Team getTeamFromPlayer(Player player){
+        for (Team team : teams)
+            for(Player p : team.getPlayers())
+                if(p.equals(player))
+                    return team;
+                return null;
+    }
+
+    public Player getPlayerFromId(int id){
+        for(Player player : playerOrder)
+            if (player.getId() == id)
+                return player;
+            return null;
+    }
+
+    public int getPosFromId(int id){
+        for (int i = 0; i < playerOrder.size(); ++i)
+            if (playerOrder.get(i).getId() == id)
+                return i;
+            return -1;
     }
 
     public List<Player> getPlayersOrder() {
@@ -115,8 +146,10 @@ public abstract class Match {
 
     public List<Student> extractStudent(int n) {
         int randomIndex;
-        List<Student> result = new ArrayList<>(n);
-        for (int i = 0; i < n; ++i) {
+        List<Student> result = new ArrayList<>(Math.min(n, studentBag.size()));
+        if (n > studentBag.size())
+            lastTurn = true;
+        for (int i = 0; i < Math.min(n, studentBag.size()); ++i) {
             randomIndex = new Random().nextInt(studentBag.size());
             result.add(studentBag.get(randomIndex));
             studentBag.remove(studentBag.get(randomIndex));
@@ -126,7 +159,7 @@ public abstract class Match {
 
     public Professor removeProfessor(PawnColor color) {
         Professor professor = null;
-        for(int i=0; i < professors.size(); ++i)
+        for(int i = 0; i < professors.size(); ++i)
             if(professors.get(i).getColor().equals(color)) {
                 professor = professors.get(i);
                 professors.remove(professors.get(i));
@@ -135,15 +168,15 @@ public abstract class Match {
     }
 
     public Player whoHaveProfessor(PawnColor color){
-        for(int i=0; i<playerOrder.size(); ++i)
+        for(int i = 0; i < playerOrder.size(); ++i)
             if(playerOrder.get(i).getSchool().isColoredProfessor(color))
                 return playerOrder.get(i);
         return null;
     }
 
-    public void addStudent(Student student, Player player){
-        player.getSchool().addStudentToTable(student);
-        PawnColor color = student.getColor();
+    public void addStudent(PawnColor color, int id){
+        Player player = getPlayerFromId(id);
+        player.getSchool().addStudentToTable(color);
         if(expert)
             checkNumberStudents(color, player);
         if(!player.getSchool().isColoredProfessor(color)){
@@ -175,15 +208,18 @@ public abstract class Match {
                 } else if (islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount) == max)
                     draw = true;
             }
-            if (!draw && max > 0 && !playerOrder.get(pos).getSchool().getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
-                List<Tower> t = islands.get(index).removeAllTowers();
-                getPlayerFromColor(t.get(0).getColor()).getSchool().addTowers(t);
-                islands.get(index).addTowers(playerOrder.get(pos).getSchool().removeTowers(t.size()));
-                checkIslands(index);
+            if (!draw && max > 0 && !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor())) {
+                if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
+                    List<Tower> t = islands.get(index).removeAllTowers();
+                    getTeamFromColor(t.get(0).getColor()).addTowers(t);
+                    islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+                    checkIslands(index);
+                }
+                else endGame(getTeamFromPlayer(playerOrder.get(pos)));
             }
         }else {
             islands.get(index).removeNoEntry();
-            /* TO DO
+            /*TODO
             for (Character character : characters)
                 if(character.getId() == 4)
                     character.addNoEntry();
@@ -193,7 +229,7 @@ public abstract class Match {
     public void checkIslands(int index) {
         if (!islands.get((index + 1) % islands.size()).getTowers().isEmpty() && islands.get((index + 1) % islands.size()).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
             uniteIslands(Math.min(index, (index + 1) % islands.size()), Math.max(index, (index + 1) % islands.size()));
-        else if (!islands.get((index - 1) % islands.size()).getTowers().isEmpty() && islands.get((index - 1) % islands.size()).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
+        if (!islands.get((index - 1) % islands.size()).getTowers().isEmpty() && islands.get((index - 1) % islands.size()).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
             uniteIslands(Math.min(index, (index - 1) % islands.size()), Math.max(index, (index - 1) % islands.size()));
     }
 
@@ -204,29 +240,26 @@ public abstract class Match {
         islands.remove(max);
         if(!noMotherNatureMoves)
             posMotherNature = min;
-        if (islands.size() == 3) {
-            endGame();
-        }
+        if (islands.size() <= 3)
+            endGame(getWinningTeam());
     }
 
     public void populateClouds() {
         if (playerOrder.size() == 3)
             for (Cloud c : clouds)
-                for (int i = 0; i < 4; ++i)
-                    c.addStudent(studentBag.remove(new Random().nextInt(studentBag.size())));
-            else for (Cloud c : clouds)
-                for (int i = 0; i < 3; ++i)
-                    c.addStudent(studentBag.remove(new Random().nextInt(studentBag.size())));
+                c.addStudents(extractStudent(4));
+        else for (Cloud c : clouds)
+                c.addStudents(extractStudent(3));
     }
 
-    public void moveStudentsFromCloud(int index, Player player) throws Exception {
+    public void moveStudentsFromCloud(int index, int id) throws Exception {
         if (index >= 0 && index < clouds.size())
-            player.getSchool().addStudentsToEntrance(clouds.get(index).removeStudents());
+            getPlayerFromId(id).getSchool().addStudentsToEntrance(clouds.get(index).removeStudents());
         else throw new Exception();
     }
 
-    public void moveMotherNature(int moves, Player player) throws Exception {
-        if (player.getCurrentAssistant().getMoves() + additionalMoves >= moves && moves >= 1)
+    public void moveMotherNature(int moves, int id) throws Exception {
+        if (getPlayerFromId(id).getCurrentAssistant().getMoves() + additionalMoves >= moves && moves >= 1)
             posMotherNature = (posMotherNature + moves) % islands.size();
         else throw new Exception();
     }
@@ -320,10 +353,42 @@ public abstract class Match {
         return (int) islands.stream().flatMap(island -> island.getTowers().stream()).filter(t -> t.getColor() == color).count();
     }
 
-    abstract List<Player> getWinningPlayers();
+    public Team getWinningTeam() {
+        return teams.stream().sorted((t1, t2) -> {
+            int towers1 = getTowersByColor(t1.getTowerColor());
+            int towers2 = getTowersByColor(t2.getTowerColor());
+            if (towers1 == towers2)
+                return t2.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum() - t2.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum();
+            else
+                return towers2 - towers1;
+        }).limit(1).toList().get(0);
+    }
 
-    public void endGame() {
-        List<Player> winners = getWinningPlayers();
+    public void endGame(Team team) {
         //TODO
+    }
+
+    public void checkLastTurn(){
+        if(lastTurn)
+            endGame(getWinningTeam());
+    }
+
+    public void useAssistant(int idPlayer, int value) throws Exception{
+        boolean var = false;
+        for(int i = 0; i < getPosFromId(idPlayer); ++i)
+            if (playerOrder.get(i).getCurrentAssistant().getValue() == value)
+                var = true;
+        if(var)
+            for (int i = 0; i < getPosFromId(idPlayer); ++i) {
+                var = false;
+                for (int j = 0; j < getPlayerFromId(idPlayer).getAssistants().size(); ++i)
+                    if (getPlayerFromId(idPlayer).getAssistants().get(j).getValue() == playerOrder.get(i).getCurrentAssistant().getValue())
+                        var = true;
+                if (!var)
+                    throw new Exception();
+            }
+        getPlayerFromId(idPlayer).setCurrentAssistant(getPlayerFromId(idPlayer).getAssistantFromValue(value));
+        if(getPlayerFromId(idPlayer).getAssistants().isEmpty())
+            lastTurn = true;
     }
 }

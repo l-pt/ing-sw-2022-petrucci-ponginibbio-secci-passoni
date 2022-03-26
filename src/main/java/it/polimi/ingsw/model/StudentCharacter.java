@@ -7,7 +7,7 @@ public class StudentCharacter extends Character {
     private List<Student> students;
 
     public StudentCharacter(int cost, String description, int id) {
-        super(cost, description, id);
+        super(id, cost, description);
         students = new ArrayList<>();
     }
 

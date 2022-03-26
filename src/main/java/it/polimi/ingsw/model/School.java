@@ -8,13 +8,11 @@ import java.util.Map;
 public class School {
     private List<Student> entrance;
     private List<Professor> professors;
-    private List<Tower> towers;
     private Map<PawnColor, List<Student>> tables;
 
-    public School(List<Tower> towers) {
+    public School() {
         entrance = new ArrayList<>();
         professors = new ArrayList<>();
-        this.towers = towers;
         tables = new HashMap<>();
         for (PawnColor color : PawnColor.values())
             tables.put(color, new ArrayList<Student>());
@@ -24,15 +22,18 @@ public class School {
         entrance.addAll(students);
     }
 
-    public void addStudentToTable(Student student) {
-        Student s = student;
-        removeStudent(student);
-        tables.get(s.getColor()).add(s);
+    public void addStudentToTable(PawnColor color) {
+        for (Student student : entrance)
+            if(student.getColor().equals(color)){
+                removeStudent(student);
+                tables.get(color).add(student);
+                break;
+            }
     }
 
     public void addStudents(List<Student> students){
         for (Student student : students)
-            addStudentToTable(student);
+            addStudentToTable(student.getColor());
     }
 
     public void removeStudent(Student student){
@@ -74,26 +75,6 @@ public class School {
             if(professors.get(i).getColor().equals(color))
                 return true;
         return false;
-    }
-
-    public List<Tower> getTowers() {
-        return towers;
-    }
-
-    public void addTowers(List<Tower>towers){
-        this.towers.addAll(towers);
-    }
-
-    public List<Tower> removeTowers(int n){
-        List<Tower> t = new ArrayList<>(n);
-        if(towers.size() > n) {
-            for (Tower tower : towers){
-                t.add(tower);
-                towers.remove(tower);
-            }
-        }
-        // else condizione di vittoria perché si finiscono le torri
-        return t;
     }
 
     public int getTableCount(PawnColor color) {

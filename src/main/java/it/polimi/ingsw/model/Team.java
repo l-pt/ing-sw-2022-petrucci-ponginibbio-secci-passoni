@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
@@ -31,11 +32,25 @@ public class Team {
         towers.add(tower);
     }
 
+    public void addTowers(List<Tower> towers) {
+        this.towers.addAll(towers);
+    }
+
     public void removeTower(Tower tower) {
         towers.remove(tower);
+    }
+
+    public List<Tower> removeTowers(int size) {
+        List<Tower> towers = new ArrayList<>(size);
+        for (int i=0; i<size; ++i)
+            towers.add(this.towers.remove(i));
+        return towers;
     }
 
     public TowerColor getTowerColor() {
         return towerColor;
     }
+
+
+
 }

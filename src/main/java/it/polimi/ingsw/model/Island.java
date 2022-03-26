@@ -50,7 +50,7 @@ public class Island {
 
     public int getInfluence(Player player, boolean noTowersCount, PawnColor noStudentCount) {
         int result = 0;
-        if (towers.size() > 0 && towers.get(0).getColor() == player.getSchool().getTowers().get(0).getColor() && !noTowersCount)
+        if (towers.size() > 0 && towers.get(0).getColor() == player.getTowerColor() && !noTowersCount)
             result += towers.size();
         for (Professor professor : player.getSchool().getProfessors())
             if (noStudentCount == null || noStudentCount != professor.getColor())

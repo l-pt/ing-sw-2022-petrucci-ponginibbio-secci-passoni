@@ -4,7 +4,7 @@ public class NoEntryCharacter extends Character {
     private int noEntry;
 
     public NoEntryCharacter(int cost, String description, int id) {
-        super(cost, description, id);
+        super(id, cost, description);
         noEntry = 4;
     }
 

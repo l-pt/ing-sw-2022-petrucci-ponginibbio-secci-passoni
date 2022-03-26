@@ -6,7 +6,7 @@ public class Character {
     private String description;
     private boolean coin;
 
-    public Character(int cost, String description, int id) {
+    public Character(int id, int cost, String description) {
         this.id = id;
         this.cost = cost;
         this.description = description;
