@@ -49,8 +49,8 @@ public class Island {
     public void removeNoEntry(){--noEntry;}
 
     public int getInfluence(Player player, InfluenceCalculationPolicy influenceCalculationPolicy) {
-        return influenceCalculationPolicy.getInfluenceOfStudents(player, students) +
-                influenceCalculationPolicy.getInfluenceOfTowers(player, towers) +
+        return influenceCalculationPolicy.getStudentsInfluence(player, students) +
+                influenceCalculationPolicy.getTowersInfluence(player, towers) +
                 player.getAdditionalInfluence();
     }
 }
