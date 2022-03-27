@@ -21,10 +21,8 @@ public abstract class Match {
     private int coinsReserve;
     private List<Character> characters;
     private boolean drawAllowed;
-    private boolean noTowersCount;
     private boolean noMotherNatureMoves;
-    private PawnColor noStudentsCount;
-
+    private InfluenceCalculationPolicy influenceCalculationPolicy;
 
     public Match(List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
         this.id = id;
@@ -72,8 +70,7 @@ public abstract class Match {
         }else coinsReserve = 0;
         drawAllowed = false;
         noMotherNatureMoves = false;
-        noTowersCount = false;
-        noStudentsCount = null;
+        influenceCalculationPolicy = new InfluenceCalculationPolicy();
 
         for (Character character : characters) {
             if (character instanceof StudentCharacter) {
@@ -208,11 +205,11 @@ public abstract class Match {
         int max = -1, pos = 0;
         if(islands.get(index).getNoEntry() == 0) {
             for (int i = 0; i < playerOrder.size(); ++i) {
-                if (islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount) > max) {
-                    max = islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount);
+                if (islands.get(index).getInfluence(playerOrder.get(i), influenceCalculationPolicy) > max) {
+                    max = islands.get(index).getInfluence(playerOrder.get(i), influenceCalculationPolicy);
                     pos = i;
                     draw = false;
-                } else if (islands.get(index).getInfluence(playerOrder.get(i), noTowersCount, noStudentsCount) == max)
+                } else if (islands.get(index).getInfluence(playerOrder.get(i), influenceCalculationPolicy) == max)
                     draw = true;
             }
             if (!draw && max > 0 && !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor())) {
@@ -284,12 +281,8 @@ public abstract class Match {
         this.drawAllowed = drawAllowed;
     }
 
-    public void setNoTowersCount(boolean noTowersCount) {
-        this.noTowersCount = noTowersCount;
-    }
-
-    public void setNoStudentsCount(PawnColor color) {
-        noStudentsCount = color;
+    public InfluenceCalculationPolicy getInfluenceCalculationPolicy() {
+        return influenceCalculationPolicy;
     }
 
     /**
@@ -309,8 +302,8 @@ public abstract class Match {
 
     public void resetAbility(){
         drawAllowed = false;
-        noTowersCount = false;
-        noStudentsCount = null;
+        influenceCalculationPolicy.setCountTowers(true);
+        influenceCalculationPolicy.setExcludedColor(null);
         for(Player player : playerOrder) {
             player.setAdditionalInfluence(0);
             player.setAdditionalMoves(0);

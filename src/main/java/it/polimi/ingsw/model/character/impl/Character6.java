@@ -13,7 +13,7 @@ public class Character6 extends Character {
     public void use(Match match, int playerId) throws IllegalMoveException {
         Player player = match.getPlayerFromId(playerId);
         checkCost(player);
-        match.setNoTowersCount(true);
+        match.getInfluenceCalculationPolicy().setCountTowers(false);
         player.removeCoins(cost);
         incrementCost();
     }

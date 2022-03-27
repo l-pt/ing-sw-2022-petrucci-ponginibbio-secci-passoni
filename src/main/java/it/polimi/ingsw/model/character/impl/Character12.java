@@ -1,10 +1,9 @@
 package it.polimi.ingsw.model.character.impl;
 
-import it.polimi.ingsw.model.IllegalMoveException;
-import it.polimi.ingsw.model.Match;
-import it.polimi.ingsw.model.PawnColor;
-import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
+
+import java.util.List;
 
 public class Character12 extends Character {
     public Character12() {
@@ -17,7 +16,8 @@ public class Character12 extends Character {
         Player player = match.getPlayerFromId(playerId);
         checkCost(player);
         for (Player p : match.getPlayersOrder()) {
-            p.getSchool().removeStudentsFromColor(color, Math.min(3, p.getSchool().getTableCount(color)));
+            List<Student> extracted = p.getSchool().removeStudentsFromColor(color, Math.min(3, p.getSchool().getTableCount(color)));
+            match.addStudents(extracted);
         }
         player.removeCoins(cost);
         incrementCost();

@@ -48,13 +48,9 @@ public class Island {
 
     public void removeNoEntry(){--noEntry;}
 
-    public int getInfluence(Player player, boolean noTowersCount, PawnColor noStudentCount) {
-        int result = 0;
-        if (towers.size() > 0 && towers.get(0).getColor() == player.getTowerColor() && !noTowersCount)
-            result += towers.size();
-        for (Professor professor : player.getSchool().getProfessors())
-            if (noStudentCount == null || noStudentCount != professor.getColor())
-                result += player.getSchool().getTableCount(professor.getColor());
-        return result + player.getAdditionalInfluence();
+    public int getInfluence(Player player, InfluenceCalculationPolicy influenceCalculationPolicy) {
+        return influenceCalculationPolicy.getInfluenceOfStudents(player, students) +
+                influenceCalculationPolicy.getInfluenceOfTowers(player, towers) +
+                player.getAdditionalInfluence();
     }
 }
