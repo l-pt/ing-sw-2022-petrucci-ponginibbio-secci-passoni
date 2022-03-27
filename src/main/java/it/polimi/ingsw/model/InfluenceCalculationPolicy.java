@@ -19,7 +19,7 @@ public class InfluenceCalculationPolicy {
         this.excludedColor = excludedColor;
     }
 
-    public int getInfluenceOfTowers(Player player, List<Tower> towers) {
+    public int getTowersInfluence(Player player, List<Tower> towers) {
         int result = 0;
         if (countTowers) {
             for (Tower tower : towers) {
@@ -31,7 +31,7 @@ public class InfluenceCalculationPolicy {
         return result;
     }
 
-    public int getInfluenceOfStudents(Player player, List<Student> students) {
+    public int getStudentsInfluence(Player player, List<Student> students) {
         int result = 0;
         for (Student student : students) {
             if (student.getColor() != excludedColor) {

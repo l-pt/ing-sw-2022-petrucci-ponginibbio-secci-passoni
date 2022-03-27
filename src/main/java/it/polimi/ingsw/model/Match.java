@@ -22,7 +22,7 @@ public abstract class Match {
     private List<Character> characters;
     private boolean drawAllowed;
     private boolean noMotherNatureMoves;
-    private InfluenceCalculationPolicy influenceCalculationPolicy;
+    private InfluenceCalculationPolicy influencePolicy;
 
     public Match(List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
         this.id = id;
@@ -70,7 +70,7 @@ public abstract class Match {
         }else coinsReserve = 0;
         drawAllowed = false;
         noMotherNatureMoves = false;
-        influenceCalculationPolicy = new InfluenceCalculationPolicy();
+        influencePolicy = new InfluenceCalculationPolicy();
 
         for (Character character : characters) {
             if (character instanceof StudentCharacter) {
@@ -205,11 +205,11 @@ public abstract class Match {
         int max = -1, pos = 0;
         if(islands.get(index).getNoEntry() == 0) {
             for (int i = 0; i < playerOrder.size(); ++i) {
-                if (islands.get(index).getInfluence(playerOrder.get(i), influenceCalculationPolicy) > max) {
-                    max = islands.get(index).getInfluence(playerOrder.get(i), influenceCalculationPolicy);
+                if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) > max) {
+                    max = islands.get(index).getInfluence(playerOrder.get(i), influencePolicy);
                     pos = i;
                     draw = false;
-                } else if (islands.get(index).getInfluence(playerOrder.get(i), influenceCalculationPolicy) == max)
+                } else if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) == max)
                     draw = true;
             }
             if (!draw && max > 0 && !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor())) {
@@ -281,8 +281,8 @@ public abstract class Match {
         this.drawAllowed = drawAllowed;
     }
 
-    public InfluenceCalculationPolicy getInfluenceCalculationPolicy() {
-        return influenceCalculationPolicy;
+    public InfluenceCalculationPolicy getInfluencePolicy() {
+        return influencePolicy;
     }
 
     /**
@@ -302,8 +302,8 @@ public abstract class Match {
 
     public void resetAbility(){
         drawAllowed = false;
-        influenceCalculationPolicy.setCountTowers(true);
-        influenceCalculationPolicy.setExcludedColor(null);
+        influencePolicy.setCountTowers(true);
+        influencePolicy.setExcludedColor(null);
         for(Player player : playerOrder) {
             player.setAdditionalInfluence(0);
             player.setAdditionalMoves(0);

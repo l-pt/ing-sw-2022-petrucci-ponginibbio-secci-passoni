@@ -15,7 +15,7 @@ public class Character9 extends Character {
     public void use(Match match, int playerId, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromId(playerId);
         checkCost(player);
-        match.getInfluenceCalculationPolicy().setExcludedColor(color);
+        match.getInfluencePolicy().setExcludedColor(color);
         player.removeCoins(cost);
         incrementCost();
     }
