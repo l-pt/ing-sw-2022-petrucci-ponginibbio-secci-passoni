@@ -2,7 +2,9 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
+import it.polimi.ingsw.model.character.impl.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,7 +26,7 @@ public abstract class Match {
     private boolean noMotherNatureMoves;
     private InfluenceCalculationPolicy influencePolicy;
 
-    public Match(List<Character> allCharacters, boolean expert, List<Player> playerOrder, int id) {
+    public Match(boolean expert, List<Player> playerOrder, int id) {
         this.id = id;
 
         this.playerOrder = playerOrder;
@@ -61,11 +63,30 @@ public abstract class Match {
 
         if(expert) {
             coinsReserve = 20 - playerOrder.size();
+
+            //Extract 3 random characters
+            List<Class<? extends Character>> allCharacters = new ArrayList<>(12);
+            allCharacters.add(Character1.class);
+            allCharacters.add(Character2.class);
+            allCharacters.add(Character3.class);
+            allCharacters.add(Character4.class);
+            allCharacters.add(Character5.class);
+            allCharacters.add(Character6.class);
+            allCharacters.add(Character7.class);
+            allCharacters.add(Character8.class);
+            allCharacters.add(Character9.class);
+            allCharacters.add(Character10.class);
+            allCharacters.add(Character11.class);
+            allCharacters.add(Character12.class);
             characters = new ArrayList<>(3);
-            while (characters.size() != 3) {
-                int randomIndex = new Random().nextInt(allCharacters.size());
-                if (!characters.contains(allCharacters.get(randomIndex)))
-                    characters.add(allCharacters.get(randomIndex));
+            Random randomGenerator = new Random();
+            for (int i = 0; i < 3; ++i) {
+                int randomIndex = randomGenerator.nextInt(allCharacters.size());
+                try {
+                    characters.add(allCharacters.remove(randomIndex).getDeclaredConstructor().newInstance());
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
         }else coinsReserve = 0;
         drawAllowed = false;
@@ -286,18 +307,13 @@ public abstract class Match {
     }
 
     /**
-     * Get the character object with given index and class
-     * Ex: match.getCharacter(0, Character2.class).use(match, player);
+     * Get the character object with given index
      */
-    public <T extends Character> T getCharacter(int characterIndex, Class<T> characterClass) throws IllegalMoveException {
+    public Character getCharacter(int characterIndex) throws IllegalMoveException {
         if (characterIndex < 0 || characterIndex >= 3) {
             throw new IllegalMoveException("Invalid character index " + characterIndex);
         }
-        Character character = characters.get(characterIndex);
-        if (!characterClass.isAssignableFrom(character.getClass())) {
-            throw new IllegalMoveException("Character with index " + characterIndex + " is not of class " + characterClass.getName());
-        }
-        return (T) character;
+        return characters.get(characterIndex);
     }
 
     public void resetAbility(){
