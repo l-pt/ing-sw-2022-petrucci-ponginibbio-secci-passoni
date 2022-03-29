@@ -16,10 +16,6 @@ public class Team {
         this.towerColor = towerColor;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public List<Player> getPlayers() {
         return players;
     }
@@ -28,16 +24,8 @@ public class Team {
         return towers;
     }
 
-    public void addTower(Tower tower) {
-        towers.add(tower);
-    }
-
     public void addTowers(List<Tower> towers) {
         this.towers.addAll(towers);
-    }
-
-    public void removeTower(Tower tower) {
-        towers.remove(tower);
     }
 
     public List<Tower> removeTowers(int size) {

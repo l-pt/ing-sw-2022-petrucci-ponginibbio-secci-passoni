@@ -24,7 +24,7 @@ public abstract class StudentCharacter extends Character {
      * @return A list of n students of the given color
      * @throws IllegalArgumentException if there are not enough students of the given color
      */
-    protected List<Student> removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException {
+    public List<Student> removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException {
         List<Student> result = new ArrayList<>(n);
         Iterator<Student> it = students.iterator();
         while (it.hasNext()) {
@@ -54,7 +54,7 @@ public abstract class StudentCharacter extends Character {
         return students;
     }
 
-    protected void addStudents(List<Student> students) {
+    public void addStudents(List<Student> students) {
         this.students.addAll(students);
     }
 
@@ -62,5 +62,5 @@ public abstract class StudentCharacter extends Character {
      * @return int the number of students that have to be put on this card
      * during the setup phase
      */
-    protected abstract int getInitialStudentsNumber();
+    public abstract int getInitialStudentsNumber();
 }

@@ -31,10 +31,6 @@ public class Player {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public School getSchool() {
         return school;
     }
@@ -62,10 +58,6 @@ public class Player {
         discardPile = currentAssistant;
         currentAssistant = assistant;
         assistants.remove(assistant);
-    }
-
-    public Assistant getDiscardPile() {
-        return discardPile;
     }
 
     public int getCoins() {

@@ -15,7 +15,7 @@ public class Character3 extends Character {
     public void use(Match match, int playerId, int island) throws IllegalMoveException {
         Player player = match.getPlayerFromId(playerId);
         checkCost(player);
-        match.islandInfluence(island);
+        match.islandInfluence(island, true);
         player.removeCoins(cost);
         incrementCost();
     }
