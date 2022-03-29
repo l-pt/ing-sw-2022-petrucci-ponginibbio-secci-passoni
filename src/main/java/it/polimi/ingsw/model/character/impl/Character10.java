@@ -21,7 +21,7 @@ public class Character10 extends Character {
             if (player.getSchool().getTableCount(entry.getKey()) < entry.getValue()) {
                 throw new IllegalMoveException("There are not enough students with color " + entry.getKey().name() + " in the dining room");
             }
-            diningRoomStudents.addAll(player.getSchool().removeStudentsFromColor(entry.getKey(), entry.getValue()));
+            diningRoomStudents.addAll(player.getSchool().removeStudentsByColor(entry.getKey(), entry.getValue()));
         }
 
         List<Student> entranceStudents = new ArrayList<>();

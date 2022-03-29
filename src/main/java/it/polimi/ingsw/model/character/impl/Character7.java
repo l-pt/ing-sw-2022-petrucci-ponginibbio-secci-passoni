@@ -42,7 +42,7 @@ public class Character7 extends StudentCharacter {
     }
 
     @Override
-    protected int getInitialStudentsNumber() {
+    public int getInitialStudentsNumber() {
         return 6;
     }
 }

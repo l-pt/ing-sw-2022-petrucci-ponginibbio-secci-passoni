@@ -65,20 +65,13 @@ public class School {
 
     public int getEntranceCount(PawnColor color) {
         int count = 0;
-        for (Student student : entrance) {
-            if (student.getColor() == color) {
+        for (Student student : entrance)
+            if (student.getColor() == color)
                 ++count;
-            }
-        }
         return count;
     }
 
-    public void removeStudentsFromTable(List<Student> students){
-        for (Student student : students)
-            tables.get(student.getColor()).remove(tables.get(student.getColor()).size()-1);
-    }
-
-    public List<Student> removeStudentsFromColor(PawnColor color, int n){
+    public List<Student> removeStudentsByColor(PawnColor color, int n){
         List<Student> result = new ArrayList<>(n);
         for(int i=0; i<n; ++i)
             result.add(tables.get(color).remove(tables.get(color).size()-1));

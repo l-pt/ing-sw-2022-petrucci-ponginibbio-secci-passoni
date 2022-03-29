@@ -14,12 +14,21 @@ public class Player {
     private int additionalInfluence;
     private int additionalMoves;
 
-    public Player(int id, String name, TowerColor towerColor, List<Assistant> assistants) {
+    public Player(int id, String name, TowerColor towerColor, Wizard wizard) {
         this.id = id;
         this.name = name;
         this.school = new School();
         this.towerColor = towerColor;
-        this.assistants = assistants;
+        assistants.add(new Assistant(1, 1, wizard));
+        assistants.add(new Assistant(2, 1, wizard));
+        assistants.add(new Assistant(3, 2, wizard));
+        assistants.add(new Assistant(4, 2, wizard));
+        assistants.add(new Assistant(5, 3, wizard));
+        assistants.add(new Assistant(6, 3, wizard));
+        assistants.add(new Assistant(7, 4, wizard));
+        assistants.add(new Assistant(8, 4, wizard));
+        assistants.add(new Assistant(9, 5, wizard));
+        assistants.add(new Assistant(10, 5, wizard));
         this.currentAssistant = null;
         this.discardPile = null;
         this.coins = 1;
@@ -29,10 +38,6 @@ public class Player {
 
     public int getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public School getSchool() {
@@ -62,10 +67,6 @@ public class Player {
         discardPile = currentAssistant;
         currentAssistant = assistant;
         assistants.remove(assistant);
-    }
-
-    public Assistant getDiscardPile() {
-        return discardPile;
     }
 
     public int getCoins() {

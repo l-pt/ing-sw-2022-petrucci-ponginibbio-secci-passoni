@@ -9,15 +9,15 @@ public class Team {
     private List<Tower> towers;
     private TowerColor towerColor;
 
-    public Team(List<Player> players, int id, List<Tower> towers, TowerColor towerColor) {
+    public Team(List<Player> players, int id, boolean is3Team, TowerColor towerColor) {
         this.id = id;
         this.players = players;
-        this.towers = towers;
+        if(is3Team)
+            for (int i = 0; i < 6; ++i)
+                towers.add(new Tower(towerColor));
+        else for (int i = 0; i < 8; ++i)
+                towers.add(new Tower(towerColor));
         this.towerColor = towerColor;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public List<Player> getPlayers() {
@@ -28,16 +28,8 @@ public class Team {
         return towers;
     }
 
-    public void addTower(Tower tower) {
-        towers.add(tower);
-    }
-
     public void addTowers(List<Tower> towers) {
         this.towers.addAll(towers);
-    }
-
-    public void removeTower(Tower tower) {
-        towers.remove(tower);
     }
 
     public List<Tower> removeTowers(int size) {
@@ -50,7 +42,4 @@ public class Team {
     public TowerColor getTowerColor() {
         return towerColor;
     }
-
-
-
 }

@@ -25,7 +25,7 @@ public class Character1 extends StudentCharacter {
     }
 
     @Override
-    protected int getInitialStudentsNumber() {
+    public int getInitialStudentsNumber() {
         return 4;
     }
 }

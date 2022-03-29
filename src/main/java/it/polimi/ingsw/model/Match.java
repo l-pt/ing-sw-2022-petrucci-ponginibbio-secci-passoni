@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public abstract class Match {
+public class Match {
     private int id;
     private List<Team> teams;
     private List<Player> playerOrder;
@@ -23,7 +23,6 @@ public abstract class Match {
     private int coinsReserve;
     private List<Character> characters;
     private boolean drawAllowed;
-    private boolean noMotherNatureMoves;
     private InfluenceCalculationPolicy influencePolicy;
 
     public Match(boolean expert, List<Player> playerOrder, int id) {
@@ -41,7 +40,7 @@ public abstract class Match {
         posMotherNature = new Random().nextInt(12);
         for (int i = 0; i < 12; ++i) {
             islands.add(new Island());
-            if(i!=posMotherNature && i != (posMotherNature + 6) % 12)
+            if(i != posMotherNature && i != (posMotherNature + 6) % 12)
                 islands.get(i).addStudent(extractStudent(1).get(0));
         }
 
@@ -90,7 +89,6 @@ public abstract class Match {
             }
         }else coinsReserve = 0;
         drawAllowed = false;
-        noMotherNatureMoves = false;
         influencePolicy = new InfluenceCalculationPolicy();
 
         for (Character character : characters) {
@@ -98,14 +96,6 @@ public abstract class Match {
                 ((StudentCharacter) character).setup(this);
             }
         }
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public List<Team> getTeams() {
-        return teams;
     }
 
     public Team getTeamFromColor(TowerColor color){
@@ -147,26 +137,12 @@ public abstract class Match {
         });
     }
 
-    public int getPosMotherNature() {
-        return posMotherNature;
-    }
-
     public List<Island> getIslands() {
         return islands;
     }
 
-    public List<Cloud> getClouds() {
-        return clouds;
-    }
-
     public void addStudents(List<Student> students){
         studentBag.addAll(students);
-    }
-
-    public void removeStudents(PawnColor color){
-        for (Player player : playerOrder)
-            if(player.getSchool().getTableCount(color) != 0)
-                addStudents(player.getSchool().removeStudentsFromColor(color, Math.min(3, player.getSchool().getTableCount(color))));
     }
 
     public List<Student> extractStudent(int n) {
@@ -204,6 +180,18 @@ public abstract class Match {
         player.getSchool().addStudentToTable(color);
         if(expert)
             checkNumberStudents(color, player);
+        checkProfessors(color, id);
+    }
+
+    public void checkNumberStudents(PawnColor color, Player player){
+        if(player.getSchool().getTableCount(color) == 3 || player.getSchool().getTableCount(color) == 6 || player.getSchool().getTableCount(color) == 9) {
+            player.addCoin();
+            --coinsReserve;
+        }
+    }
+
+    public void checkProfessors(PawnColor color, int id){
+        Player player = getPlayerFromId(id);
         if(!player.getSchool().isColoredProfessor(color)){
             if(whoHaveProfessor(color) == null)
                 player.getSchool().addProfessor(removeProfessor(color));
@@ -214,14 +202,7 @@ public abstract class Match {
         }
     }
 
-    public void checkNumberStudents(PawnColor color, Player player){
-        if(player.getSchool().getTableCount(color) == 3 || player.getSchool().getTableCount(color) == 6 || player.getSchool().getTableCount(color) == 9) {
-            player.addCoin();
-            --coinsReserve;
-        }
-    }
-
-    public void islandInfluence(int index){
+    public void islandInfluence(int index, boolean noMotherNatureMoves){
         boolean draw = false;
         int max = -1, pos = 0;
         if(islands.get(index).getNoEntry() == 0) {
@@ -238,7 +219,7 @@ public abstract class Match {
                     List<Tower> t = islands.get(index).removeAllTowers();
                     getTeamFromColor(t.get(0).getColor()).addTowers(t);
                     islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
-                    checkIslands(index);
+                    checkIslands(index, noMotherNatureMoves);
                 }
                 else endGame(getTeamFromPlayer(playerOrder.get(pos)));
             }
@@ -251,14 +232,14 @@ public abstract class Match {
              */
         }
     }
-    public void checkIslands(int index) {
+    public void checkIslands(int index, boolean noMotherNatureMoves) {
         if (!islands.get((index + 1) % islands.size()).getTowers().isEmpty() && islands.get((index + 1) % islands.size()).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
-            uniteIslands(Math.min(index, (index + 1) % islands.size()), Math.max(index, (index + 1) % islands.size()));
+            uniteIslands(Math.min(index, (index + 1) % islands.size()), Math.max(index, (index + 1) % islands.size()), noMotherNatureMoves);
         if (!islands.get((index - 1) % islands.size()).getTowers().isEmpty() && islands.get((index - 1) % islands.size()).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
-            uniteIslands(Math.min(index, (index - 1) % islands.size()), Math.max(index, (index - 1) % islands.size()));
+            uniteIslands(Math.min(index, (index - 1) % islands.size()), Math.max(index, (index - 1) % islands.size()), noMotherNatureMoves);
     }
 
-    public void uniteIslands(int min, int max) {
+    public void uniteIslands(int min, int max, boolean noMotherNatureMoves) {
         islands.get(min).addStudents(islands.get(max).getStudents());
         islands.get(min).addTowers(islands.get(max).getTowers());
         islands.get(min).addNoEntry(islands.get(max).getNoEntry());
@@ -288,10 +269,6 @@ public abstract class Match {
         if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1)
             posMotherNature = (posMotherNature + moves) % islands.size();
         else throw new Exception();
-    }
-
-    public boolean isExpert() {
-        return expert;
     }
 
     public int getCoins() {
@@ -350,22 +327,24 @@ public abstract class Match {
             endGame(getWinningTeam());
     }
 
-    public void useAssistant(int idPlayer, int value) throws Exception{
+    public void useAssistant(int playerId, int value) throws Exception{
         boolean var = false;
-        for(int i = 0; i < getPosFromId(idPlayer); ++i)
+        for(int i = 0; i < getPosFromId(playerId); ++i)
             if (playerOrder.get(i).getCurrentAssistant().getValue() == value)
                 var = true;
         if(var)
-            for (int i = 0; i < getPosFromId(idPlayer); ++i) {
+            for (int i = 0; i < getPosFromId(playerId); ++i) {
                 var = false;
-                for (int j = 0; j < getPlayerFromId(idPlayer).getAssistants().size(); ++i)
-                    if (getPlayerFromId(idPlayer).getAssistants().get(j).getValue() == playerOrder.get(i).getCurrentAssistant().getValue())
+                for (int j = 0; j < getPlayerFromId(playerId).getAssistants().size(); ++i)
+                    if (getPlayerFromId(playerId).getAssistants().get(j).getValue() == playerOrder.get(i).getCurrentAssistant().getValue())
                         var = true;
                 if (!var)
                     throw new Exception();
             }
-        getPlayerFromId(idPlayer).setCurrentAssistant(getPlayerFromId(idPlayer).getAssistantFromValue(value));
-        if(getPlayerFromId(idPlayer).getAssistants().isEmpty())
+        getPlayerFromId(playerId).setCurrentAssistant(getPlayerFromId(playerId).getAssistantFromValue(value));
+        if(getPlayerFromId(playerId).getAssistants().isEmpty())
             lastTurn = true;
+        if(getPosFromId(playerId) == playerOrder.size()-1)
+            orderPlayers();
     }
 }

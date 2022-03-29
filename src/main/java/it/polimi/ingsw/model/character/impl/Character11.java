@@ -20,13 +20,14 @@ public class Character11 extends StudentCharacter {
         }
         player.getSchool().addStudentsToTable(removeStudentsByColor(color, 1));
         match.checkNumberStudents(color, player);
+        match.checkProfessors(color, playerId);
         addStudents(match.extractStudent(1));
         player.removeCoins(cost);
         incrementCost();
     }
 
     @Override
-    protected int getInitialStudentsNumber() {
+    public int getInitialStudentsNumber() {
         return 4;
     }
 }
