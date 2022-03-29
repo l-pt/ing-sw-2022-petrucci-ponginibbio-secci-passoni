@@ -5,34 +5,6 @@ public class Bag {
     private Student[] bag; //array of students
 
     public Bag(){
-        this.count = 120; //10 students of each color are already initialized on the board (thus 120 in the bag at the start)
-        this.bag = new Student[130]; //allocate memory for array of 130 students
-
-        //fill bag with 130 students: 26 of each tower color
-        for(int i = 0; i < 120; i++){
-            //add 24 YELLOW
-            for(int j = 0; j < 24; j++){
-                this.bag[i] = Student(YELLOW);
-            }
-            //add 24 BLUE
-            for(int j = 0; j < 24; j++){
-                this.bag[i] = Student(BLUE);
-            }
-            //add 24 GREEN
-            for(int j = 0; j < 24; j++){
-                this.bag[i] = Student(GREEN);
-            }
-            //add 24 RED
-            for(int j = 0; j < 24; j++){
-                this.bag[i] = Student(RED);
-            }
-            //add 24 PINK
-            for(int j = 0; j < 24; j++){
-                this.bag[i] = Student(PINK);
-            }
-        } // bag is filled with 120 students, 24 of each color
-    }
-    public Bag(){
         //ARRAY FOR EFFICIENCY
         this.count = 120; //10 students of each color are already initialized on the board (thus 120 in the bag at the start)
         this.bag = new Student[130]; //allocate memory for array of 130 students
@@ -41,8 +13,8 @@ public class Bag {
         for(int i = 0; i < 120; i++){
             //for each color, add 24 students to bag
             for (PawnColor color : PawnColor.values()){
-                for (int i = 0; i < 24; ++i){
-                    bag[i] = new Student(color));
+                for (int j = 0; j < 24; j++){
+                    bag[i] = new Student(color);
                 }
             }
         } // bag is filled with 120 students, 24 of each color
@@ -56,8 +28,8 @@ public class Bag {
         for(int i = 0; i < num_students; i++){
             //for each color, add (num_students/5) students to bag
             for (PawnColor color : PawnColor.values()){
-                for (int i = 0; i < (num_students / 5); ++i){
-                    bag[i] = new Student(color));
+                for (int j = 0; j < (num_students / 5); j++){
+                    bag[i] = new Student(color);
                 }
             }
         } // bag is filled evenly with num_students of the 5 colors
