@@ -9,14 +9,11 @@ public class Team {
     private List<Tower> towers;
     private TowerColor towerColor;
 
-    public Team(List<Player> players, int id, boolean is3Team, TowerColor towerColor) {
+    public Team(int id, List<Player> players, int numTowers, TowerColor towerColor) {
         this.id = id;
         this.players = players;
-        if(is3Team)
-            for (int i = 0; i < 6; ++i)
-                towers.add(new Tower(towerColor));
-        else for (int i = 0; i < 8; ++i)
-                towers.add(new Tower(towerColor));
+        for (int i = 0; i < numTowers; ++i)
+            towers.add(new Tower(towerColor));
         this.towerColor = towerColor;
     }
 

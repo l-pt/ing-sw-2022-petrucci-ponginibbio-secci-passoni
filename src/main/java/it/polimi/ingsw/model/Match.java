@@ -15,21 +15,22 @@ public class Match {
     private List<Player> playerOrder;
     private int posMotherNature;
     private List<Island> islands;
-    private List<Cloud> clouds;
-    private List<Student> studentBag;
+    protected List<Cloud> clouds;
+    protected List<Student> studentBag;
     private List<Professor> professors;
-    public boolean lastTurn;
+    private boolean lastTurn;
     private boolean expert;
     private int coinsReserve;
     private List<Character> characters;
     private boolean drawAllowed;
     private InfluenceCalculationPolicy influencePolicy;
 
-    public Match(boolean expert, List<Player> playerOrder, int id) {
+    public Match(int id, List<Team> teams, List<Player> playerOrder, boolean expert) {
 
-        //set match id, match difficulty, and player order
+        //set match id, match difficulty, teams and player order
         this.id = id;
         this.expert = expert;
+        this.teams = teams;
         this.playerOrder = playerOrder;
 
         //allocate memory for islands, studentBag, clouds, professors
@@ -58,6 +59,9 @@ public class Match {
         for (PawnColor color : PawnColor.values())
             for (int i = 0; i < 24; ++i)
                 studentBag.add(new Student(color));
+
+        for (Player player : playerOrder)
+            player.getSchool().addStudentsToEntrance(extractStudent(7));
 
         //add a cloud for each player
         for (int i = 0; i < playerOrder.size(); ++i)
@@ -152,6 +156,8 @@ public class Match {
         return islands;
     }
 
+    public List<Student> getStudentBag(){return studentBag;}
+
     public void addStudents(List<Student> students){
         studentBag.addAll(students);
     }
@@ -236,11 +242,9 @@ public class Match {
             }
         }else {
             islands.get(index).removeNoEntry();
-            /*TODO
             for (Character character : characters)
-                if(character.getId() == 4)
-                    character.addNoEntry();
-             */
+                if(character instanceof Character5)
+                    ((Character5) character).addNoEntry();
         }
     }
     public void checkIslands(int index, boolean noMotherNatureMoves) {
@@ -262,10 +266,8 @@ public class Match {
     }
 
     public void populateClouds() {
-        if (playerOrder.size() == 3)
-            for (Cloud c : clouds)
-                c.addStudents(extractStudent(4));
-        else for (Cloud c : clouds)
+        for (Cloud c : clouds)
+            if (!studentBag.isEmpty())
                 c.addStudents(extractStudent(3));
     }
 

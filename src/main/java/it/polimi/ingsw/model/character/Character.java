@@ -28,14 +28,14 @@ public abstract class Character {
         return description;
     }
 
-    protected void incrementCost() {
+    public void incrementCost() {
         if(!coin) {
             coin = true;
             ++cost;
         }
     }
 
-    protected void checkCost(Player player) throws IllegalMoveException {
+    public void checkCost(Player player) throws IllegalMoveException {
         if (player.getCoins() < cost) {
             throw new IllegalMoveException("Insufficient coins");
         }

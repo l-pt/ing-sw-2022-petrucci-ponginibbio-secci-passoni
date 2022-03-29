@@ -26,4 +26,6 @@ public class Character5 extends Character {
         player.removeCoins(cost);
         incrementCost();
     }
+
+    public void addNoEntry(){++noEntry;}
 }
