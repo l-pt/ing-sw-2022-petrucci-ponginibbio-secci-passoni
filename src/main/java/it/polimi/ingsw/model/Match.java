@@ -14,7 +14,7 @@ public class Match {
     private List<Team> teams;
     private List<Player> playerOrder;
     private int posMotherNature;
-    protected List<Island> islands;
+    private List<Island> islands;
     private List<Cloud> clouds;
     private List<Student> studentBag;
     private List<Professor> professors;
@@ -26,40 +26,51 @@ public class Match {
     private InfluenceCalculationPolicy influencePolicy;
 
     public Match(boolean expert, List<Player> playerOrder, int id) {
-        this.id = id;
 
+        //set match id, match difficulty, and player order
+        this.id = id;
+        this.expert = expert;
         this.playerOrder = playerOrder;
 
-        islands = new ArrayList<>();
+        //allocate memory for islands, studentBag, clouds, professors
+        this.islands = new ArrayList<>();
+        this.studentBag = new ArrayList<>();
+        this.clouds = new ArrayList<>();
+        this.professors = new ArrayList<>();
 
-        studentBag = new ArrayList<>();
+        //prepare bag for initialization of islands
+        //2 students of each color to be randomly placed on the islands corresponding to mother nature
         for (PawnColor color : PawnColor.values())
             for (int i = 0; i < 2; ++i)
                 studentBag.add(new Student(color));
 
+        //randomly select an island index for mother nature
         posMotherNature = new Random().nextInt(12);
         for (int i = 0; i < 12; ++i) {
             islands.add(new Island());
+
+            //add random student to all islands except where mother nature is and directly across (+/- 6 positions)
             if(i != posMotherNature && i != (posMotherNature + 6) % 12)
                 islands.get(i).addStudent(extractStudent(1).get(0));
         }
 
+        //fill the bag with the rest of the students
         for (PawnColor color : PawnColor.values())
             for (int i = 0; i < 24; ++i)
                 studentBag.add(new Student(color));
 
-        clouds = new ArrayList<>();
+        //add a cloud for each player
         for (int i = 0; i < playerOrder.size(); ++i)
             clouds.add(new Cloud());
 
-        professors = new ArrayList<>();
+        //create a professor for each color
         for (PawnColor color : PawnColor.values())
             professors.add(new Professor(color));
 
+        //at the init, it is not the last turn
         lastTurn = false;
 
-        this.expert = expert;
-
+        //specific parameters for expert mode
         if(expert) {
             coinsReserve = 20 - playerOrder.size();
 
