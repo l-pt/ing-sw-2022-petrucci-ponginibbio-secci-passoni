@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public abstract class Match {
+public class Match {
     private int id;
     private List<Team> teams;
     private List<Player> playerOrder;
