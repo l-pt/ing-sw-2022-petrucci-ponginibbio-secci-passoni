@@ -3,12 +3,12 @@ package it.polimi.ingsw.model;
 public class Assistant {
     private int value;
     private int moves;
-    private int type;
+    private Wizard wizard;
 
-    public Assistant(int value, int moves, int type) {
+    public Assistant(int value, int moves, Wizard wizard) {
         this.value = value;
         this.moves = moves;
-        this.type = type;
+        this.wizard = wizard;
     }
 
     public int getValue() {
@@ -19,7 +19,7 @@ public class Assistant {
         return moves;
     }
 
-    public int getType() {
-        return type;
+    public Wizard getWizard() {
+        return wizard;
     }
 }

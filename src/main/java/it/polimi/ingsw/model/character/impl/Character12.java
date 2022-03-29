@@ -17,7 +17,7 @@ public class Character12 extends Character {
         Player player = match.getPlayerFromId(playerId);
         checkCost(player);
         for (Player p : match.getPlayersOrder())
-            p.getSchool().removeStudentsByColor(color, Math.min(3, p.getSchool().getTableCount(color)));
+            match.addStudents(p.getSchool().removeStudentsByColor(color, Math.min(3, p.getSchool().getTableCount(color))));
         player.removeCoins(cost);
         incrementCost();
     }

@@ -1,9 +1,8 @@
 package it.polimi.ingsw.model;
 
-public enum PawnColor {
-    YELLOW,
+public enum Wizard {
+    PURPLE,
     BLUE,
     GREEN,
-    RED,
     PINK
 }
