@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class Match {
     private int id;
-    private List<Team> teams;
+    protected List<Team> teams;
     private List<Player> playerOrder;
     private int posMotherNature;
     private List<Island> islands;
@@ -111,6 +111,12 @@ public class Match {
                 ((StudentCharacter) character).setup(this);
             }
         }
+    }
+
+    public void setupTowers(){
+        for (Team team : teams)
+            for (int i = 0; i < 8; ++i)
+                team.addTower(new Tower(team.getTowerColor()));
     }
 
     public Team getTeamFromColor(TowerColor color){
@@ -316,7 +322,7 @@ public class Match {
         }
     }
 
-    protected int getTowersByColor(TowerColor color) {
+    public int getTowersByColor(TowerColor color) {
         return (int) islands.stream().flatMap(island -> island.getTowers().stream()).filter(t -> t.getColor() == color).count();
     }
 
