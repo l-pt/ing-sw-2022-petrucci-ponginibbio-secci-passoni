@@ -22,7 +22,7 @@ public class School {
     public void addStudentToTable(PawnColor color) {
         for (Student student : entrance)
             if(student.getColor().equals(color)){
-                removeStudent(student);
+                entrance.remove(student);
                 tables.get(color).add(student);
                 break;
             }
@@ -37,10 +37,6 @@ public class School {
         for (Student student : students) {
             tables.get(student.getColor()).add(student);
         }
-    }
-
-    public void removeStudent(Student student){
-        entrance.remove(student);
     }
 
     /**
@@ -71,7 +67,10 @@ public class School {
         return count;
     }
 
-    public List<Student> removeStudentsByColor(PawnColor color, int n){
+    public List<Student> removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException{
+        if (tables.get(color).size() < n) {
+            throw new IllegalArgumentException("There are not enough students with color " + color.name() + " on the table");
+        }
         List<Student> result = new ArrayList<>(n);
         for(int i=0; i<n; ++i)
             result.add(tables.get(color).remove(tables.get(color).size()-1));
@@ -86,13 +85,16 @@ public class School {
         professors.add(professor);
     }
 
-    public Professor removeProfessor(PawnColor color) {
+    public Professor removeProfessor(PawnColor color) throws IllegalArgumentException {
         Professor professor = null;
         for(int i = 0; i < professors.size(); ++i)
             if(professors.get(i).getColor().equals(color)) {
                 professor = professors.get(i);
                 professors.remove(professors.get(i));
             }
+        if (professor == null) {
+            throw new IllegalArgumentException("No professor with color " + color.name());
+        }
         return professor;
     }
 

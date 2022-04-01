@@ -30,7 +30,10 @@ public class Team {
         this.towers.addAll(towers);
     }
 
-    public List<Tower> removeTowers(int size) {
+    public List<Tower> removeTowers(int size) throws IllegalArgumentException {
+        if (size > towers.size()) {
+            throw new IllegalArgumentException("Team " + id + " does not have enough towers");
+        }
         List<Tower> towers = new ArrayList<>(size);
         for (int i=0; i<size; ++i)
             towers.add(this.towers.remove(i));

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
@@ -19,6 +20,7 @@ public class Player {
         this.name = name;
         this.school = new School();
         this.towerColor = towerColor;
+        assistants = new ArrayList<>(10);
         assistants.add(new Assistant(1, 1, wizard));
         assistants.add(new Assistant(2, 1, wizard));
         assistants.add(new Assistant(3, 2, wizard));
@@ -31,13 +33,17 @@ public class Player {
         assistants.add(new Assistant(10, 5, wizard));
         this.currentAssistant = null;
         this.discardPile = null;
-        this.coins = 1;
+        this.coins = 0;
         this.additionalInfluence = 0;
         this.additionalMoves = 0;
     }
 
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public School getSchool() {
@@ -54,6 +60,10 @@ public class Player {
 
     public Assistant getCurrentAssistant() {
         return currentAssistant;
+    }
+
+    public Assistant getDiscardPile() {
+        return discardPile;
     }
 
     public Assistant getAssistantFromValue(int value){
@@ -77,7 +87,10 @@ public class Player {
         ++coins;
     }
 
-    public void removeCoins(int coins) {
+    public void removeCoins(int coins) throws IllegalArgumentException {
+        if (coins > this.coins) {
+            throw new IllegalArgumentException("Player " + name + "does not have enough coins");
+        }
         this.coins -= coins;
     }
 

@@ -78,6 +78,11 @@ public class Match {
         if(expert) {
             coinsReserve = 20 - playerOrder.size();
 
+            //Add 1 coin to all players
+            for (Player player : playerOrder) {
+                player.addCoin();
+            }
+
             //Extract 3 random characters
             List<Class<? extends Character>> allCharacters = new ArrayList<>(12);
             allCharacters.add(Character1.class);
@@ -346,7 +351,11 @@ public class Match {
             endGame(getWinningTeam());
     }
 
-    public void useAssistant(int playerId, int value) throws Exception{
+    public void useAssistant(int playerId, int value) throws IllegalMoveException {
+        Player player = getPlayerFromId(playerId);
+        if (player.getAssistantFromValue(value) == null) {
+            throw new IllegalMoveException("Player " + player.getName() + " does not have an assistant with value " + value);
+        }
         boolean var = false;
         for(int i = 0; i < getPosFromId(playerId); ++i)
             if (playerOrder.get(i).getCurrentAssistant().getValue() == value)
@@ -358,7 +367,7 @@ public class Match {
                     if (getPlayerFromId(playerId).getAssistants().get(j).getValue() == playerOrder.get(i).getCurrentAssistant().getValue())
                         var = true;
                 if (!var)
-                    throw new Exception();
+                    throw new IllegalMoveException("Cannot play this assistant");
             }
         getPlayerFromId(playerId).setCurrentAssistant(getPlayerFromId(playerId).getAssistantFromValue(value));
         if(getPlayerFromId(playerId).getAssistants().isEmpty())
