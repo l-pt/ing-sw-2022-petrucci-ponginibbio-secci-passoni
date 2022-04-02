@@ -11,8 +11,16 @@ public class InfluenceCalculationPolicy {
         excludedColor = null;
     }
 
+    public boolean getCountTowers() {
+        return countTowers;
+    }
+
     public void setCountTowers(boolean countTowers) {
         this.countTowers = countTowers;
+    }
+
+    public PawnColor getExcludedColor() {
+        return excludedColor;
     }
 
     public void setExcludedColor(PawnColor excludedColor) {

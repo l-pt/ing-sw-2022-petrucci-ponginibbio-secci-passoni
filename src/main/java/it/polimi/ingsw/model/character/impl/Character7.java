@@ -14,6 +14,13 @@ public class Character7 extends StudentCharacter {
     }
 
     public void use(Match match, int playerId, Map<PawnColor, Integer> studentsInMap, Map<PawnColor, Integer> studentsOutMap) throws IllegalMoveException {
+        if (studentsInMap.size() < 1 || studentsInMap.size() > 3 || studentsOutMap.size() < 1 || studentsOutMap.size() > 3) {
+            throw new IllegalMoveException("Invalid student number");
+        }
+        if (studentsInMap.size() != studentsOutMap.size()) {
+            throw new IllegalMoveException("Different map sizes");
+        }
+
         Player player = match.getPlayerFromId(playerId);
         checkCost(player);
 
@@ -32,7 +39,7 @@ public class Character7 extends StudentCharacter {
                 throw new IllegalMoveException("There are not enough students with color " + entry.getKey().name() + " in the entrance");
             }
             List<Student> extracted = player.getSchool().removeEntranceStudentsByColor(entry.getKey(), entry.getValue());
-            studentsOut.addAll(extracted);
+            studentsIn.addAll(extracted);
         }
 
         player.getSchool().addStudentsToEntrance(studentsOut);

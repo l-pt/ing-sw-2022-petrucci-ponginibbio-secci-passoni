@@ -157,6 +157,10 @@ public class Match {
         return playerOrder;
     }
 
+    public int getPosMotherNature() {
+        return posMotherNature;
+    }
+
     public void orderPlayers() {
         playerOrder.sort((Player p1, Player p2) -> {
             return p1.getCurrentAssistant().getValue() - p2.getCurrentAssistant().getValue();
@@ -288,11 +292,11 @@ public class Match {
         else throw new Exception();
     }
 
-    public void moveMotherNature(int moves, int id) throws Exception {
+    public void moveMotherNature(int moves, int id) throws IllegalMoveException {
         Player player = getPlayerFromId(id);
         if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1)
             posMotherNature = (posMotherNature + moves) % islands.size();
-        else throw new Exception();
+        else throw new IllegalMoveException("Too many moves");
     }
 
     public int getCoins() {

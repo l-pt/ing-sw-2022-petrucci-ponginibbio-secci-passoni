@@ -13,6 +13,13 @@ public class Character10 extends Character {
     }
 
     public void use(Match match, int playerId, Map<PawnColor, Integer> entranceStudentsMap, Map<PawnColor, Integer> diningRoomStudentsMap) throws IllegalMoveException {
+        if (entranceStudentsMap.size() < 1 || entranceStudentsMap.size() > 2 || diningRoomStudentsMap.size() < 1 || diningRoomStudentsMap.size() > 2) {
+            throw new IllegalMoveException("Invalid student number");
+        }
+        if (entranceStudentsMap.size() != diningRoomStudentsMap.size()) {
+            throw new IllegalMoveException("Different map sizes");
+        }
+
         Player player = match.getPlayerFromId(playerId);
         checkCost(player);
 
