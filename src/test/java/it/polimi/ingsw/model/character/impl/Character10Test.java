@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Character10Test extends TestCase {
     @Test
-    public void useTest() throws IllegalMoveException {
+    public void invalidParametersTest() throws IllegalMoveException {
         Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
         Player player2 = new Player(1, "test2", TowerColor.BLACK, Wizard.GREEN);
         Team team1 = new Team(0, List.of(player1), TowerColor.WHITE);
@@ -27,8 +27,18 @@ public class Character10Test extends TestCase {
             character.use(match, player1.getId(), Map.of(PawnColor.RED, 1), Map.of(PawnColor.RED, 1, PawnColor.GREEN, 2));
         });
         assertEquals(e.getMessage(), "Different map sizes");
+    }
 
-        player1.getSchool().addStudentsToTable(List.of(new Student(PawnColor.RED)));
+    @Test
+    public void useTest() throws IllegalMoveException {
+        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player(1, "test2", TowerColor.BLACK, Wizard.GREEN);
+        Team team1 = new Team(0, List.of(player1), TowerColor.WHITE);
+        Team team2 = new Team(1, List.of(player2), TowerColor.BLACK);
+        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2), true);
+        Character10 character = new Character10();
+
+        //Get the color of a student that we can extract from the entrance
         PawnColor entranceColor = null;
         for (PawnColor c : PawnColor.values()) {
             if (player1.getSchool().getEntranceCount(c) > 0) {
@@ -36,21 +46,48 @@ public class Character10Test extends TestCase {
                 break;
             }
         }
-        Map<PawnColor, Integer> entranceMap = Map.of(entranceColor, 1);
-        Map<PawnColor, Integer> entranceCount = new HashMap<>();
+        //Put it in the entranceToCard map
+        Map<PawnColor, Integer> entranceToDiningRoom = new HashMap<>();
+        entranceToDiningRoom.put(entranceColor, 1);
+
+        //Get the color of a student that we can extract from the dining room
+        player1.getSchool().addStudentsToTable(match.extractStudent(1));
+        PawnColor diningRoomColor = null;
         for (PawnColor c : PawnColor.values()) {
-            entranceCount.put(c, player1.getSchool().getEntranceCount(c));
-        }
-        character.use(match, player1.getId(), entranceMap, Map.of(PawnColor.RED, 1));
-        for (PawnColor c : PawnColor.values()) {
-            if (c == entranceColor) {
-                assertEquals((int) entranceCount.get(c), player1.getSchool().getEntranceCount(entranceColor) + 1 - (c == PawnColor.RED ? 1 : 0));
-            } else if (c == PawnColor.RED) {
-                assertEquals(1, player1.getSchool().getTableCount(c) + 1 - entranceMap.getOrDefault(c, 0));
-            } else {
-                assertEquals((int) entranceCount.get(c), player1.getSchool().getEntranceCount(c));
-                assertEquals(0, player1.getSchool().getTableCount(c));
+            if (player1.getSchool().getTableCount(c) > 0) {
+                diningRoomColor = c;
             }
         }
+        //Put it in the cardToEntrance map
+        Map<PawnColor, Integer> diningRoomToEntrance = new HashMap<>();
+        diningRoomToEntrance.put(diningRoomColor, 1);
+
+        //Save current number of all students on the dining room
+        Map<PawnColor, Integer> oldDiningRoomState = new HashMap<>();
+        for (PawnColor c : PawnColor.values()) {
+            oldDiningRoomState.put(c, player1.getSchool().getTableCount(c));
+        }
+
+        //Save current number of all students on the entrance
+        Map<PawnColor, Integer> oldEntranceState = new HashMap<>();
+        for (PawnColor c : PawnColor.values()) {
+            oldEntranceState.put(c, player1.getSchool().getEntranceCount(c));
+        }
+
+        character.use(match, player1.getId(), entranceToDiningRoom, diningRoomToEntrance);
+
+        //Save new number of all students on the dining room
+        Map<PawnColor, Integer> newDiningRoomState = new HashMap<>();
+        for (PawnColor c : PawnColor.values()) {
+            newDiningRoomState.put(c, player1.getSchool().getTableCount(c));
+        }
+
+        //Save new number of all students in the entrance
+        Map<PawnColor, Integer> newEntranceState = new HashMap<>();
+        for (PawnColor c : PawnColor.values()) {
+            newEntranceState.put(c, player1.getSchool().getEntranceCount(c));
+        }
+
+        Character7Test.checkTransaction(entranceToDiningRoom, diningRoomToEntrance, oldEntranceState, newEntranceState, oldDiningRoomState, newDiningRoomState);
     }
 }

@@ -41,7 +41,7 @@ public class Character10 extends Character {
         }
 
         player.getSchool().addStudentsToEntrance(diningRoomStudents);
-        player.getSchool().addStudents(entranceStudents);
+        player.getSchool().addStudentsToTable(entranceStudents);
         player.removeCoins(cost);
         incrementCost();
     }
