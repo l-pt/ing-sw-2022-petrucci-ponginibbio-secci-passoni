@@ -31,6 +31,7 @@ public class Match {
         this.id = id;
         this.expert = expert;
         this.teams = teams;
+        setupTowers();
         this.playerOrder = playerOrder;
 
         //allocate memory for islands, studentBag, clouds, professors
@@ -66,6 +67,8 @@ public class Match {
         //add a cloud for each player
         for (int i = 0; i < playerOrder.size(); ++i)
             clouds.add(new Cloud());
+
+        populateClouds();
 
         //create a professor for each color
         for (PawnColor color : PawnColor.values())
@@ -107,15 +110,15 @@ public class Match {
                     e.printStackTrace();
                 }
             }
+            //Setup characters
+            for (Character character : characters) {
+                if (character instanceof StudentCharacter) {
+                    ((StudentCharacter) character).setup(this);
+                }
+            }
         }else coinsReserve = 0;
         drawAllowed = false;
         influencePolicy = new InfluenceCalculationPolicy();
-
-        for (Character character : characters) {
-            if (character instanceof StudentCharacter) {
-                ((StudentCharacter) character).setup(this);
-            }
-        }
     }
 
     public void setupTowers(){
@@ -124,33 +127,33 @@ public class Match {
                 team.addTower(new Tower(team.getTowerColor()));
     }
 
-    public Team getTeamFromColor(TowerColor color){
+    public Team getTeamFromColor(TowerColor color) throws IllegalMoveException {
         for(Team team : teams)
             if(team.getTowers().get(0).getColor().equals(color))
                 return team;
-        return null;
+        throw new IllegalMoveException("A team with tower color " + color.name() + " does not exist");
     }
 
-    public Team getTeamFromPlayer(Player player){
+    public Team getTeamFromPlayer(Player player) throws IllegalMoveException {
         for (Team team : teams)
             for(Player p : team.getPlayers())
                 if(p.equals(player))
                     return team;
-                return null;
+                throw new IllegalMoveException("Player is not in a team");
     }
 
-    public Player getPlayerFromId(int id){
+    public Player getPlayerFromId(int id) throws IllegalMoveException {
         for(Player player : playerOrder)
             if (player.getId() == id)
                 return player;
-            return null;
+            throw new IllegalMoveException("Invalid Id");
     }
 
-    public int getPosFromId(int id){
+    public int getPosFromId(int id) throws IllegalMoveException {
         for (int i = 0; i < playerOrder.size(); ++i)
             if (playerOrder.get(i).getId() == id)
                 return i;
-            return -1;
+            throw new IllegalMoveException("Invalid Id");
     }
 
     public List<Player> getPlayersOrder() {
@@ -171,7 +174,15 @@ public class Match {
         return islands;
     }
 
+    public List<Cloud> getClouds() {
+        return clouds;
+    }
+
     public List<Student> getStudentBag(){return studentBag;}
+
+    public List<Professor> getProfessors() {
+        return professors;
+    }
 
     public void addStudents(List<Student> students){
         studentBag.addAll(students);
@@ -190,14 +201,11 @@ public class Match {
         return result;
     }
 
-    public Professor removeProfessor(PawnColor color) {
-        Professor professor = null;
+    public Professor removeProfessor(PawnColor color) throws IllegalMoveException {
         for(int i = 0; i < professors.size(); ++i)
-            if(professors.get(i).getColor().equals(color)) {
-                professor = professors.get(i);
-                professors.remove(professors.get(i));
-            }
-        return professor;
+            if(professors.get(i).getColor().equals(color))
+                return professors.remove(i);
+        throw new IllegalMoveException("No professor of color " + color.name() + " on the table");
     }
 
     public Player whoHaveProfessor(PawnColor color){
@@ -207,7 +215,7 @@ public class Match {
         return null;
     }
 
-    public void addStudent(PawnColor color, int id){
+    public void addStudent(PawnColor color, int id) throws IllegalMoveException {
         Player player = getPlayerFromId(id);
         player.getSchool().addStudentToTable(color);
         if(expert)
@@ -222,7 +230,7 @@ public class Match {
         }
     }
 
-    public void checkProfessors(PawnColor color, int id){
+    public void checkProfessors(PawnColor color, int id) throws IllegalMoveException {
         Player player = getPlayerFromId(id);
         if(!player.getSchool().isColoredProfessor(color)){
             if(whoHaveProfessor(color) == null)
@@ -234,7 +242,7 @@ public class Match {
         }
     }
 
-    public void islandInfluence(int index, boolean noMotherNatureMoves){
+    public void islandInfluence(int index, boolean noMotherNatureMoves) throws IllegalMoveException {
         boolean draw = false;
         int max = -1, pos = 0;
         if(islands.get(index).getNoEntry() == 0) {
@@ -246,11 +254,15 @@ public class Match {
                 } else if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) == max)
                     draw = true;
             }
-            if (!draw && max > 0 && !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor())) {
+            if (!draw && max > 0 && (islands.get(index).getTowers().size() == 0 || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
                 if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
                     List<Tower> t = islands.get(index).removeAllTowers();
-                    getTeamFromColor(t.get(0).getColor()).addTowers(t);
-                    islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+                    if (t.size() > 0) {
+                        getTeamFromColor(t.get(0).getColor()).addTowers(t);
+                        islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+                    } else {
+                        islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(1));
+                    }
                     checkIslands(index, noMotherNatureMoves);
                 }
                 else endGame(getTeamFromPlayer(playerOrder.get(pos)));
@@ -263,10 +275,18 @@ public class Match {
         }
     }
     public void checkIslands(int index, boolean noMotherNatureMoves) {
-        if (!islands.get((index + 1) % islands.size()).getTowers().isEmpty() && islands.get((index + 1) % islands.size()).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
-            uniteIslands(Math.min(index, (index + 1) % islands.size()), Math.max(index, (index + 1) % islands.size()), noMotherNatureMoves);
-        if (!islands.get((index - 1) % islands.size()).getTowers().isEmpty() && islands.get((index - 1) % islands.size()).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
-            uniteIslands(Math.min(index, (index - 1) % islands.size()), Math.max(index, (index - 1) % islands.size()), noMotherNatureMoves);
+        if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() && islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
+            uniteIslands(Math.min(index, islandIndex(index + 1)), Math.max(index, islandIndex(index + 1)), noMotherNatureMoves);
+        if (!islands.get(islandIndex(index - 1)).getTowers().isEmpty() && islands.get(islandIndex(index - 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
+            uniteIslands(Math.min(index, islandIndex(index - 1)), Math.max(index, islandIndex(index - 1)), noMotherNatureMoves);
+    }
+
+    public int islandIndex(int idx) {
+        int mod = idx % islands.size();
+        if (mod < 0) {
+            mod += islands.size();
+        }
+        return mod;
     }
 
     public void uniteIslands(int min, int max, boolean noMotherNatureMoves) {
@@ -286,10 +306,10 @@ public class Match {
                 c.addStudents(extractStudent(3));
     }
 
-    public void moveStudentsFromCloud(int index, int id) throws Exception {
+    public void moveStudentsFromCloud(int index, int id) throws IllegalMoveException {
         if (index >= 0 && index < clouds.size())
             getPlayerFromId(id).getSchool().addStudentsToEntrance(clouds.get(index).removeStudents());
-        else throw new Exception();
+        else throw new IllegalMoveException("Invalid cloud index");
     }
 
     public void moveMotherNature(int moves, int id) throws IllegalMoveException {
@@ -339,9 +359,9 @@ public class Match {
         return teams.stream().min((t1, t2) -> {
             int towers1 = getTowersByColor(t1.getTowerColor());
             int towers2 = getTowersByColor(t2.getTowerColor());
-            if (towers1 == towers2)
-                return t2.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum() - t2.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum();
-            else
+            if (towers1 == towers2) {
+                return t2.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum() - t1.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum();
+            } else
                 return towers2 - towers1;
         }).get();
     }
@@ -364,15 +384,15 @@ public class Match {
         for(int i = 0; i < getPosFromId(playerId); ++i)
             if (playerOrder.get(i).getCurrentAssistant().getValue() == value)
                 var = true;
-        if(var)
+        if(var) {
+            List<Assistant> assistants = new ArrayList<>();
             for (int i = 0; i < getPosFromId(playerId); ++i) {
-                var = false;
-                for (int j = 0; j < getPlayerFromId(playerId).getAssistants().size(); ++i)
-                    if (getPlayerFromId(playerId).getAssistants().get(j).getValue() == playerOrder.get(i).getCurrentAssistant().getValue())
-                        var = true;
-                if (!var)
-                    throw new IllegalMoveException("Cannot play this assistant");
+                assistants.add(playerOrder.get(i).getCurrentAssistant());
             }
+            if (!assistants.containsAll(player.getAssistants())) {
+                throw new IllegalMoveException("Cannot play this assistant");
+            }
+        }
         getPlayerFromId(playerId).setCurrentAssistant(getPlayerFromId(playerId).getAssistantFromValue(value));
         if(getPlayerFromId(playerId).getAssistants().isEmpty())
             lastTurn = true;

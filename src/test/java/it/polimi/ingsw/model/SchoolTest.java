@@ -35,7 +35,7 @@ public class SchoolTest extends TestCase {
     }
 
     @Test
-    public void addStudentToTableTest() {
+    public void addStudentToTableTest() throws IllegalMoveException {
         School school = new School();
         List<Student> students = new ArrayList<>();
         students.add(new Student(PawnColor.PINK));
@@ -61,7 +61,7 @@ public class SchoolTest extends TestCase {
     }
 
     @Test
-    public void addStudentsTest() {
+    public void addStudentsTest() throws IllegalMoveException {
         School school = new School();
         List<Student> students = new ArrayList<>();
         students.add(new Student(PawnColor.PINK));

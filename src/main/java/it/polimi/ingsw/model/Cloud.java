@@ -10,6 +10,10 @@ public class Cloud {
         students = new ArrayList<>();
     }
 
+    public List<Student> getStudents() {
+        return students;
+    }
+
     public void addStudents(List<Student> students) {
         this.students.addAll(students);
     }
