@@ -15,10 +15,12 @@ public class Connection implements Runnable{
     private Server server;
     private String name;
     private boolean isActive = true;
+    private boolean isFirst;
 
-    public Connection(Socket socket, Server server){
+    public Connection(Socket socket, Server server, boolean isFirst){
         this.socket = socket;
         this.server = server;
+        this.isFirst = isFirst;
     }
 
     private synchronized boolean isActive(){
@@ -31,12 +33,7 @@ public class Connection implements Runnable{
     }
 
     public void asyncSend(final String message){
-        new Thread(new Runnable(){
-            @Override
-            public void run(){
-                send(message);
-            }
-        }).start();
+        server.getExecutor().submit(() -> send(message));
     }
 
     public synchronized void closeConnection(){
@@ -74,6 +71,12 @@ public class Connection implements Runnable{
             //get name of connected user
             send("What is your name? ");
             name = in.nextLine();
+
+            if (isFirst) {
+                send("Choose game size: ");
+                int gameSize = in.nextInt();
+                server.setWaitingConnectionMax(gameSize);
+            }
 
             //add user to lobby
             server.lobby(this, name);
