@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 
 public class Server {
     //vars
-    private static final int PORT = 61863;
     private ServerSocket serverSocket;
     private List<Connection> connections = new ArrayList<>();
     private int waitingConnectionMax;
@@ -18,7 +17,7 @@ public class Server {
 
     //constr
     public Server() throws IOException{
-        this.serverSocket = new ServerSocket(PORT);
+        this.serverSocket = new ServerSocket(61863);
         waitingConnectionMax = -1;
     }
 
@@ -28,7 +27,7 @@ public class Server {
 
     //methods
     //Register Connection
-    private synchronized void registerConnection(Connection c){
+    public synchronized void registerConnection(Connection c){
         this.connections.add(c);
     }
 
@@ -69,7 +68,8 @@ public class Server {
 
     public void run(){
         int connectionCount = 0; //at the beginning there are no connections
-        System.out.println("Server is listening on PORT " + PORT);
+        System.out.println("Server is listening on PORT " + 61863);
+        System.out.println("Number of Connections: " + connectionCount);
 
         while(true){
             try{
@@ -79,8 +79,8 @@ public class Server {
                     connection = new Connection(socket, this, waitingConnection.size() == 0);
                 }
 
-                System.out.println("Number of Connections: " + connectionCount);
                 connectionCount++;
+                System.out.println("Number of Connections: " + connectionCount);
 
                 registerConnection(connection);
                 executor.submit(connection);

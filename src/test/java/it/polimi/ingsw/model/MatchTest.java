@@ -1,7 +1,8 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.character.Character;
-import it.polimi.ingsw.model.character.StudentCharacter;
+import it.polimi.ingsw.*;
+import it.polimi.ingsw.character.Character;
+import it.polimi.ingsw.character.StudentCharacter;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 
