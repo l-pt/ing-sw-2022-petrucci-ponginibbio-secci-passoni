@@ -21,7 +21,7 @@ public class School {
 
     public void addStudentToTable(PawnColor color) throws IllegalMoveException {
         if (getEntranceCount(color) == 0) {
-            throw new IllegalMoveException("There are no students with color " + color.name() + " in the etrance");
+            throw new IllegalMoveException("There are no students with color " + color.name() + " in the entrance");
         }
         for (Student student : entrance)
             if(student.getColor().equals(color)){
