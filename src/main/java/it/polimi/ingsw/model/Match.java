@@ -107,7 +107,7 @@ public class Match {
                 try {
                     characters.add(allCharacters.remove(randomIndex).getDeclaredConstructor().newInstance());
                 } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("Error instantiating character classes");
                 }
             }
             //Setup characters
@@ -139,21 +139,21 @@ public class Match {
             for(Player p : team.getPlayers())
                 if(p.equals(player))
                     return team;
-                throw new IllegalMoveException("Player is not in a team");
+        throw new IllegalMoveException("Player is not in a team");
     }
 
     public Player getPlayerFromId(int id) throws IllegalMoveException {
         for(Player player : playerOrder)
             if (player.getId() == id)
                 return player;
-            throw new IllegalMoveException("Invalid Id");
+        throw new IllegalMoveException("Invalid Id");
     }
 
     public int getPosFromId(int id) throws IllegalMoveException {
         for (int i = 0; i < playerOrder.size(); ++i)
             if (playerOrder.get(i).getId() == id)
                 return i;
-            throw new IllegalMoveException("Invalid Id");
+        throw new IllegalMoveException("Invalid Id");
     }
 
     public List<Player> getPlayersOrder() {
@@ -306,14 +306,14 @@ public class Match {
                 c.addStudents(extractStudent(3));
     }
 
-    public void moveStudentsFromCloud(int index, int id) throws IllegalMoveException {
-        if (index >= 0 && index < clouds.size())
-            getPlayerFromId(id).getSchool().addStudentsToEntrance(clouds.get(index).removeStudents());
+    public void moveStudentsFromCloud(int cloudIndex, int playerId) throws IllegalMoveException {
+        if (cloudIndex >= 0 && cloudIndex < clouds.size())
+            getPlayerFromId(playerId).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
         else throw new IllegalMoveException("Invalid cloud index");
     }
 
-    public void moveMotherNature(int moves, int id) throws IllegalMoveException {
-        Player player = getPlayerFromId(id);
+    public void moveMotherNature(int moves, int playerId) throws IllegalMoveException {
+        Player player = getPlayerFromId(playerId);
         if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1)
             posMotherNature = (posMotherNature + moves) % islands.size();
         else throw new IllegalMoveException("Too many moves");
