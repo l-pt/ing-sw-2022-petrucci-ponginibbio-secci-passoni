@@ -8,8 +8,8 @@ import java.util.List;
 public class Controller {
     private Match match;
 
-    public Controller(Match match) {
-        this.match = match;
+    public Controller(int matchId, List<Team> teams, List<Player> players, boolean expert) {
+        this.match = new Match(matchId, teams, players, expert);
     }
 
     /**

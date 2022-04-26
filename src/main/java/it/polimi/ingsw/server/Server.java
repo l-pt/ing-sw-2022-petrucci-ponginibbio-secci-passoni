@@ -1,5 +1,8 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.model.*;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,13 +16,22 @@ public class Server {
     private ServerSocket serverSocket;
     private List<Connection> connections = new ArrayList<>();
     private int waitingConnectionMax;
+    private boolean expert;
     private Map<String, Connection> waitingConnection = new HashMap<>();
     private ExecutorService executor = Executors.newFixedThreadPool(64);
+    private List<Controller> controllers = new ArrayList<>();
+    private int nextMatchId;
+    private int nextPlayerId;
+    private int nextTeamId;
 
     //constr
     public Server() throws IOException{
         this.serverSocket = new ServerSocket(PORT);
         waitingConnectionMax = -1;
+        expert = false;
+        nextMatchId = 0;
+        nextPlayerId = 0;
+        nextTeamId = 0;
     }
 
     public ExecutorService getExecutor() {
@@ -44,6 +56,19 @@ public class Server {
         this.waitingConnectionMax = waitingConnectionMax;
     }
 
+    public synchronized void setExpert(boolean expert) {
+        this.expert = expert;
+    }
+
+    public synchronized boolean nameUsed(String name) {
+        for (Connection connection : connections) {
+            if (name.equals(connection.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public synchronized void lobby(Connection c, String name){
         this.waitingConnection.put(name, c);
 
@@ -61,6 +86,42 @@ public class Server {
             }
 
             //TODO create match and controller objects here, once view is done
+            System.out.println("Starting match now...");
+            //TODO select expert
+
+            List<Player> players = new ArrayList<>(waitingConnectionMax);
+            for (Connection connection : waitingConnection.values()) {
+                //TODO fix tower colors
+                players.add(new Player(nextPlayerId, connection.getName(), TowerColor.values()[nextPlayerId], Wizard.values()[nextPlayerId]));
+                ++nextPlayerId;
+            }
+            List<Team> teams = new ArrayList<>(players.size() == 4 ? 2 : players.size());
+            if (players.size() == 4) {
+                Random randomGenerator = new Random();
+                List<Player> playersRandom = new ArrayList<>(players);
+                teams.add(new Team(nextTeamId,
+                        List.of(playersRandom.remove(randomGenerator.nextInt(playersRandom.size())),
+                                playersRandom.remove(randomGenerator.nextInt(playersRandom.size()))
+                        ),
+                        TowerColor.WHITE
+                ));
+                ++nextTeamId;
+                teams.add(new Team(nextTeamId,
+                        List.of(playersRandom.remove(randomGenerator.nextInt(playersRandom.size())),
+                                playersRandom.remove(randomGenerator.nextInt(playersRandom.size()))
+                        ),
+                        TowerColor.BLACK
+                ));
+                ++nextTeamId;
+            } else {
+                for (Player player : players) {
+                    teams.add(new Team(nextTeamId, List.of(player), player.getTowerColor()));
+                    ++nextTeamId;
+                }
+            }
+
+            controllers.add(new Controller(nextMatchId, teams, players, expert));
+            ++nextMatchId;
 
             waitingConnectionMax = -1;
             waitingConnection.clear();
