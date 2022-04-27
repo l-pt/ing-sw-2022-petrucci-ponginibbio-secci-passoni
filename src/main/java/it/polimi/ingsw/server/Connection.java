@@ -1,19 +1,17 @@
 package it.polimi.ingsw.server;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.google.gson.*;
+import it.polimi.ingsw.protocol.*;
+import it.polimi.ingsw.protocol.message.*;
+
+import java.io.*;
 import java.net.Socket;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 //implement Observable extension !!! later (TO DO)
 public class Connection implements Runnable{
-
     private Socket socket;
-    private Scanner in;
-    private PrintWriter out;
-
+    private InputStreamReader in;
+    private OutputStreamWriter out;
     private Server server;
     private String name;
     private boolean isActive = true;
@@ -33,18 +31,39 @@ public class Connection implements Runnable{
         return this.isActive;
     }
 
-    public void send(String message){
-        out.println(message);
+    /**
+     * Send a message to the client
+     */
+    public void sendMessage(Message msg) throws IOException {
+        String json = GsonSingleton.get().toJson(msg);
+        out.write(json.length());
+        out.write(json, 0, json.length());
         out.flush();
     }
 
-    public void asyncSend(final String message){
-        server.getExecutor().submit(() -> send(message));
+    /**
+     * Receive a message from the client
+     */
+    public Message readMessage() throws JsonSyntaxException, IOException {
+        int jsonLen = in.read();
+        if (jsonLen == -1) {
+            throw new IOException("Connection closed by the client");
+        }
+        StringBuilder jsonBuilder = new StringBuilder();
+        for (int i = 0; i < jsonLen; ++i) {
+            jsonBuilder.appendCodePoint(in.read());
+        }
+        return GsonSingleton.get().fromJson(jsonBuilder.toString(), Message.class);
+    }
+
+    /**
+     * Receive a message from the client
+     */
+    public <T extends Message> T readMessage(Class<T> messageClass) throws JsonSyntaxException, IOException {
+        return messageClass.cast(readMessage());
     }
 
     public synchronized void closeConnection(){
-        send("Connection closed by the server.");
-
         //attempt to close connection via socket object method
         try{
             this.socket.close();
@@ -71,56 +90,61 @@ public class Connection implements Runnable{
     public void run(){
         try{
             //link socket input/output streams to local variables
-            in = new Scanner(socket.getInputStream()).useDelimiter("\n");
-            out = new PrintWriter(socket.getOutputStream());
+            in = new InputStreamReader(socket.getInputStream());
+            out = new OutputStreamWriter(socket.getOutputStream());
 
             //get name of connected user
-            String n;
-            send("What is your name? ");
-            n = in.nextLine();
-            while (server.nameUsed(n)) {
-                send("Name already used. What is your name? ");
-                n = in.nextLine();
+            SetUsernameMessage usernameMessage = null;
+            while(usernameMessage == null) {
+                sendMessage(new AskUsernameMessage());
+                try {
+                    usernameMessage = readMessage(SetUsernameMessage.class);
+                    if (server.nameUsed(usernameMessage.getUsername())) {
+                        sendMessage(new ErrorMessage("Username already taken"));
+                        usernameMessage = null;
+                    }
+                } catch (JsonSyntaxException e) {
+                    sendMessage(new ErrorMessage("Error reading username"));
+                }
             }
-            name = n;
+            name = usernameMessage.getUsername();
 
             if (isFirst) {
-                send("Choose game size: ");
-                Integer gameSize = null;
-                do {
+                //Ask number of players in the match
+                SetPlayerNumberMessage playerNumberMessage = null;
+                while (playerNumberMessage == null) {
+                    sendMessage(new AskPlayerNumberMessage());
                     try {
-                        gameSize = in.nextInt();
-                    } catch (NoSuchElementException e) {
-                        //TODO
-                        in.skip("");
-                        send("Invalid number. Choose game size: ");
+                        playerNumberMessage = readMessage(SetPlayerNumberMessage.class);
+                        if (playerNumberMessage.getPlayersNumber() < 2 || playerNumberMessage.getPlayersNumber() > 4) {
+                            sendMessage(new ErrorMessage("Game size must be between 2 and 4. Choose game size: "));
+                            playerNumberMessage = null;
+                        }
+                    } catch (JsonSyntaxException e) {
+                        sendMessage(new ErrorMessage("Error reading player number"));
                     }
-                    if (gameSize != null && (gameSize < 2 || gameSize > 4)) {
-                        send("Game size must be between 2 and 4. Choose game size: ");
-                    }
-                } while (gameSize == null || gameSize < 2 || gameSize > 4);
-                server.setWaitingConnectionMax(gameSize);
+                }
+                server.setWaitingConnectionMax(playerNumberMessage.getPlayersNumber());
 
-                send("Activate expert mode? yes/no");
-                String expert = null;
-                do {
+                //Ask whether to activate expert mode
+                SetExpertMessage expertMessage = null;
+                while (expertMessage == null) {
+                    sendMessage(new AskExpertMessage());
                     try {
-                        expert = in.nextLine();
-                    } catch (NoSuchElementException e) {
-                        send("Answer yes/no. Activate expert mode? ");
+                        expertMessage = readMessage(SetExpertMessage.class);
+                    } catch (JsonSyntaxException e) {
+                        sendMessage(new ErrorMessage("Error reading expert message"));
                     }
-                    if (expert != null && !expert.equals("yes") && !expert.equals("no")) {
-                        send("Answer yes/no. Activate expert mode? ");
-                    }
-                } while (expert == null || (!expert.equals("yes") && !expert.equals("no")));
-                server.setExpert(expert.equals("yes"));
+                }
+                server.setExpert(expertMessage.getExpert());
             }
 
             //add user to lobby
             server.lobby(this, name);
 
             while(this.isActive()){
-                String read = in.nextLine();
+                Message read = readMessage();
+                //TODO implement notify
                 //notify(read); //WHY DOESNT THIS WORK?? TO DO
             }
         }

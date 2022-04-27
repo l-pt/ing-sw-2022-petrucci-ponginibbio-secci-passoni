@@ -85,9 +85,7 @@ public class Server {
                 curr = iterator.next();
             }
 
-            //TODO create match and controller objects here, once view is done
             System.out.println("Starting match now...");
-            //TODO select expert
 
             List<Player> players = new ArrayList<>(waitingConnectionMax);
             for (Connection connection : waitingConnection.values()) {
@@ -140,8 +138,8 @@ public class Server {
                     connection = new Connection(socket, this, waitingConnection.size() == 0);
                 }
 
-                System.out.println("Number of Connections: " + connectionCount);
                 connectionCount++;
+                System.out.println("Number of Connections: " + connectionCount);
 
                 registerConnection(connection);
                 executor.submit(connection);
