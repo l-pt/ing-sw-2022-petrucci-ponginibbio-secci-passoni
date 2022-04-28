@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +20,7 @@ public class Server {
     /** Connections that are not part of any match */
     private List<Connection> waitingConnections = new ArrayList<>();
 
-    private final ConcurrentLinkedQueue<MessageQueueEntry> messageQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>();
 
     private MatchParameters matchParameters;
 
@@ -73,14 +72,14 @@ public class Server {
         waitingConnections.add(c);
     }
 
-    public synchronized void deregisterConnection(Connection c){
-        c.close();
-        connections.remove(c);
-        waitingConnections.remove(c);
+    public synchronized void deregisterConnection(Connection connection){
+        connection.close();
+        connections.remove(connection);
+        waitingConnections.remove(connection);
         //Find the controller of the player's match
-        Controller controller = connectionControllerMap.get(c);
+        Controller controller = connectionControllerMap.get(connection);
         if (controller != null) {
-            connectionControllerMap.remove(c);
+            connectionControllerMap.remove(connection);
             //Player is in a match, disconnect all players in the same match
             Iterator<Map.Entry<Connection, Controller>> it = connectionControllerMap.entrySet().iterator();
             while (it.hasNext()) {
@@ -114,47 +113,44 @@ public class Server {
      */
     public synchronized void checkWaitingConnections(){
         if (matchParameters != null) {
-            List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getWaitingConnectionMax()).toList();
-            if(readyConnections.size() >= matchParameters.getWaitingConnectionMax()){
+            List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
+            if(readyConnections.size() >= matchParameters.getPlayerNumber()){
                 System.out.println("Starting match now...");
 
-                List<Player> players = new ArrayList<>(matchParameters.getWaitingConnectionMax());
-                for (Connection connection : readyConnections) {
-                    //TODO fix tower colors
-                    players.add(new Player(nextPlayerId, connection.getName(), TowerColor.values()[nextPlayerId], Wizard.values()[nextPlayerId]));
-                    ++nextPlayerId;
-                }
-                List<Team> teams = new ArrayList<>(players.size() == 4 ? 2 : players.size());
-                if (players.size() == 4) {
-                    Random randomGenerator = new Random();
-                    List<Player> playersRandom = new ArrayList<>(players);
-                    teams.add(new Team(nextTeamId,
-                            List.of(playersRandom.remove(randomGenerator.nextInt(playersRandom.size())),
-                                    playersRandom.remove(randomGenerator.nextInt(playersRandom.size()))
-                            ),
-                            TowerColor.WHITE
-                    ));
-                    ++nextTeamId;
-                    teams.add(new Team(nextTeamId,
-                            List.of(playersRandom.remove(randomGenerator.nextInt(playersRandom.size())),
-                                    playersRandom.remove(randomGenerator.nextInt(playersRandom.size()))
-                            ),
-                            TowerColor.BLACK
-                    ));
-                    ++nextTeamId;
-                } else {
-                    for (Player player : players) {
-                        teams.add(new Team(nextTeamId, List.of(player), player.getTowerColor()));
-                        ++nextTeamId;
+                List<Player> players = new ArrayList<>(matchParameters.getPlayerNumber());
+                List<Team> teams = new ArrayList<>(matchParameters.getPlayerNumber() == 4 ? 2 : matchParameters.getPlayerNumber());
+                switch (matchParameters.getPlayerNumber()) {
+                    case 4 -> {
+                        List<Player> white = List.of(
+                                new Player(nextPlayerId++, readyConnections.get(0).getName(), TowerColor.WHITE, Wizard.values()[0]),
+                                new Player(nextPlayerId++, readyConnections.get(1).getName(), TowerColor.WHITE, Wizard.values()[1])
+                        );
+                        List<Player> black = List.of(
+                                new Player(nextPlayerId++, readyConnections.get(2).getName(), TowerColor.BLACK, Wizard.values()[2]),
+                                new Player(nextPlayerId++, readyConnections.get(3).getName(), TowerColor.BLACK, Wizard.values()[3])
+                        );
+                        players.addAll(white);
+                        players.addAll(black);
+                        teams.add(new Team(nextTeamId++, white, TowerColor.WHITE));
+                        teams.add(new Team(nextTeamId++, black, TowerColor.BLACK));
                     }
+                    case 3, 2 -> {
+                        for (int i = 0; i < matchParameters.getPlayerNumber(); ++i) {
+                            players.add(new Player(nextPlayerId++, readyConnections.get(i).getName(), TowerColor.values()[i], Wizard.values()[i]));
+                        }
+                        //2/3 player matches have teams made of just one player
+                        for (Player player : players) {
+                            teams.add(new Team(nextTeamId++, List.of(player), player.getTowerColor()));
+                        }
+                    }
+                    default -> throw new AssertionError();
                 }
 
-                Controller controller = new Controller(nextMatchId, teams, players, matchParameters.isExpert());
+                Controller controller = new Controller(nextMatchId++, teams, players, matchParameters.isExpert());
                 controllers.add(controller);
                 for (Connection c : readyConnections) {
                     connectionControllerMap.put(c, controller);
                 }
-                ++nextMatchId;
 
                 matchParameters = null;
                 waitingConnections.removeAll(readyConnections);
@@ -173,20 +169,19 @@ public class Server {
         while (true) {
             MessageQueueEntry entry;
             synchronized (messageQueue) {
-                while (messageQueue.size() == 0) {
+                while (messageQueue.isEmpty()) {
                     messageQueue.wait();
                 }
-                entry = messageQueue.poll();
+                entry = messageQueue.remove();
             }
             Connection connection = entry.getConnection();
             Message message = entry.getMessage();
 
             if (message == null) {
                 deregisterConnection(connection);
-                return;
+            } else {
+                //TODO handle game messages
             }
-
-            //TODO handle game messages
         }
 
         //TODO call this when the match finishes
@@ -265,16 +260,16 @@ public class Server {
      * They are requested to the first player that connects to the lobby
      */
     private static class MatchParameters {
-        private int waitingConnectionMax;
+        private int playerNumber;
         private boolean expert;
 
-        public MatchParameters(int waitingConnectionMax, boolean expert) {
-            this.waitingConnectionMax = waitingConnectionMax;
+        public MatchParameters(int playerNumber, boolean expert) {
+            this.playerNumber = playerNumber;
             this.expert = expert;
         }
 
-        public int getWaitingConnectionMax() {
-            return waitingConnectionMax;
+        public int getPlayerNumber() {
+            return playerNumber;
         }
 
         public boolean isExpert() {
