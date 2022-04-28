@@ -1,8 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Cloud;
-import it.polimi.ingsw.PawnColor;
-import it.polimi.ingsw.Student;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 

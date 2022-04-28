@@ -1,9 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Assistant;
-import it.polimi.ingsw.Player;
-import it.polimi.ingsw.TowerColor;
-import it.polimi.ingsw.Wizard;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 

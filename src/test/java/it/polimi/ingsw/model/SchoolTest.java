@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.*;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 

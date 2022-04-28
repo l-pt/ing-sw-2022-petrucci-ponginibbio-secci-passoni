@@ -16,7 +16,7 @@ public class Server {
     private List<Connection> connections = new ArrayList<>();
     private int waitingConnectionMax;
     private boolean expert;
-    private Map<String, Connection> waitingConnection = new HashMap<>();
+    private List<Connection> waitingConnections = new ArrayList<>();
     private ExecutorService executor = Executors.newFixedThreadPool(64);
     private List<Controller> controllers = new ArrayList<>();
     private int nextMatchId;
@@ -31,6 +31,14 @@ public class Server {
         nextMatchId = 0;
         nextPlayerId = 0;
         nextTeamId = 0;
+    }
+
+    public List<Connection> getConnections(){
+        return connections;
+    }
+
+    public synchronized List<Connection> getWaitingConnections(){
+        return waitingConnections;
     }
 
     public ExecutorService getExecutor() {
@@ -68,26 +76,26 @@ public class Server {
         return false;
     }
 
-    public synchronized void lobby(Connection c, String name){
-        this.waitingConnection.put(name, c);
+    public synchronized void addToLobby(Connection c) {
+        this.waitingConnections.add(c);
+    }
 
-        if(waitingConnectionMax != -1 && waitingConnection.size() >= waitingConnectionMax){
+    public synchronized void checkWatingConnections(){
+        if(waitingConnectionMax != -1 && waitingConnections.size() >= waitingConnectionMax){
             //Disconnect players in excess
-            int toRemove = waitingConnection.size() - waitingConnectionMax;
-            Iterator<Connection> iterator = waitingConnection.values().iterator();
-            Connection curr = iterator.next();
+            int toRemove = waitingConnections.size() - waitingConnectionMax;
+            Connection curr;
             while (toRemove > 0) {
+                curr = waitingConnections.remove(waitingConnections.size()-1);
                 curr.closeConnection();
                 deregisterConnection(curr);
-                iterator.remove();
                 --toRemove;
-                curr = iterator.next();
             }
 
             System.out.println("Starting match now...");
 
             List<Player> players = new ArrayList<>(waitingConnectionMax);
-            for (Connection connection : waitingConnection.values()) {
+            for (Connection connection : waitingConnections) {
                 //TODO fix tower colors
                 players.add(new Player(nextPlayerId, connection.getName(), TowerColor.values()[nextPlayerId], Wizard.values()[nextPlayerId]));
                 ++nextPlayerId;
@@ -121,28 +129,25 @@ public class Server {
             ++nextMatchId;
 
             waitingConnectionMax = -1;
-            waitingConnection.clear();
+            waitingConnections.clear();
         }
     }
 
     public void run(){
-        int connectionCount = 0; //at the beginning there are no connections
         System.out.println("Server is listening on PORT " + 61863);
-        System.out.println("Number of Connections: " + connectionCount);
+        System.out.println("Number of Connections: " + connections.size());
 
         while(true){
             try{
                 Socket socket = serverSocket.accept();
                 Connection connection;
                 synchronized (this) {
-                    connection = new Connection(socket, this, waitingConnection.size() == 0);
+                    connection = new Connection(socket, this, waitingConnections.size() == 0);
                 }
-
-                connectionCount++;
-                System.out.println("Number of Connections: " + connectionCount);
 
                 registerConnection(connection);
                 executor.submit(connection);
+                System.out.println("Number of Connections: " + connections.size());
             }
             catch(IOException e){
                 System.err.println("Connection Error.");

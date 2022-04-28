@@ -3,6 +3,7 @@ package it.polimi.ingsw.server;
 import com.google.gson.*;
 import it.polimi.ingsw.protocol.*;
 import it.polimi.ingsw.protocol.message.*;
+import org.junit.jupiter.api.parallel.Resources;
 
 import java.io.*;
 import java.net.Socket;
@@ -66,6 +67,8 @@ public class Connection implements Runnable{
     public synchronized void closeConnection(){
         //attempt to close connection via socket object method
         try{
+            if(this.isFirst)
+                server.setWaitingConnectionMax(-1);
             this.socket.close();
         }
         catch(IOException e){
@@ -84,6 +87,28 @@ public class Connection implements Runnable{
         System.out.println("Deregistering client...");
         server.deregisterConnection(this);
         System.out.println("Client deregistered.");
+        System.out.println("Number of Connections: " + server.getConnections().size());
+    }
+
+    public void askName() throws IOException{
+        //get name of connected user
+        SetUsernameMessage usernameMessage = null;
+        while (usernameMessage == null) {
+            sendMessage(new AskUsernameMessage());
+            try {
+                usernameMessage = readMessage(SetUsernameMessage.class);
+                if (server.nameUsed(usernameMessage.getUsername())) {
+                    sendMessage(new ErrorMessage("Username already taken"));
+                    usernameMessage = null;
+                }
+            } catch (JsonSyntaxException e) {
+                sendMessage(new ErrorMessage("Error reading username"));
+            }
+        }
+        name = usernameMessage.getUsername();
+
+        //add user to lobby
+        server.addToLobby(this);
     }
 
     @Override
@@ -93,23 +118,13 @@ public class Connection implements Runnable{
             in = new InputStreamReader(socket.getInputStream());
             out = new OutputStreamWriter(socket.getOutputStream());
 
-            //get name of connected user
-            SetUsernameMessage usernameMessage = null;
-            while(usernameMessage == null) {
-                sendMessage(new AskUsernameMessage());
-                try {
-                    usernameMessage = readMessage(SetUsernameMessage.class);
-                    if (server.nameUsed(usernameMessage.getUsername())) {
-                        sendMessage(new ErrorMessage("Username already taken"));
-                        usernameMessage = null;
-                    }
-                } catch (JsonSyntaxException e) {
-                    sendMessage(new ErrorMessage("Error reading username"));
+            if(server.getWaitingConnections().size() == 0) {
+                synchronized (server) {
+                    askName();
                 }
-            }
-            name = usernameMessage.getUsername();
+            }else askName();
 
-            if (isFirst) {
+            if (server.getWaitingConnections().size() == 1) {
                 //Ask number of players in the match
                 SetPlayerNumberMessage playerNumberMessage = null;
                 while (playerNumberMessage == null) {
@@ -137,10 +152,8 @@ public class Connection implements Runnable{
                     }
                 }
                 server.setExpert(expertMessage.getExpert());
+                server.checkWatingConnections();
             }
-
-            //add user to lobby
-            server.lobby(this, name);
 
             while(this.isActive()){
                 Message read = readMessage();
