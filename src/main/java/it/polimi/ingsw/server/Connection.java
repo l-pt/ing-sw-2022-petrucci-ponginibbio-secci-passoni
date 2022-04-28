@@ -3,6 +3,8 @@ package it.polimi.ingsw.server;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 //implement Observable extension !!! later (TO DO)
@@ -21,6 +23,10 @@ public class Connection implements Runnable{
         this.socket = socket;
         this.server = server;
         this.isFirst = isFirst;
+    }
+
+    public String getName() {
+        return name;
     }
 
     private synchronized boolean isActive(){
@@ -65,17 +71,49 @@ public class Connection implements Runnable{
     public void run(){
         try{
             //link socket input/output streams to local variables
-            in = new Scanner(socket.getInputStream());
+            in = new Scanner(socket.getInputStream()).useDelimiter("\n");
             out = new PrintWriter(socket.getOutputStream());
 
             //get name of connected user
+            String n;
             send("What is your name? ");
-            name = in.nextLine();
+            n = in.nextLine();
+            while (server.nameUsed(n)) {
+                send("Name already used. What is your name? ");
+                n = in.nextLine();
+            }
+            name = n;
 
             if (isFirst) {
                 send("Choose game size: ");
-                int gameSize = in.nextInt();
+                Integer gameSize = null;
+                do {
+                    try {
+                        gameSize = in.nextInt();
+                    } catch (NoSuchElementException e) {
+                        //TODO
+                        in.skip("");
+                        send("Invalid number. Choose game size: ");
+                    }
+                    if (gameSize != null && (gameSize < 2 || gameSize > 4)) {
+                        send("Game size must be between 2 and 4. Choose game size: ");
+                    }
+                } while (gameSize == null || gameSize < 2 || gameSize > 4);
                 server.setWaitingConnectionMax(gameSize);
+
+                send("Activate expert mode? yes/no");
+                String expert = null;
+                do {
+                    try {
+                        expert = in.nextLine();
+                    } catch (NoSuchElementException e) {
+                        send("Answer yes/no. Activate expert mode? ");
+                    }
+                    if (expert != null && !expert.equals("yes") && !expert.equals("no")) {
+                        send("Answer yes/no. Activate expert mode? ");
+                    }
+                } while (expert == null || (!expert.equals("yes") && !expert.equals("no")));
+                server.setExpert(expert.equals("yes"));
             }
 
             //add user to lobby
