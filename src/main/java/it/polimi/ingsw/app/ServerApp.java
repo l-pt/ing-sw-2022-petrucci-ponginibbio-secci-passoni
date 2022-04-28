@@ -13,6 +13,8 @@ public class ServerApp
             server.run();
         } catch(IOException e){
             System.err.println("Impossible to start the server!\n" + e.getMessage());
+        } catch (InterruptedException e) {
+            System.err.println("Concurrency system error");
         }
 
     }
