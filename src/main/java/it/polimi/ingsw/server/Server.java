@@ -84,9 +84,7 @@ public class Server {
                 curr = iterator.next();
             }
 
-            //TODO create match and controller objects here, once view is done
             System.out.println("Starting match now...");
-            //TODO select expert
 
             List<Player> players = new ArrayList<>(waitingConnectionMax);
             for (Connection connection : waitingConnection.values()) {
