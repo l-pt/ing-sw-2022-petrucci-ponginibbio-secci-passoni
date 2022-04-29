@@ -45,6 +45,8 @@ public class Server {
     }
 
     //methods
+    public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
+
     public synchronized MatchParameters getMatchParameters() {
         return matchParameters;
     }

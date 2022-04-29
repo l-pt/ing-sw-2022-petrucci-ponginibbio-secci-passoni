@@ -91,24 +91,30 @@ public class Connection implements Runnable{
         closeConnection();
     }
 
+    public void askName() throws IOException{
+        //get name of connected user
+        SetUsernameMessage usernameMessage = null;
+        while (usernameMessage == null) {
+            sendMessage(new AskUsernameMessage());
+            try {
+                usernameMessage = readMessage(SetUsernameMessage.class);
+                if (server.nameUsed(usernameMessage.getUsername())) {
+                    sendMessage(new ErrorMessage("Username already taken"));
+                    usernameMessage = null;
+                }
+            } catch (JsonSyntaxException e) {
+                sendMessage(new ErrorMessage("Error reading username"));
+            }
+        }
+        name = usernameMessage.getUsername();
+    }
+
     @Override
     public void run(){
         try{
-            //get name of connected user
-            SetUsernameMessage usernameMessage = null;
-            while (usernameMessage == null) {
-                sendMessage(new AskUsernameMessage());
-                try {
-                    usernameMessage = readMessage(SetUsernameMessage.class);
-                    if (server.nameUsed(usernameMessage.getUsername())) {
-                        sendMessage(new ErrorMessage("Username already taken"));
-                        usernameMessage = null;
-                    }
-                } catch (JsonSyntaxException e) {
-                    sendMessage(new ErrorMessage("Error reading username"));
-                }
-            }
-            name = usernameMessage.getUsername();
+            if (server.getWaitingConnections().size() != 0)
+                synchronized (server){askName();}
+            else askName();
 
             synchronized (server) {
                 if (server.getFirstConnection() == this) {
@@ -119,7 +125,7 @@ public class Connection implements Runnable{
                         try {
                             playerNumberMessage = readMessage(SetPlayerNumberMessage.class);
                             if (playerNumberMessage.getPlayersNumber() < 2 || playerNumberMessage.getPlayersNumber() > 4) {
-                            sendMessage(new ErrorMessage("Game size must be between 2 and 4. Choose game size: "));
+                                sendMessage(new ErrorMessage("Game size must be between 2 and 4. Choose game size: "));
                                 playerNumberMessage = null;
                             }
                         } catch (JsonSyntaxException e) {
