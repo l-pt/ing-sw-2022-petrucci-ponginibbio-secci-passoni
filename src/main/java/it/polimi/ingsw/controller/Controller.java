@@ -12,6 +12,10 @@ public class Controller {
         this.match = new Match(matchId, teams, players, expert);
     }
 
+    public Match getMatch() {
+        return match;
+    }
+
     /**
      * Move a student from entrance to table
      */

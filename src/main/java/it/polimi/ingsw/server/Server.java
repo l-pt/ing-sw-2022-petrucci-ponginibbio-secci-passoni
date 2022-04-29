@@ -3,6 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.protocol.Message;
+import it.polimi.ingsw.protocol.message.InitialAssistantMessage;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -125,7 +126,7 @@ public class Server {
      * It is called from Connection.run (another thread) when a client has provided all
      * the required information (name, (max players, expert mode))
      */
-    public synchronized void checkWaitingConnections(){
+    public synchronized void checkWaitingConnections() throws IOException {
         if (matchParameters != null) {
             List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
             if(readyConnections.size() >= matchParameters.getPlayerNumber()){
@@ -165,6 +166,9 @@ public class Server {
                 for (Connection c : readyConnections) {
                     connectionControllerMap.put(c, controller);
                 }
+                for (int i = 0; i < readyConnections.size(); ++i){
+                    readyConnections.get(i).sendMessage(new InitialAssistantMessage(controller.getMatch().getPlayersOrder().get(i).getAssistants()));
+                }
 
                 matchParameters = null;
                 firstConnection = null;
@@ -196,6 +200,7 @@ public class Server {
                 deregisterConnection(connection);
             } else {
                 //TODO handle game messages
+
             }
         }
 
