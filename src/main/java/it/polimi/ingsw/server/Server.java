@@ -19,6 +19,7 @@ public class Server {
     private List<Connection> connections = new ArrayList<>();
     /** Connections that are not part of any match */
     private List<Connection> waitingConnections = new ArrayList<>();
+    private Connection firstConnection;
 
     private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>();
 
@@ -36,6 +37,7 @@ public class Server {
     public Server() throws IOException{
         serverSocketThread = new ServerSocketThread();
         executor.submit(serverSocketThread);
+        firstConnection = null;
         matchParameters = null;
         nextMatchId = 0;
         nextPlayerId = 0;
@@ -45,6 +47,10 @@ public class Server {
     //methods
     public synchronized MatchParameters getMatchParameters() {
         return matchParameters;
+    }
+
+    public Connection getFirstConnection() {
+        return firstConnection;
     }
 
     public synchronized void setMatchParameters(int waitingConnectionMax, boolean expert) {
@@ -70,12 +76,18 @@ public class Server {
     public synchronized void registerConnection(Connection c){
         connections.add(c);
         waitingConnections.add(c);
+        if (firstConnection == null) {
+            firstConnection = c;
+        }
     }
 
     public synchronized void deregisterConnection(Connection connection){
         connection.close();
         connections.remove(connection);
         waitingConnections.remove(connection);
+        if (firstConnection == connection) {
+            firstConnection = null;
+        }
         //Find the controller of the player's match
         Controller controller = connectionControllerMap.get(connection);
         if (controller != null) {
@@ -153,6 +165,7 @@ public class Server {
                 }
 
                 matchParameters = null;
+                firstConnection = null;
                 waitingConnections.removeAll(readyConnections);
                 for (Connection c : waitingConnections) {
                     c.close();

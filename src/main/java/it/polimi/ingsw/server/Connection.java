@@ -111,7 +111,7 @@ public class Connection implements Runnable{
             name = usernameMessage.getUsername();
 
             synchronized (server) {
-                if (server.getMatchParameters() == null) {
+                if (server.getFirstConnection() == this) {
                     //Ask number of players in the match
                     SetPlayerNumberMessage playerNumberMessage = null;
                     while (playerNumberMessage == null) {
