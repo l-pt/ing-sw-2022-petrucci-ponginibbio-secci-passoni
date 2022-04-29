@@ -91,30 +91,24 @@ public class Connection implements Runnable{
         closeConnection();
     }
 
-    public void askName() throws IOException{
-        //get name of connected user
-        SetUsernameMessage usernameMessage = null;
-        while (usernameMessage == null) {
-            sendMessage(new AskUsernameMessage());
-            try {
-                usernameMessage = readMessage(SetUsernameMessage.class);
-                if (server.nameUsed(usernameMessage.getUsername())) {
-                    sendMessage(new ErrorMessage("Username already taken"));
-                    usernameMessage = null;
-                }
-            } catch (JsonSyntaxException e) {
-                sendMessage(new ErrorMessage("Error reading username"));
-            }
-        }
-        name = usernameMessage.getUsername();
-    }
-
     @Override
     public void run(){
         try{
-            if (server.getWaitingConnections().size() != 0)
-                synchronized (server){askName();}
-            else askName();
+            //get name of connected user
+            SetUsernameMessage usernameMessage = null;
+            while (usernameMessage == null) {
+                sendMessage(new AskUsernameMessage());
+                try {
+                    usernameMessage = readMessage(SetUsernameMessage.class);
+                    if (server.nameUsed(usernameMessage.getUsername())) {
+                        sendMessage(new ErrorMessage("Username already taken"));
+                        usernameMessage = null;
+                    }
+                } catch (JsonSyntaxException e) {
+                    sendMessage(new ErrorMessage("Error reading username"));
+                }
+            }
+            name = usernameMessage.getUsername();
 
             synchronized (server) {
                 if (server.getFirstConnection() == this) {
