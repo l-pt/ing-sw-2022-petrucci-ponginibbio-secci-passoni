@@ -13,8 +13,8 @@ public class Character12 extends Character {
                 "has fewer than 3 students of that type, return as many students as they have.");
     }
 
-    public void use(Match match, int playerId, PawnColor color) throws IllegalMoveException {
-        Player player = match.getPlayerFromId(playerId);
+    public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         for (Player p : match.getPlayersOrder())
             match.addStudents(p.getSchool().removeStudentsByColor(color, Math.min(3, p.getSchool().getTableCount(color))));

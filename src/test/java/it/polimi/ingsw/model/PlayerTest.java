@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PlayerTest extends TestCase {
     @Test
     public void assistantFromValueTest() {
-        Player player = new Player(0, "test", TowerColor.BLACK, Wizard.BLUE);
+        Player player = new Player("test", TowerColor.BLACK, Wizard.BLUE);
         assertNull(player.getAssistantFromValue(11));
 
         Assistant assistant = player.getAssistantFromValue(1);
@@ -18,7 +18,7 @@ public class PlayerTest extends TestCase {
 
     @Test
     public void currentAssistantTest() {
-        Player player = new Player(0, "test", TowerColor.BLACK, Wizard.BLUE);
+        Player player = new Player("test", TowerColor.BLACK, Wizard.BLUE);
 
         Assistant assistant = player.getAssistantFromValue(1);
         player.setCurrentAssistant(assistant);
@@ -32,7 +32,7 @@ public class PlayerTest extends TestCase {
 
     @Test
     public void coinsTest() {
-        Player player = new Player(0, "test", TowerColor.BLACK, Wizard.BLUE);
+        Player player = new Player("test", TowerColor.BLACK, Wizard.BLUE);
 
         assertEquals(player.getCoins(), 0);
 

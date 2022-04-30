@@ -137,31 +137,31 @@ public class Server {
                 switch (matchParameters.getPlayerNumber()) {
                     case 4 -> {
                         List<Player> white = List.of(
-                                new Player(nextPlayerId++, readyConnections.get(0).getName(), TowerColor.WHITE, Wizard.values()[0]),
-                                new Player(nextPlayerId++, readyConnections.get(1).getName(), TowerColor.WHITE, Wizard.values()[1])
+                                new Player(readyConnections.get(0).getName(), TowerColor.WHITE, Wizard.values()[0]),
+                                new Player(readyConnections.get(1).getName(), TowerColor.WHITE, Wizard.values()[1])
                         );
                         List<Player> black = List.of(
-                                new Player(nextPlayerId++, readyConnections.get(2).getName(), TowerColor.BLACK, Wizard.values()[2]),
-                                new Player(nextPlayerId++, readyConnections.get(3).getName(), TowerColor.BLACK, Wizard.values()[3])
+                                new Player(readyConnections.get(2).getName(), TowerColor.BLACK, Wizard.values()[2]),
+                                new Player(readyConnections.get(3).getName(), TowerColor.BLACK, Wizard.values()[3])
                         );
                         players.addAll(white);
                         players.addAll(black);
-                        teams.add(new Team(nextTeamId++, white, TowerColor.WHITE));
-                        teams.add(new Team(nextTeamId++, black, TowerColor.BLACK));
+                        teams.add(new Team(white, TowerColor.WHITE));
+                        teams.add(new Team(black, TowerColor.BLACK));
                     }
                     case 3, 2 -> {
                         for (int i = 0; i < matchParameters.getPlayerNumber(); ++i) {
-                            players.add(new Player(nextPlayerId++, readyConnections.get(i).getName(), TowerColor.values()[i], Wizard.values()[i]));
+                            players.add(new Player(readyConnections.get(i).getName(), TowerColor.values()[i], Wizard.values()[i]));
                         }
                         //2/3 player matches have teams made of just one player
                         for (Player player : players) {
-                            teams.add(new Team(nextTeamId++, List.of(player), player.getTowerColor()));
+                            teams.add(new Team(List.of(player), player.getTowerColor()));
                         }
                     }
                     default -> throw new AssertionError();
                 }
 
-                Controller controller = new Controller(this, nextMatchId++, teams, players, matchParameters.isExpert());
+                Controller controller = new Controller(this, teams, players, matchParameters.isExpert());
                 controllers.add(controller);
                 for (Connection c : readyConnections) {
                     connectionControllerMap.put(c, controller);

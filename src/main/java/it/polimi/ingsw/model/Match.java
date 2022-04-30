@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Match {
-    private int id;
     protected List<Team> teams;
     private List<Player> playerOrder;
     private int posMotherNature;
@@ -25,10 +24,9 @@ public class Match {
     private boolean drawAllowed;
     private InfluenceCalculationPolicy influencePolicy;
 
-    public Match(int id, List<Team> teams, List<Player> playerOrder, boolean expert) {
+    public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
 
         //set match id, match difficulty, teams and player order
-        this.id = id;
         this.expert = expert;
         this.teams = teams;
         setupTowers();
@@ -142,18 +140,18 @@ public class Match {
         throw new IllegalMoveException("Player is not in a team");
     }
 
-    public Player getPlayerFromId(int id) throws IllegalMoveException {
+    public Player getPlayerFromName(String name) throws IllegalMoveException {
         for(Player player : playerOrder)
-            if (player.getId() == id)
+            if (player.getName().equals(name))
                 return player;
-        throw new IllegalMoveException("Invalid Id");
+        throw new IllegalMoveException("Invalid Name");
     }
 
-    public int getPosFromId(int id) throws IllegalMoveException {
+    public int getPosFromName(String name) throws IllegalMoveException {
         for (int i = 0; i < playerOrder.size(); ++i)
-            if (playerOrder.get(i).getId() == id)
+            if (playerOrder.get(i).getName().equals(name))
                 return i;
-        throw new IllegalMoveException("Invalid Id");
+        throw new IllegalMoveException("Invalid Name");
     }
 
     public List<Player> getPlayersOrder() {
@@ -215,12 +213,12 @@ public class Match {
         return null;
     }
 
-    public void addStudent(PawnColor color, int id) throws IllegalMoveException {
-        Player player = getPlayerFromId(id);
+    public void addStudent(PawnColor color, String playerName) throws IllegalMoveException {
+        Player player = getPlayerFromName(playerName);
         player.getSchool().addStudentToTable(color);
         if(expert)
             checkNumberStudents(color, player);
-        checkProfessors(color, id);
+        checkProfessors(color, playerName);
     }
 
     public void checkNumberStudents(PawnColor color, Player player){
@@ -230,8 +228,8 @@ public class Match {
         }
     }
 
-    public void checkProfessors(PawnColor color, int id) throws IllegalMoveException {
-        Player player = getPlayerFromId(id);
+    public void checkProfessors(PawnColor color, String playerName) throws IllegalMoveException {
+        Player player = getPlayerFromName(playerName);
         if(!player.getSchool().isColoredProfessor(color)){
             if(whoHaveProfessor(color) == null)
                 player.getSchool().addProfessor(removeProfessor(color));
@@ -306,14 +304,14 @@ public class Match {
                 c.addStudents(extractStudent(3));
     }
 
-    public void moveStudentsFromCloud(int cloudIndex, int playerId) throws IllegalMoveException {
+    public void moveStudentsFromCloud(int cloudIndex, String playerName) throws IllegalMoveException {
         if (cloudIndex >= 0 && cloudIndex < clouds.size())
-            getPlayerFromId(playerId).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
+            getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
         else throw new IllegalMoveException("Invalid cloud index");
     }
 
-    public void moveMotherNature(int moves, int playerId) throws IllegalMoveException {
-        Player player = getPlayerFromId(playerId);
+    public void moveMotherNature(int moves, String playerName) throws IllegalMoveException {
+        Player player = getPlayerFromName(playerName);
         if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1)
             posMotherNature = (posMotherNature + moves) % islands.size();
         else throw new IllegalMoveException("Too many moves");
@@ -375,28 +373,29 @@ public class Match {
             endGame(getWinningTeam());
     }
 
-    public void useAssistant(int playerId, int value) throws IllegalMoveException {
-        Player player = getPlayerFromId(playerId);
+    public void useAssistant(String playerName, int value) throws IllegalMoveException {
+        Player player = getPlayerFromName(playerName);
+        int playerPos = getPosFromName(playerName);
         if (player.getAssistantFromValue(value) == null) {
             throw new IllegalMoveException("Player " + player.getName() + " does not have an assistant with value " + value);
         }
         boolean var = false;
-        for(int i = 0; i < getPosFromId(playerId); ++i)
+        for(int i = 0; i < playerPos; ++i)
             if (playerOrder.get(i).getCurrentAssistant().getValue() == value)
                 var = true;
         if(var) {
             List<Assistant> assistants = new ArrayList<>();
-            for (int i = 0; i < getPosFromId(playerId); ++i) {
+            for (int i = 0; i < playerPos; ++i) {
                 assistants.add(playerOrder.get(i).getCurrentAssistant());
             }
             if (!assistants.containsAll(player.getAssistants())) {
                 throw new IllegalMoveException("Cannot play this assistant");
             }
         }
-        getPlayerFromId(playerId).setCurrentAssistant(getPlayerFromId(playerId).getAssistantFromValue(value));
-        if(getPlayerFromId(playerId).getAssistants().isEmpty())
+        getPlayerFromName(playerName).setCurrentAssistant(getPlayerFromName(playerName).getAssistantFromValue(value));
+        if(getPlayerFromName(playerName).getAssistants().isEmpty())
             lastTurn = true;
-        if(getPosFromId(playerId) == playerOrder.size()-1)
+        if(getPosFromName(playerName) == playerOrder.size()-1)
             orderPlayers();
     }
 }

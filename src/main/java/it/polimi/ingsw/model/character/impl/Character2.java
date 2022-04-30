@@ -11,8 +11,8 @@ public class Character2 extends Character {
                 "even if you have the same number of students as the player who currently controls them.");
     }
 
-    public void use(Match match, int playerId) throws IllegalMoveException {
-        Player player = match.getPlayerFromId(playerId);
+    public void use(Match match, String playerName) throws IllegalMoveException {
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         match.setDrawAllowed(true);
         player.removeCoins(cost);

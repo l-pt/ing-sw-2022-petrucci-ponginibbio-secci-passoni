@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private int id;
     private String name;
     private School school;
     private TowerColor towerColor;
@@ -15,8 +14,7 @@ public class Player {
     private int additionalInfluence;
     private int additionalMoves;
 
-    public Player(int id, String name, TowerColor towerColor, Wizard wizard) {
-        this.id = id;
+    public Player(String name, TowerColor towerColor, Wizard wizard) {
         this.name = name;
         this.school = new School();
         this.towerColor = towerColor;
@@ -36,10 +34,6 @@ public class Player {
         this.coins = 0;
         this.additionalInfluence = 0;
         this.additionalMoves = 0;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -70,7 +64,7 @@ public class Player {
         for (Assistant assistant : assistants)
             if (assistant.getValue() == value)
                 return assistant;
-            return null;
+        return null;
     }
 
     public void setCurrentAssistant(Assistant assistant) {

@@ -10,8 +10,8 @@ public class Character6 extends Character {
         super(5, 3, "When resolving a conquering on an island, towers do not count towards influence.");
     }
 
-    public void use(Match match, int playerId) throws IllegalMoveException {
-        Player player = match.getPlayerFromId(playerId);
+    public void use(Match match, String playerName) throws IllegalMoveException {
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         match.getInfluencePolicy().setCountTowers(false);
         player.removeCoins(cost);

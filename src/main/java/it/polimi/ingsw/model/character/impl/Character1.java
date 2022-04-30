@@ -11,11 +11,11 @@ public class Character1 extends StudentCharacter {
                 "Then, draw a new student from the bag and place it on this card.");
     }
 
-    public void use(Match match, int playerId, PawnColor color, int island) throws IllegalMoveException {
+    public void use(Match match, String playerName, PawnColor color, int island) throws IllegalMoveException {
         if (island < 0 || island >= match.getIslands().size()) {
             throw new IllegalMoveException("Island must be between 0 and " + (match.getIslands().size() - 1));
         }
-        Player player = match.getPlayerFromId(playerId);
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         if (getStudentsColorCount(color) == 0) {
             throw new IllegalMoveException("There are no students with color " + color.name() + " on this character");

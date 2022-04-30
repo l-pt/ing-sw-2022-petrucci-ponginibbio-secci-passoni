@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ThreePlayersMatch extends Match {
 
-    public ThreePlayersMatch(int id, List<Team> teams, List<Player> playerOrder, boolean expert){
-        super(id, teams, playerOrder, expert);
+    public ThreePlayersMatch(List<Team> teams, List<Player> playerOrder, boolean expert){
+        super(teams, playerOrder, expert);
 
         for (Player player : playerOrder)
             player.getSchool().addStudentsToEntrance(extractStudent(2));

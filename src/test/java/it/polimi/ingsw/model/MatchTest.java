@@ -15,11 +15,11 @@ import java.util.Map;
 public class MatchTest extends TestCase {
     @Test
     public void setupTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.BLACK, Wizard.GREEN);
-        Team team1 = new Team(0, List.of(player1), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player2), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.BLACK, Wizard.GREEN);
+        Team team1 = new Team(List.of(player1), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player2), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2), true);
 
         assertEquals(8, team1.getTowers().size());
         assertEquals(8, team2.getTowers().size());
@@ -66,13 +66,13 @@ public class MatchTest extends TestCase {
     }
     @Test
     public void matchTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         assertEquals(team1, match.getTeamFromColor(TowerColor.WHITE));
         assertEquals(team2, match.getTeamFromColor(TowerColor.BLACK));
@@ -82,32 +82,32 @@ public class MatchTest extends TestCase {
         assertEquals(team2, match.getTeamFromPlayer(player3));
         assertEquals(team2, match.getTeamFromPlayer(player4));
 
-        assertEquals(player1, match.getPlayerFromId(0));
-        assertEquals(player2, match.getPlayerFromId(1));
-        assertEquals(player3, match.getPlayerFromId(2));
-        assertEquals(player4, match.getPlayerFromId(3));
+        assertEquals(player1, match.getPlayerFromName("test1"));
+        assertEquals(player2, match.getPlayerFromName("test2"));
+        assertEquals(player3, match.getPlayerFromName("test3"));
+        assertEquals(player4, match.getPlayerFromName("test4"));
 
-        assertEquals(0, match.getPosFromId(0));
-        assertEquals(1, match.getPosFromId(1));
-        assertEquals(2, match.getPosFromId(2));
-        assertEquals(3, match.getPosFromId(3));
+        assertEquals(0, match.getPosFromName("test1"));
+        assertEquals(1, match.getPosFromName("test2"));
+        assertEquals(2, match.getPosFromName("test3"));
+        assertEquals(3, match.getPosFromName("test4"));
     }
 
     @Test
     public void orderTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
         List<Player> playerOrder = new ArrayList<>(List.of(player1, player2, player3, player4));
-        Match match = new Match(0, List.of(team1, team2), playerOrder, true);
+        Match match = new Match(List.of(team1, team2), playerOrder, true);
 
-        match.useAssistant(player1.getId(), 4);
-        match.useAssistant(player2.getId(), 3);
-        match.useAssistant(player3.getId(), 1);
-        match.useAssistant(player4.getId(), 2);
+        match.useAssistant(player1.getName(), 4);
+        match.useAssistant(player2.getName(), 3);
+        match.useAssistant(player3.getName(), 1);
+        match.useAssistant(player4.getName(), 2);
 
         assertEquals(player3, match.getPlayersOrder().get(0));
         assertEquals(player4, match.getPlayersOrder().get(1));
@@ -117,14 +117,14 @@ public class MatchTest extends TestCase {
 
     @Test
     public void extractStudentTest() {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
         List<Player> playerOrder = new ArrayList<>(List.of(player1, player2, player3, player4));
-        Match match = new Match(0, List.of(team1, team2), playerOrder, true);
+        Match match = new Match(List.of(team1, team2), playerOrder, true);
 
         Map<PawnColor, Integer> oldBagState = new HashMap<>();
         for (Student student : match.getStudentBag()) {
@@ -153,14 +153,14 @@ public class MatchTest extends TestCase {
 
     @Test
     public void professorTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
         List<Player> playerOrder = new ArrayList<>(List.of(player1, player2, player3, player4));
-        Match match = new Match(0, List.of(team1, team2), playerOrder, true);
+        Match match = new Match(List.of(team1, team2), playerOrder, true);
 
         Professor professor = match.removeProfessor(PawnColor.RED);
         assertEquals(PawnColor.RED, professor.getColor());
@@ -176,13 +176,13 @@ public class MatchTest extends TestCase {
 
     @Test
     public void addStudentTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         PawnColor color = null;
         int oldEntranceCount = -1;
@@ -193,7 +193,7 @@ public class MatchTest extends TestCase {
             }
         }
 
-        match.addStudent(color, player1.getId());
+        match.addStudent(color, player1.getName());
 
         assertEquals(1, player1.getSchool().getTableCount(color));
         assertEquals(oldEntranceCount - 1, player1.getSchool().getEntranceCount(color));
@@ -207,13 +207,13 @@ public class MatchTest extends TestCase {
 
     @Test
     public void islandInfluenceTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         int islandIndex = -1;
         Island island = null;
@@ -233,13 +233,13 @@ public class MatchTest extends TestCase {
 
     @Test
     public void islandUnionTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         int islandIndex = -1;
         Island island = null;
@@ -273,13 +273,13 @@ public class MatchTest extends TestCase {
     }
     @Test
     public void cloudTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         Map<PawnColor, Integer> oldEntranceState = new HashMap<>();
         for (PawnColor c : PawnColor.values()) {
@@ -289,7 +289,7 @@ public class MatchTest extends TestCase {
         for (Student s : match.getClouds().get(0).getStudents()) {
             cloudMap.put(s.getColor(), cloudMap.getOrDefault(s.getColor(), 0) + 1);
         }
-        match.moveStudentsFromCloud(0, player1.getId());
+        match.moveStudentsFromCloud(0, player1.getName());
         for (PawnColor c : PawnColor.values()) {
             assertEquals(oldEntranceState.get(c) + cloudMap.getOrDefault(c, 0), player1.getSchool().getEntranceCount(c));
         }
@@ -298,29 +298,29 @@ public class MatchTest extends TestCase {
 
     @Test
     public void moveMotherNatureTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
-        match.useAssistant(player1.getId(), 10);
+        match.useAssistant(player1.getName(), 10);
         int motherNaturePos = match.getPosMotherNature();
-        match.moveMotherNature(5, player1.getId());
+        match.moveMotherNature(5, player1.getName());
         assertEquals(match.islandIndex(motherNaturePos + 5), match.getPosMotherNature());
     }
 
     @Test
     public void towersColorTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         player1.getSchool().addProfessor(new Professor(PawnColor.RED));
         match.getIslands().get(0).addStudents(List.of(new Student(PawnColor.RED)));
@@ -336,13 +336,13 @@ public class MatchTest extends TestCase {
 
     @Test
     public void winningTeamTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         player1.getSchool().addProfessor(new Professor(PawnColor.RED));
         match.getIslands().get(0).addStudents(List.of(new Student(PawnColor.RED), new Student(PawnColor.RED)));
@@ -367,18 +367,18 @@ public class MatchTest extends TestCase {
 
     @Test
     public void useAssistantTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
-        Player player3 = new Player(2, "test3", TowerColor.BLACK, Wizard.PINK);
-        Player player4 = new Player(3, "test4", TowerColor.BLACK, Wizard.PURPLE);
-        Team team1 = new Team(0, List.of(player1, player2), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player3, player4), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2, player3, player4), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.BLACK, Wizard.PINK);
+        Player player4 = new Player("test4", TowerColor.BLACK, Wizard.PURPLE);
+        Team team1 = new Team(List.of(player1, player2), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player3, player4), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
-        match.useAssistant(player1.getId(), 1);
+        match.useAssistant(player1.getName(), 1);
         assertEquals(1, player1.getCurrentAssistant().getValue());
 
-        Exception e = assertThrows(IllegalMoveException.class, () -> match.useAssistant(player2.getId(), 1));
+        Exception e = assertThrows(IllegalMoveException.class, () -> match.useAssistant(player2.getName(), 1));
         assertEquals("Cannot play this assistant", e.getMessage());
     }
 }

@@ -11,8 +11,8 @@ public class Character4 extends Character {
                 "than is indicated by the assistant card you have played.");
     }
 
-    public void use(Match match, int playerId) throws IllegalMoveException {
-        Player player = match.getPlayerFromId(playerId);
+    public void use(Match match, String playerName) throws IllegalMoveException {
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         player.setAdditionalMoves(2);
         player.removeCoins(cost);

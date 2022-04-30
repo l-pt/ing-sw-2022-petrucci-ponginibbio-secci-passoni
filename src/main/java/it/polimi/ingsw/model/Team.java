@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
-    private int id;
     private List<Player> players;
     private List<Tower> towers;
     private TowerColor towerColor;
 
-    public Team(int id, List<Player> players, TowerColor towerColor) {
-        this.id = id;
+    public Team(List<Player> players, TowerColor towerColor) {
         this.players = players;
         towers = new ArrayList<>();
         this.towerColor = towerColor;
@@ -32,7 +30,7 @@ public class Team {
 
     public List<Tower> removeTowers(int size) throws IllegalArgumentException {
         if (size > towers.size()) {
-            throw new IllegalArgumentException("Team " + id + " does not have enough towers");
+            throw new IllegalArgumentException("Team does not have enough towers");
         }
         List<Tower> towers = new ArrayList<>(size);
         for (int i=0; i<size; ++i)

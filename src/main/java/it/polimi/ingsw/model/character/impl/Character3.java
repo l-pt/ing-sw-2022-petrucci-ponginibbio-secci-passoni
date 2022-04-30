@@ -12,11 +12,11 @@ public class Character3 extends Character {
                 "ends her movement will also be resolved.");
     }
 
-    public void use(Match match, int playerId, int island) throws IllegalMoveException {
+    public void use(Match match, String playerName, int island) throws IllegalMoveException {
         if (island < 0 || island >= match.getIslands().size()) {
             throw new IllegalMoveException("Island must be between 0 and " + (match.getIslands().size() - 1));
         }
-        Player player = match.getPlayerFromId(playerId);
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         match.islandInfluence(island, true);
         player.removeCoins(cost);

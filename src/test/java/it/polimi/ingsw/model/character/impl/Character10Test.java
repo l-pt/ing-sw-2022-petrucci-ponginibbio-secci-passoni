@@ -13,29 +13,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class Character10Test extends TestCase {
     @Test
     public void invalidParametersTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.BLACK, Wizard.GREEN);
-        Team team1 = new Team(0, List.of(player1), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player2), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.BLACK, Wizard.GREEN);
+        Team team1 = new Team(List.of(player1), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player2), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2), true);
         Character10 character = new Character10();
 
-        Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getId(), new HashMap<>(), new HashMap<>()));
+        Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), new HashMap<>(), new HashMap<>()));
         assertEquals(e.getMessage(), "Invalid student number");
 
         e = assertThrows(IllegalMoveException.class, () -> {
-            character.use(match, player1.getId(), Map.of(PawnColor.RED, 1), Map.of(PawnColor.RED, 1, PawnColor.GREEN, 2));
+            character.use(match, player1.getName(), Map.of(PawnColor.RED, 1), Map.of(PawnColor.RED, 1, PawnColor.GREEN, 2));
         });
         assertEquals(e.getMessage(), "Different map sizes");
     }
 
     @Test
     public void useTest() throws IllegalMoveException {
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.BLACK, Wizard.GREEN);
-        Team team1 = new Team(0, List.of(player1), TowerColor.WHITE);
-        Team team2 = new Team(1, List.of(player2), TowerColor.BLACK);
-        Match match = new Match(0, List.of(team1, team2), List.of(player1, player2), true);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.BLACK, Wizard.GREEN);
+        Team team1 = new Team(List.of(player1), TowerColor.WHITE);
+        Team team2 = new Team(List.of(player2), TowerColor.BLACK);
+        Match match = new Match(List.of(team1, team2), List.of(player1, player2), true);
         Character10 character = new Character10();
 
         //Get the color of a student that we can extract from the entrance
@@ -74,7 +74,7 @@ public class Character10Test extends TestCase {
             oldEntranceState.put(c, player1.getSchool().getEntranceCount(c));
         }
 
-        character.use(match, player1.getId(), entranceToDiningRoom, diningRoomToEntrance);
+        character.use(match, player1.getName(), entranceToDiningRoom, diningRoomToEntrance);
 
         //Save new number of all students on the dining room
         Map<PawnColor, Integer> newDiningRoomState = new HashMap<>();

@@ -10,8 +10,8 @@ public class Character8 extends Character {
         super(7, 2, "During the influence calculation this turn, you count as having 2 more influence.");
     }
 
-    public void use(Match match, int playerId) throws IllegalMoveException {
-        Player player = match.getPlayerFromId(playerId);
+    public void use(Match match, String playerName) throws IllegalMoveException {
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         player.setAdditionalInfluence(2);
         player.removeCoins(cost);

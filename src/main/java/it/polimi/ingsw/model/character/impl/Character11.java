@@ -12,15 +12,15 @@ public class Character11 extends StudentCharacter {
                 "Then, draw a new student from the bag and place it on this card.");
     }
 
-    public void use(Match match, int playerId, PawnColor color) throws IllegalMoveException {
-        Player player = match.getPlayerFromId(playerId);
+    public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
         if (getStudentsColorCount(color) == 0) {
             throw new IllegalMoveException("There are no students with color " + color.name() + " on this character");
         }
         player.getSchool().addStudentsToTable(removeStudentsByColor(color, 1));
         match.checkNumberStudents(color, player);
-        match.checkProfessors(color, playerId);
+        match.checkProfessors(color, playerName);
         if(!match.getStudentBag().isEmpty())
             addStudents(match.extractStudent(1));
         player.removeCoins(cost);

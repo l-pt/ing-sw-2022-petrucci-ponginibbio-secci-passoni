@@ -15,13 +15,13 @@ public class TeamTest extends TestCase {
         towers.add(new Tower(TowerColor.WHITE));
         towers.add(new Tower(TowerColor.WHITE));
 
-        Player player1 = new Player(0, "test1", TowerColor.WHITE, Wizard.BLUE);
-        Player player2 = new Player(1, "test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
+        Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
         List<Player> players = new ArrayList<>();
         players.add(player1);
         players.add(player2);
 
-        Team team = new Team(0, players, TowerColor.WHITE);
+        Team team = new Team(players, TowerColor.WHITE);
         assertEquals(team.getTowers().size(), 0);
         Tower tower = new Tower(TowerColor.WHITE);
         team.addTower(tower);
@@ -35,6 +35,6 @@ public class TeamTest extends TestCase {
         assertEquals(team.getTowers(), towers);
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> team.removeTowers(3));
-        assertEquals(e.getMessage(), "Team 0 does not have enough towers");
+        assertEquals(e.getMessage(), "Team does not have enough towers");
     }
 }

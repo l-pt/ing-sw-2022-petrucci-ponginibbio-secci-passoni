@@ -12,7 +12,7 @@ public class Character10 extends Character {
         super(9, 1, "You may exchange up to 2 students between your entrance and your dining room.");
     }
 
-    public void use(Match match, int playerId, Map<PawnColor, Integer> entranceStudentsMap, Map<PawnColor, Integer> diningRoomStudentsMap) throws IllegalMoveException {
+    public void use(Match match, String playerName, Map<PawnColor, Integer> entranceStudentsMap, Map<PawnColor, Integer> diningRoomStudentsMap) throws IllegalMoveException {
         if (entranceStudentsMap.size() < 1 || entranceStudentsMap.size() > 2 || diningRoomStudentsMap.size() < 1 || diningRoomStudentsMap.size() > 2) {
             throw new IllegalMoveException("Invalid student number");
         }
@@ -20,7 +20,7 @@ public class Character10 extends Character {
             throw new IllegalMoveException("Different map sizes");
         }
 
-        Player player = match.getPlayerFromId(playerId);
+        Player player = match.getPlayerFromName(playerName);
         checkCost(player);
 
         List<Student> diningRoomStudents = new ArrayList<>();

@@ -59,7 +59,7 @@ public class IslandTest extends TestCase {
 
     @Test
     public void influenceTest() {
-        Player player = new Player(0, "test", TowerColor.BLACK, Wizard.BLUE);
+        Player player = new Player("test", TowerColor.BLACK, Wizard.BLUE);
         Island island = new Island();
         InfluenceCalculationPolicy calculationPolicy = new InfluenceCalculationPolicy();
 
