@@ -2,16 +2,11 @@ package it.polimi.ingsw.client;
 
 import com.google.gson.JsonSyntaxException;
 import it.polimi.ingsw.protocol.*;
-import it.polimi.ingsw.protocol.message.ErrorMessage;
-import it.polimi.ingsw.protocol.message.SetExpertMessage;
-import it.polimi.ingsw.protocol.message.SetPlayerNumberMessage;
-import it.polimi.ingsw.protocol.message.SetUsernameMessage;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 public abstract class Client {
     protected String ip;

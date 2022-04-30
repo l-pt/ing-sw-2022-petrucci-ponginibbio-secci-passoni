@@ -3,7 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.protocol.Message;
-import it.polimi.ingsw.protocol.message.InitialAssistantMessage;
+import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -161,13 +161,21 @@ public class Server {
                     default -> throw new AssertionError();
                 }
 
-                Controller controller = new Controller(nextMatchId++, teams, players, matchParameters.isExpert());
+                Controller controller = new Controller(this, nextMatchId++, teams, players, matchParameters.isExpert());
                 controllers.add(controller);
                 for (Connection c : readyConnections) {
                     connectionControllerMap.put(c, controller);
                 }
                 for (int i = 0; i < readyConnections.size(); ++i){
-                    readyConnections.get(i).sendMessage(new InitialAssistantMessage(controller.getMatch().getPlayersOrder().get(i).getAssistants()));
+                    readyConnections.get(i).sendMessage(new UpdateViewMessage(
+                        controller.getMatch().getPlayersOrder().get(i).getAssistants(),
+                        controller.getMatch().getIslands(),
+                        controller.getMatch().getPlayersOrder(),
+                        controller.getMatch().getPosMotherNature(),
+                        controller.getMatch().getClouds(),
+                        controller.getMatch().getProfessors(),
+                        controller.getMatch().getCoins()
+                    ));
                 }
 
                 matchParameters = null;
@@ -199,8 +207,9 @@ public class Server {
             if (message == null) {
                 deregisterConnection(connection);
             } else {
-                //TODO handle game messages
-
+                Controller controller = connectionControllerMap.get(connection);
+                assert controller != null;
+                controller.handleClientMessage(connection, message);
             }
         }
 

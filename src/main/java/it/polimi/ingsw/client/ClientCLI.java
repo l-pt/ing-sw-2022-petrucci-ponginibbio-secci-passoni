@@ -2,10 +2,7 @@ package it.polimi.ingsw.client;
 
 import com.google.gson.JsonSyntaxException;
 import it.polimi.ingsw.protocol.Message;
-import it.polimi.ingsw.protocol.message.ErrorMessage;
-import it.polimi.ingsw.protocol.message.SetExpertMessage;
-import it.polimi.ingsw.protocol.message.SetPlayerNumberMessage;
-import it.polimi.ingsw.protocol.message.SetUsernameMessage;
+import it.polimi.ingsw.protocol.message.*;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,9 +11,12 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientCLI extends Client{
+    private Scanner stdin;
+    private ViewCLI view;
 
     public ClientCLI(String ip, int port){
         super(ip, port);
+        stdin = new Scanner(System.in);
     }
 
     @Override
@@ -27,20 +27,40 @@ public class ClientCLI extends Client{
 
         try {
             lobbyLoop();
-            //TODO Match loop
+            gameLoop();
         } catch (IOException e) {
             System.out.println("Disconnected : " + e.getMessage());
             closeProgram();
         }
     }
 
+    private void gameLoop() throws IOException {
+        System.out.println("Starting game loop");
+        while (true) {
+            Message msg;
+            //Wait for a server message
+            try {
+                msg = readMessage();
+            } catch (JsonSyntaxException e) {
+                System.out.println("Server sent invalid message");
+                closeProgram();
+                return;
+            }
+            switch (msg.getMessageId()) {
+                case UPDATE_VIEW -> {
+                    view.handleUpdateView((UpdateViewMessage) msg);
+                }
+                //TODO other messages
+            }
+        }
+        //closeProgram();
+    }
+
     /**
      * Loop executed when the client is inside the lobby
      * Client waits for server questions about username, max player number and expert mode
      */
-
     private void lobbyLoop() throws IOException {
-        Scanner stdin = new Scanner(System.in);
         Message msg;
 
         while (true) {
@@ -49,7 +69,6 @@ public class ClientCLI extends Client{
                 msg = readMessage();
             } catch (JsonSyntaxException e) {
                 System.out.println("Server sent invalid message");
-                stdin.close();
                 closeProgram();
                 return;
             }
@@ -92,7 +111,17 @@ public class ClientCLI extends Client{
                     }
                     sendMessage(new SetExpertMessage(expert.equals("yes")));
                 }
+                case UPDATE_VIEW -> {
+                    view = new ViewCLI(this);
+                    view.handleUpdateView((UpdateViewMessage) msg);
+                    return;
+                }
             }
         }
+    }
+
+    public void closeProgram() {
+        stdin.close();
+        super.closeProgram();
     }
 }

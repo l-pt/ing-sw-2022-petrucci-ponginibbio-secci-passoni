@@ -2,18 +2,27 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.protocol.Message;
+import it.polimi.ingsw.server.Connection;
+import it.polimi.ingsw.server.Server;
 
 import java.util.List;
 
 public class Controller {
     private Match match;
+    private Server server;
 
-    public Controller(int matchId, List<Team> teams, List<Player> players, boolean expert) {
+    public Controller(Server server, int matchId, List<Team> teams, List<Player> players, boolean expert) {
         this.match = new Match(matchId, teams, players, expert);
+        this.server = server;
     }
 
     public Match getMatch() {
         return match;
+    }
+
+    public void handleClientMessage(Connection connection, Message message) {
+        //TODO
     }
 
     /**

@@ -8,7 +8,7 @@ public class Player {
     private String name;
     private School school;
     private TowerColor towerColor;
-    private List<Assistant> assistants;
+    private transient List<Assistant> assistants;
     private Assistant currentAssistant;
     private Assistant discardPile;
     private int coins;
