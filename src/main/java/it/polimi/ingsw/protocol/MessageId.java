@@ -13,7 +13,10 @@ public enum MessageId {
     SET_PLAYER_NUMBER(SetPlayerNumberMessage.class),
     ASK_EXPERT(AskExpertMessage.class),
     SET_EXPERT(SetExpertMessage.class),
-    UPDATE_VIEW(UpdateViewMessage.class);
+    UPDATE_VIEW(UpdateViewMessage.class),
+    ASK_ASSISTANT(AskAssistantMessage.class),
+    SET_ASSISTANT(SetAssistantMessage.class),
+    ASK_ENTRANCE_STUDENT(AskEntranceStudentMessage.class);
 
     private Class<? extends Message> messageClass;
 

@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class ViewCLI {
     private List<Cloud> clouds;
     private List<Professor> professors;
     private int coinReserve;
+    private List<Character> characters;
 
     public ViewCLI(ClientCLI client) {
         this.client = client;
@@ -29,6 +31,7 @@ public class ViewCLI {
         clouds = message.getClouds();
         professors = message.getProfessors();
         coinReserve = message.getCoinReserve();
+        characters = message.getCharacters();
 
         print();
     }
@@ -59,6 +62,14 @@ public class ViewCLI {
         //TODO all the rest
     }
 
+    public Player getPlayerFromName(String name){
+        for (Player player : playersOrder) {
+            if (player.getName().equals(name))
+                return player;
+        }
+        throw new IllegalArgumentException();
+    }
+
     public List<Assistant> getAssistants() {
         return assistants;
     }
@@ -85,5 +96,9 @@ public class ViewCLI {
 
     public int getCoinReserve() {
         return coinReserve;
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
     }
 }

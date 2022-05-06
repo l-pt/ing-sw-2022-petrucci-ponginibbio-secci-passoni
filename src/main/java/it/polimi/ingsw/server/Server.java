@@ -3,6 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.protocol.Message;
+import it.polimi.ingsw.protocol.message.AskAssistantMessage;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
 import java.io.IOException;
@@ -62,6 +63,14 @@ public class Server {
 
     public synchronized void setMatchParameters(MatchParameters parameters) {
         matchParameters = parameters;
+    }
+
+    public Connection getConnectionFromName(String name){
+        for(Connection c : connections){
+            if (c.getName().equals(name))
+                return c;
+        }
+        return null;
     }
 
     /**
@@ -174,9 +183,12 @@ public class Server {
                         controller.getMatch().getPosMotherNature(),
                         controller.getMatch().getClouds(),
                         controller.getMatch().getProfessors(),
-                        controller.getMatch().getCoins()
+                        controller.getMatch().getCoins(),
+                            controller.getMatch().getCharacters()
                     ));
                 }
+
+                readyConnections.get(0).sendMessage(new AskAssistantMessage());
 
                 matchParameters = null;
                 firstConnection = null;
@@ -192,7 +204,7 @@ public class Server {
     /**
      * Main server loop: process all messages in the messageQueue
      */
-    public void run() throws InterruptedException {
+    public void run() throws InterruptedException, IOException {
         while (true) {
             MessageQueueEntry entry;
             synchronized (messageQueue) {

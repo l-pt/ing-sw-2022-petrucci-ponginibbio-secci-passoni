@@ -168,6 +168,10 @@ public class Match {
         });
     }
 
+    public List<Character> getCharacters() {
+        return characters;
+    }
+
     public List<Island> getIslands() {
         return islands;
     }
@@ -376,8 +380,10 @@ public class Match {
     public void useAssistant(String playerName, int value) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         int playerPos = getPosFromName(playerName);
+        if (value < 0 || value > 10)
+            throw new IllegalMoveException("The value must be between 1 and 10");
         if (player.getAssistantFromValue(value) == null) {
-            throw new IllegalMoveException("Player " + player.getName() + " does not have an assistant with value " + value);
+            throw new IllegalMoveException("You don't have an assistant with value " + value);
         }
         boolean var = false;
         for(int i = 0; i < playerPos; ++i)

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.protocol.message;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.MessageId;
 
@@ -14,6 +15,7 @@ public class UpdateViewMessage extends Message {
     private List<Cloud> clouds;
     private List<Professor> professors;
     private int coinReserve;
+    private List<Character> characters;
 
     public UpdateViewMessage(
         List<Assistant> assistants,
@@ -22,7 +24,8 @@ public class UpdateViewMessage extends Message {
         int posMotherNature,
         List<Cloud> clouds,
         List<Professor> professors,
-        int coinReserve
+        int coinReserve,
+        List<Character> characters
     ){
         super(MessageId.UPDATE_VIEW);
         this.assistants = assistants;
@@ -32,6 +35,7 @@ public class UpdateViewMessage extends Message {
         this.clouds = clouds;
         this.professors = professors;
         this.coinReserve = coinReserve;
+        this.characters = characters;
     }
 
     private UpdateViewMessage() {
@@ -64,5 +68,9 @@ public class UpdateViewMessage extends Message {
 
     public int getCoinReserve() {
         return coinReserve;
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
     }
 }

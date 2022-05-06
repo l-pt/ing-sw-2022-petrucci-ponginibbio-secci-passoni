@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import com.google.gson.JsonSyntaxException;
+import it.polimi.ingsw.model.PawnColor;
 import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.message.*;
 
@@ -11,6 +12,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientCLI extends Client{
+    private String name;
     private Scanner stdin;
     private ViewCLI view;
 
@@ -50,10 +52,103 @@ public class ClientCLI extends Client{
                 case UPDATE_VIEW -> {
                     view.handleUpdateView((UpdateViewMessage) msg);
                 }
-                //TODO other messages
+                case ASK_ASSISTANT -> {
+                    Integer assistant = null;
+                    while (assistant == null) {
+                        System.out.println("What assistant do you want to play?");
+                        String assistantString = stdin.nextLine();
+                        try {
+                            assistant = Integer.parseInt(assistantString);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid number formatting");
+                        }
+                    }
+                    sendMessage(new SetAssistantMessage(assistant));
+                }
+                case ASK_ENTRANCE_STUDENT -> {
+                    handleCharacter();
+                    int remaining = 3;
+                    for (PawnColor color : PawnColor.values()) {
+                        if (remaining != 0) {
+                            Integer count = null;
+                            while (count == null) {
+                                System.out.println("How many " + color.name() + " students do you want to move from entrance to an island? (" + remaining + "remaining)");
+                                String countString = stdin.nextLine();
+                                try {
+                                    count = Integer.parseInt(countString);
+                                    if (count > remaining) {
+                                        System.out.println("You can move up to " + remaining + " " + color.name() + " students");
+                                        count = null;
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid number formatting");
+                                }
+                            }
+                            if (count > 0) {
+                                while (count > 0) {
+                                    Integer island = null;
+                                    while (island == null) {
+                                        System.out.println("Choose an island index: (0 - " + (view.getIslands().size() - 1) + ")");
+                                        String countString = stdin.nextLine();
+                                        try {
+                                            island = Integer.parseInt(countString);
+                                            if (island < 0 || island > view.getIslands().size() - 1) {
+                                                System.out.println("The island index must be between 0 and " + (view.getIslands().size() - 1));
+                                                island = null;
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Invalid number formatting");
+                                        }
+                                    }
+                                    Integer student = null;
+                                    while (student == null) {
+                                        System.out.println("How many " + color.name() + " student in island n°" + island + "?");
+                                        String countString = stdin.nextLine();
+                                        try {
+                                            student = Integer.parseInt(countString);
+                                            if (student > count) {
+                                                System.out.println("You can move up to " + count + " " + color.name() + " students");
+                                                student = null;
+                                            }
+                                            } catch (NumberFormatException e) {
+                                            System.out.println("Invalid number formatting");
+                                        }
+                                    }
+
+                                    count -= student;
+                                    remaining -= student;
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+                case ERROR -> {
+                    System.out.println(((ErrorMessage)msg).getError());
+                }
             }
         }
         //closeProgram();
+    }
+
+    public void handleCharacter(){
+        if(view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() ||
+                view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(1).getCost() ||
+                view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(2).getCost()){
+            String character = null;
+            while (character == null) {
+                System.out.println("Do you want to play a character card? (yes/no)");
+                character = stdin.nextLine();
+                if (!character.equals("yes") && !character.equals("no")) {
+                    System.out.println("Answer must be yes or no");
+                    character = null;
+                }
+            }
+            if(character.equals("yes")){
+                //TODO
+            }
+        }
     }
 
     /**
@@ -81,6 +176,7 @@ public class ClientCLI extends Client{
                     System.out.println("Insert username: ");
                     String username = stdin.nextLine();
                     sendMessage(new SetUsernameMessage(username));
+                    name = username;
                 }
                 case ASK_PLAYER_NUMBER -> {
                     Integer playerNumber = null;

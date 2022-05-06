@@ -3,9 +3,14 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.Message;
+import it.polimi.ingsw.protocol.message.AskAssistantMessage;
+import it.polimi.ingsw.protocol.message.AskEntranceStudentMessage;
+import it.polimi.ingsw.protocol.message.ErrorMessage;
+import it.polimi.ingsw.protocol.message.SetAssistantMessage;
 import it.polimi.ingsw.server.Connection;
 import it.polimi.ingsw.server.Server;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Controller {
@@ -21,8 +26,22 @@ public class Controller {
         return match;
     }
 
-    public void handleClientMessage(Connection connection, Message message) {
-        //TODO
+    public void handleClientMessage(Connection connection, Message message) throws IOException {
+        switch (message.getMessageId()){
+            case SET_ASSISTANT -> {
+                try {
+                    int pos = match.getPosFromName(connection.getName());
+                    useAssistant(connection.getName(), ((SetAssistantMessage)message).getAssisant());
+                    if (pos != match.getPlayersOrder().size() - 1)
+                        server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskAssistantMessage());
+                    else
+                        server.getConnectionFromName(match.getPlayersOrder().get(0).getName()).sendMessage(new AskEntranceStudentMessage());
+                    }catch (IllegalMoveException e){
+                        connection.sendMessage(new ErrorMessage(e.getMessage()));
+                        connection.sendMessage(new AskAssistantMessage());
+                }
+            }
+        }
     }
 
     /**
