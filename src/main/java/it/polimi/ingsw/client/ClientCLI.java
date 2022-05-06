@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.function.IntPredicate;
 
 public class ClientCLI extends Client{
     private String name;
@@ -53,16 +54,7 @@ public class ClientCLI extends Client{
                     view.handleUpdateView((UpdateViewMessage) msg);
                 }
                 case ASK_ASSISTANT -> {
-                    Integer assistant = null;
-                    while (assistant == null) {
-                        System.out.println("What assistant do you want to play?");
-                        String assistantString = stdin.nextLine();
-                        try {
-                            assistant = Integer.parseInt(assistantString);
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid number formatting");
-                        }
-                    }
+                    int assistant = readInt("What assistant do you want to play?");
                     sendMessage(new SetAssistantMessage(assistant));
                 }
                 case ASK_ENTRANCE_STUDENT -> {
@@ -70,51 +62,16 @@ public class ClientCLI extends Client{
                     int remaining = 3;
                     for (PawnColor color : PawnColor.values()) {
                         if (remaining != 0) {
-                            Integer count = null;
-                            while (count == null) {
-                                System.out.println("How many " + color.name() + " students do you want to move from entrance to an island? (" + remaining + "remaining)");
-                                String countString = stdin.nextLine();
-                                try {
-                                    count = Integer.parseInt(countString);
-                                    if (count > remaining) {
-                                        System.out.println("You can move up to " + remaining + " " + color.name() + " students");
-                                        count = null;
-                                    }
-                                } catch (NumberFormatException e) {
-                                    System.out.println("Invalid number formatting");
-                                }
-                            }
+                            int finalRemaining = remaining;
+                            int count = readInt("How many " + color.name() + " students do you want to move from entrance to an island? (" + remaining + "remaining)",
+                                    n -> n <= finalRemaining, "You can move up to " + remaining + " " + color.name() + " students");
                             if (count > 0) {
                                 while (count > 0) {
-                                    Integer island = null;
-                                    while (island == null) {
-                                        System.out.println("Choose an island index: (0 - " + (view.getIslands().size() - 1) + ")");
-                                        String countString = stdin.nextLine();
-                                        try {
-                                            island = Integer.parseInt(countString);
-                                            if (island < 0 || island > view.getIslands().size() - 1) {
-                                                System.out.println("The island index must be between 0 and " + (view.getIslands().size() - 1));
-                                                island = null;
-                                            }
-                                        } catch (NumberFormatException e) {
-                                            System.out.println("Invalid number formatting");
-                                        }
-                                    }
-                                    Integer student = null;
-                                    while (student == null) {
-                                        System.out.println("How many " + color.name() + " student in island n°" + island + "?");
-                                        String countString = stdin.nextLine();
-                                        try {
-                                            student = Integer.parseInt(countString);
-                                            if (student > count) {
-                                                System.out.println("You can move up to " + count + " " + color.name() + " students");
-                                                student = null;
-                                            }
-                                            } catch (NumberFormatException e) {
-                                            System.out.println("Invalid number formatting");
-                                        }
-                                    }
-
+                                    int island = readInt("Choose an island index: (0 - " + (view.getIslands().size() - 1) + ")",
+                                            n -> n >= 0 && n < view.getIslands().size(), "Island index must be between 0 and " + (view.getIslands().size() - 1));
+                                    int finalCount = count;
+                                    int student = readInt("How many " + color.name() + " student in island n°" + island + "?",
+                                            n -> n <= finalCount, "You can move up to " + count + " " + color.name() + " students");
                                     count -= student;
                                     remaining -= student;
                                 }
@@ -179,20 +136,7 @@ public class ClientCLI extends Client{
                     name = username;
                 }
                 case ASK_PLAYER_NUMBER -> {
-                    Integer playerNumber = null;
-                    while (playerNumber == null) {
-                        System.out.println("Insert player number: ");
-                        String playerNumberString = stdin.nextLine();
-                        try {
-                            playerNumber = Integer.parseInt(playerNumberString);
-                            if (playerNumber < 2 || playerNumber > 4) {
-                                System.out.println("Player number must be between 2 and 4");
-                                playerNumber = null;
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid number formatting");
-                        }
-                    }
+                    int playerNumber = readInt("Insert player number: ", n -> n >= 2 && n <= 4, "Player number must be between 2 and 4");
                     sendMessage(new SetPlayerNumberMessage(playerNumber));
                 }
                 case ASK_EXPERT -> {
@@ -219,5 +163,27 @@ public class ClientCLI extends Client{
     public void closeProgram() {
         stdin.close();
         super.closeProgram();
+    }
+
+    private int readInt(String prompt) {
+        return readInt(prompt, n -> true, "");
+    }
+
+    private int readInt(String prompt, IntPredicate predicate, String error) {
+        Integer res = null;
+        while (res == null) {
+            System.out.println(prompt);
+            String playerNumberString = stdin.nextLine();
+            try {
+                res = Integer.parseInt(playerNumberString);
+                if (!predicate.test(res)) {
+                    System.out.println(error);
+                    res = null;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number formatting");
+            }
+        }
+        return res;
     }
 }
