@@ -217,12 +217,21 @@ public class Match {
         return null;
     }
 
-    public void addStudent(PawnColor color, String playerName) throws IllegalMoveException {
+    public void playerMoveStudent(PawnColor color, String playerName) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         player.getSchool().addStudentToTable(color);
         if(expert)
             checkNumberStudents(color, player);
         checkProfessors(color, playerName);
+    }
+
+    public void playerMoveStudents(PawnColor color, int n, String playerName) throws IllegalMoveException {
+        if (n < 0) {
+            throw new IllegalArgumentException("n must be non negative");
+        }
+        for(int i = 0; i < n; ++i) {
+            playerMoveStudent(color, playerName);
+        }
     }
 
     public void checkNumberStudents(PawnColor color, Player player){

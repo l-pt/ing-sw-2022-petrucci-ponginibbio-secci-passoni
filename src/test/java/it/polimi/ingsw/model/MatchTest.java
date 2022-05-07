@@ -193,7 +193,7 @@ public class MatchTest extends TestCase {
             }
         }
 
-        match.addStudent(color, player1.getName());
+        match.playerMoveStudent(color, player1.getName());
 
         assertEquals(1, player1.getSchool().getTableCount(color));
         assertEquals(oldEntranceCount - 1, player1.getSchool().getEntranceCount(color));

@@ -21,7 +21,7 @@ public class Character5Test extends TestCase {
 
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         player1.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED)));
-        match.addStudent(PawnColor.RED, player1.getName());
+        match.playerMoveStudent(PawnColor.RED, player1.getName());
         match.islandInfluence(0, false);
         assertEquals(match.getIslands().get(0).getTowers().size(), 0);
     }

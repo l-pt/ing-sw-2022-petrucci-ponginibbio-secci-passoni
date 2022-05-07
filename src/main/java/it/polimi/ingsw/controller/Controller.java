@@ -90,8 +90,7 @@ public class Controller {
         }
         //Move students from entrance to table
         for (Map.Entry<PawnColor, Integer> entry : tableStudents.entrySet()) {
-            List<Student> extractedStudents = player.getSchool().removeEntranceStudentsByColor(entry.getKey(), entry.getValue());
-            player.getSchool().addStudentsToTable(extractedStudents);
+            match.playerMoveStudents(entry.getKey(), entry.getValue(), playerName);
         }
     }
 
