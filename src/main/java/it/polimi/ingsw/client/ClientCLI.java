@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.function.IntPredicate;
 
@@ -60,26 +62,47 @@ public class ClientCLI extends Client{
                 case ASK_ENTRANCE_STUDENT -> {
                     handleCharacter();
                     int remaining = 3;
+                    Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
                     for (PawnColor color : PawnColor.values()) {
                         if (remaining != 0) {
                             int finalRemaining = remaining;
                             int count = readInt("How many " + color.name() + " students do you want to move from entrance to an island? (" + remaining + "remaining)",
                                     n -> n <= finalRemaining, "You can move up to " + remaining + " " + color.name() + " students");
-                            if (count > 0) {
-                                while (count > 0) {
-                                    int island = readInt("Choose an island index: (0 - " + (view.getIslands().size() - 1) + ")",
-                                            n -> n >= 0 && n < view.getIslands().size(), "Island index must be between 0 and " + (view.getIslands().size() - 1));
-                                    int finalCount = count;
-                                    int student = readInt("How many " + color.name() + " student in island n°" + island + "?",
+                            while (count > 0) {
+                                int island = readInt("Choose an island index: (0 - " + (view.getIslands().size() - 1) + ")",
+                                        n -> n >= 0 && n < view.getIslands().size(), "Island index must be between 0 and " + (view.getIslands().size() - 1));
+                                int finalCount = count;
+                                int student;
+                                if (count > 1) {
+                                    student = readInt("How many " + color.name() + " student in island n°" + island + "?",
                                             n -> n <= finalCount, "You can move up to " + count + " " + color.name() + " students");
-                                    count -= student;
-                                    remaining -= student;
+                                } else {
+                                    student = 1;
                                 }
+
+                                if (!islandsStudents.containsKey(island)) {
+                                    islandsStudents.put(island, new HashMap<>());
+                                }
+                                islandsStudents.get(island).put(color, islandsStudents.get(island).getOrDefault(color, 0) + count);
+
+                                count -= student;
+                                remaining -= student;
                             }
-
                         }
-
                     }
+                    Map<PawnColor, Integer> tableStudents = new HashMap<>();
+                    while (remaining != 0) {
+                        for (PawnColor color : PawnColor.values()) {
+                            if (remaining != 0) {
+                                int finalRemaining = remaining;
+                                int count = readInt("How many " + color.name() + " students do you want to move from entrance to table? (" + remaining + "remaining)",
+                                        n -> n <= finalRemaining, "You can move up to " + remaining + " " + color.name() + " students");
+                                tableStudents.put(color, tableStudents.getOrDefault(color, 0) + count);
+                                remaining -= count;
+                            }
+                        }
+                    }
+                    sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
                 }
                 case ERROR -> {
                     System.out.println(((ErrorMessage)msg).getError());
@@ -165,25 +188,29 @@ public class ClientCLI extends Client{
         super.closeProgram();
     }
 
+    /**
+     * Read an int from stdin
+     */
     private int readInt(String prompt) {
         return readInt(prompt, n -> true, "");
     }
 
+    /**
+     * Read an int from stdin until it satisfies predicate
+     */
     private int readInt(String prompt, IntPredicate predicate, String error) {
-        Integer res = null;
-        while (res == null) {
+        while (true) {
             System.out.println(prompt);
             String playerNumberString = stdin.nextLine();
             try {
-                res = Integer.parseInt(playerNumberString);
-                if (!predicate.test(res)) {
-                    System.out.println(error);
-                    res = null;
+                int res = Integer.parseInt(playerNumberString);
+                if (predicate.test(res)) {
+                    return res;
                 }
+                System.out.println(error);
             } catch (NumberFormatException e) {
                 System.out.println("Invalid number formatting");
             }
         }
-        return res;
     }
 }

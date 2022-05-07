@@ -16,7 +16,8 @@ public enum MessageId {
     UPDATE_VIEW(UpdateViewMessage.class),
     ASK_ASSISTANT(AskAssistantMessage.class),
     SET_ASSISTANT(SetAssistantMessage.class),
-    ASK_ENTRANCE_STUDENT(AskEntranceStudentMessage.class);
+    ASK_ENTRANCE_STUDENT(AskEntranceStudentMessage.class),
+    SET_ENTRANCE_STUDENT(SetEntranceStudentMessage.class);
 
     private Class<? extends Message> messageClass;
 

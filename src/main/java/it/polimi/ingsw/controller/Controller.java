@@ -3,15 +3,13 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.Message;
-import it.polimi.ingsw.protocol.message.AskAssistantMessage;
-import it.polimi.ingsw.protocol.message.AskEntranceStudentMessage;
-import it.polimi.ingsw.protocol.message.ErrorMessage;
-import it.polimi.ingsw.protocol.message.SetAssistantMessage;
+import it.polimi.ingsw.protocol.message.*;
 import it.polimi.ingsw.server.Connection;
 import it.polimi.ingsw.server.Server;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class Controller {
     private Match match;
@@ -36,9 +34,23 @@ public class Controller {
                         server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskAssistantMessage());
                     else
                         server.getConnectionFromName(match.getPlayersOrder().get(0).getName()).sendMessage(new AskEntranceStudentMessage());
-                    }catch (IllegalMoveException e){
-                        connection.sendMessage(new ErrorMessage(e.getMessage()));
-                        connection.sendMessage(new AskAssistantMessage());
+                }catch (IllegalMoveException e){
+                    connection.sendMessage(new ErrorMessage(e.getMessage()));
+                    connection.sendMessage(new AskAssistantMessage());
+                }
+            }
+            case SET_ENTRANCE_STUDENT -> {
+                SetEntranceStudentMessage entranceStudentMessage = (SetEntranceStudentMessage) message;
+                try {
+                    int pos = match.getPosFromName(connection.getName());
+                    moveStudentsToIslandsAndTable(connection.getName(), entranceStudentMessage.getIslandStudents(), entranceStudentMessage.getTableStudents());
+                    if (pos != match.getPlayersOrder().size() - 1)
+                        server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskEntranceStudentMessage());
+                    //else
+                        //TODO server.getConnectionFromName(match.getPlayersOrder().get(0).getName()).sendMessage(new AskEntranceStudentMessage());
+                }catch (IllegalMoveException e){
+                    connection.sendMessage(new ErrorMessage(e.getMessage()));
+                    connection.sendMessage(new AskEntranceStudentMessage());
                 }
             }
         }
@@ -50,6 +62,37 @@ public class Controller {
     public void moveStudentToTable(String playerName, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
         player.getSchool().addStudentToTable(color);
+    }
+
+    public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
+        //Check that all island indexes are valid
+        for (int island : islandsStudents.keySet()) {
+            if (island < 0 || island >= match.getIslands().size()) {
+                throw new IllegalMoveException("Island " + island + " does not exist");
+            }
+        }
+        Player player = match.getPlayerFromName(playerName);
+        //Check if the number of students in the entrance is sufficient
+        for (PawnColor color : PawnColor.values()) {
+            int usedStudents = islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).filter(e -> e.getKey() == color).mapToInt(e -> e.getValue()).sum() +
+                    tableStudents.getOrDefault(color, 0);
+            if (player.getSchool().getEntranceCount(color) < usedStudents) {
+                throw new IllegalMoveException("There aren't enough students with color " + color.name() + " in the entrance");
+            }
+        }
+        //Move students from entrance to islands
+        for (Map.Entry<Integer, Map<PawnColor, Integer>> entry : islandsStudents.entrySet()) {
+            int island = entry.getKey();
+            for (Map.Entry<PawnColor, Integer> islandEntry : entry.getValue().entrySet()) {
+                List<Student> extractedStudents = player.getSchool().removeEntranceStudentsByColor(islandEntry.getKey(), islandEntry.getValue());
+                match.getIslands().get(island).addStudents(extractedStudents);
+            }
+        }
+        //Move students from entrance to table
+        for (Map.Entry<PawnColor, Integer> entry : tableStudents.entrySet()) {
+            List<Student> extractedStudents = player.getSchool().removeEntranceStudentsByColor(entry.getKey(), entry.getValue());
+            player.getSchool().addStudentsToTable(extractedStudents);
+        }
     }
 
     /**
