@@ -73,6 +73,10 @@ public class Server {
         return null;
     }
 
+    public List<Connection> getConnectionsFromController(Controller controller) {
+        return connectionControllerMap.entrySet().stream().filter(e -> e.getValue() == controller).map(e -> e.getKey()).toList();
+    }
+
     /**
      * The notifyMessage method is called from Connection classes (other threads)
      * to put new messages from clients into the messageQueue and notify the server

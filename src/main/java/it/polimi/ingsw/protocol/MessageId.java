@@ -17,7 +17,12 @@ public enum MessageId {
     ASK_ASSISTANT(AskAssistantMessage.class),
     SET_ASSISTANT(SetAssistantMessage.class),
     ASK_ENTRANCE_STUDENT(AskEntranceStudentMessage.class),
-    SET_ENTRANCE_STUDENT(SetEntranceStudentMessage.class);
+    SET_ENTRANCE_STUDENT(SetEntranceStudentMessage.class),
+    ASK_MOTHER_NATURE(AskMotherNatureMessage.class),
+    SET_MOTHER_NATURE(SetMotherNatureMessage.class),
+    ASK_CLOUD(AskCloudMessage.class),
+    SET_CLOUD(SetCloudMessage.class),
+    END_TURN(EndTurnMessage.class);
 
     private Class<? extends Message> messageClass;
 

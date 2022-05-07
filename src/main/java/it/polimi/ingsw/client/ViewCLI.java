@@ -33,6 +33,7 @@ public class ViewCLI {
         coinReserve = message.getCoinReserve();
         characters = message.getCharacters();
 
+        ClientCLI.clrscr();
         print();
     }
 
@@ -47,13 +48,17 @@ public class ViewCLI {
         System.out.println("--- Islands ---");
         i = 0;
         for (Island island : islands) {
-            System.out.println("Island " + i + ": ");
-            //TODO
+            String studentsString = Student.listToString(island.getStudents());
+            System.out.println("Island " + i + ": " + studentsString);
             ++i;
         }
 
         System.out.println("--- Players ---");
-        System.out.println(playersOrder.stream().map(Player::getName).collect(Collectors.joining(", ")));
+        for (Player player : playersOrder) {
+            System.out.println("Player " + player.getName());
+            System.out.println("Entrance: " + Student.listToString(player.getSchool().getEntrance()));
+            System.out.println("Table: " + Student.listToString(player.getSchool().getTables().values().stream().flatMap(l -> l.stream()).toList()));
+        }
 
         System.out.println("-- Other info ---");
         System.out.println("Mother nature is on island " + posMotherNature);

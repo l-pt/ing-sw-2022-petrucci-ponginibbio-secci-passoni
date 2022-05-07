@@ -19,6 +19,14 @@ public class School {
         entrance.addAll(students);
     }
 
+    public List<Student> getEntrance() {
+        return entrance;
+    }
+
+    public Map<PawnColor, List<Student>> getTables() {
+        return tables;
+    }
+
     public void addStudentToTable(PawnColor color) throws IllegalMoveException {
         if (getEntranceCount(color) == 0) {
             throw new IllegalMoveException("There are no students with color " + color.name() + " in the entrance");

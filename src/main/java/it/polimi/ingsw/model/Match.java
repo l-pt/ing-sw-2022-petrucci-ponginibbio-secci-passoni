@@ -3,7 +3,10 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.*;
+import it.polimi.ingsw.protocol.message.UpdateViewMessage;
+import it.polimi.ingsw.server.Connection;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -325,9 +328,10 @@ public class Match {
 
     public void moveMotherNature(int moves, String playerName) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
-        if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1)
+        if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1) {
             posMotherNature = (posMotherNature + moves) % islands.size();
-        else throw new IllegalMoveException("Too many moves");
+            islandInfluence(posMotherNature, false);
+        } else throw new IllegalMoveException("Too many moves");
     }
 
     public int getCoins() {
@@ -412,5 +416,31 @@ public class Match {
             lastTurn = true;
         if(getPosFromName(playerName) == playerOrder.size()-1)
             orderPlayers();
+    }
+
+    public void updateView(List<Connection> connections) {
+        for (Connection connection : connections) {
+            Player player = null;
+            try {
+                player = getPlayerFromName(connection.getName());
+            } catch (IllegalMoveException e) {
+                throw new RuntimeException(e);
+            }
+            UpdateViewMessage message = new UpdateViewMessage(
+                player.getAssistants(),
+                islands,
+                playerOrder,
+                posMotherNature,
+                clouds,
+                professors,
+                coinsReserve,
+                characters
+            );
+            try {
+                connection.sendMessage(message);
+            } catch (IOException e) {
+                System.out.println("Error update view");
+            }
+        }
     }
 }

@@ -15,7 +15,6 @@ import java.util.Scanner;
 import java.util.function.IntPredicate;
 
 public class ClientCLI extends Client{
-    private String name;
     private Scanner stdin;
     private ViewCLI view;
 
@@ -58,9 +57,10 @@ public class ClientCLI extends Client{
                 case ASK_ASSISTANT -> {
                     int assistant = readInt("What assistant do you want to play?");
                     sendMessage(new SetAssistantMessage(assistant));
+                    System.out.println("Waiting for other players");
                 }
                 case ASK_ENTRANCE_STUDENT -> {
-                    handleCharacter();
+                    usedCharacter = handleCharacter();
                     int remaining = 3;
                     Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
                     for (PawnColor color : PawnColor.values()) {
@@ -104,6 +104,26 @@ public class ClientCLI extends Client{
                     }
                     sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
                 }
+                case ASK_MOTHER_NATURE -> {
+                    if (!usedCharacter) {
+                        usedCharacter = handleCharacter();
+                    }
+                    int motherNatureMoves = readInt("Insert mother nature moves: (1-" + view.getPlayerFromName(name).getCurrentAssistant().getMoves()+")");
+                    sendMessage(new SetMotherNatureMessage(motherNatureMoves));
+                }
+                case ASK_CLOUD -> {
+                    if (!usedCharacter) {
+                        usedCharacter = handleCharacter();
+                    }
+                    int cloud = readInt("Choose a cloud: (0-" + (view.getClouds().size() - 1));
+                    sendMessage(new SetCloudMessage(cloud));
+                    if (!usedCharacter) {
+                        handleCharacter();
+                    }
+                    usedCharacter = false;
+                    sendMessage(new EndTurnMessage());
+                    System.out.println("Waiting for other players");
+                }
                 case ERROR -> {
                     System.out.println(((ErrorMessage)msg).getError());
                 }
@@ -112,7 +132,7 @@ public class ClientCLI extends Client{
         //closeProgram();
     }
 
-    public void handleCharacter(){
+    public boolean handleCharacter(){
         if(view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(1).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(2).getCost()){
@@ -127,8 +147,10 @@ public class ClientCLI extends Client{
             }
             if(character.equals("yes")){
                 //TODO
+                return true;
             }
         }
+        return false;
     }
 
     /**
@@ -211,6 +233,25 @@ public class ClientCLI extends Client{
             } catch (NumberFormatException e) {
                 System.out.println("Invalid number formatting");
             }
+        }
+    }
+    
+    public static void clrscr(){
+        try{
+            String operatingSystem = System.getProperty("os.name"); //Check the current operating system
+
+            if(operatingSystem.contains("Windows")){
+                ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "cls");
+                Process startProcess = pb.inheritIO().start();
+                startProcess.waitFor();
+            } else {
+                ProcessBuilder pb = new ProcessBuilder("clear");
+                Process startProcess = pb.inheritIO().start();
+
+                startProcess.waitFor();
+            }
+        }catch(Exception e){
+            System.out.println(e);
         }
     }
 }

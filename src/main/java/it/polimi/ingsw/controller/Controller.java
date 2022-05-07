@@ -30,6 +30,7 @@ public class Controller {
                 try {
                     int pos = match.getPosFromName(connection.getName());
                     useAssistant(connection.getName(), ((SetAssistantMessage)message).getAssisant());
+                    match.updateView(server.getConnectionsFromController(this));
                     if (pos != match.getPlayersOrder().size() - 1)
                         server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskAssistantMessage());
                     else
@@ -42,15 +43,43 @@ public class Controller {
             case SET_ENTRANCE_STUDENT -> {
                 SetEntranceStudentMessage entranceStudentMessage = (SetEntranceStudentMessage) message;
                 try {
-                    int pos = match.getPosFromName(connection.getName());
                     moveStudentsToIslandsAndTable(connection.getName(), entranceStudentMessage.getIslandStudents(), entranceStudentMessage.getTableStudents());
-                    if (pos != match.getPlayersOrder().size() - 1)
-                        server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskEntranceStudentMessage());
-                    //else
-                        //TODO server.getConnectionFromName(match.getPlayersOrder().get(0).getName()).sendMessage(new AskEntranceStudentMessage());
+                    match.updateView(server.getConnectionsFromController(this));
+                    connection.sendMessage(new AskMotherNatureMessage());
                 }catch (IllegalMoveException e){
                     connection.sendMessage(new ErrorMessage(e.getMessage()));
                     connection.sendMessage(new AskEntranceStudentMessage());
+                }
+            }
+            case SET_MOTHER_NATURE -> {
+                try {
+                    moveMotherNature(((SetMotherNatureMessage) message).getMotherNatureMoves(), connection.getName());
+                    match.updateView(server.getConnectionsFromController(this));
+                    connection.sendMessage(new AskCloudMessage());
+                } catch (IllegalMoveException e) {
+                    connection.sendMessage(new ErrorMessage(e.getMessage()));
+                    connection.sendMessage(new AskMotherNatureMessage());
+                }
+            }
+            case SET_CLOUD -> {
+                try {
+                    moveStudentsFromCloud(((SetCloudMessage) message).getCloud(), connection.getName());
+                    match.updateView(server.getConnectionsFromController(this));
+                } catch (IllegalMoveException e) {
+                    connection.sendMessage(new ErrorMessage(e.getMessage()));
+                    connection.sendMessage(new AskMotherNatureMessage());
+                }
+            }
+            case END_TURN -> {
+                try {
+                    match.updateView(server.getConnectionsFromController(this));
+                    int pos = match.getPosFromName(connection.getName());
+                    if (pos != match.getPlayersOrder().size() - 1)
+                        server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskEntranceStudentMessage());
+                    else
+                        server.getConnectionFromName(match.getPlayersOrder().get(0).getName()).sendMessage(new AskAssistantMessage());
+                } catch (IllegalMoveException e) {
+                    connection.sendMessage(new ErrorMessage(e.getMessage()));
                 }
             }
         }

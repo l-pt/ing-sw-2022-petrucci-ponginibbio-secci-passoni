@@ -9,15 +9,18 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 public abstract class Client {
+    protected String name;
     protected String ip;
     protected int port;
     protected Socket socket;
     protected InputStreamReader in;
     protected OutputStreamWriter out;
+    protected boolean usedCharacter;
 
     public Client(String ip, int port){
         this.ip = ip;
         this.port = port;
+        usedCharacter = false;
     }
 
     /**
