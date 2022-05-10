@@ -18,6 +18,7 @@ public class ViewCLI {
     private List<Professor> professors;
     private int coinReserve;
     private List<Character> characters;
+    private boolean expert;
 
     public ViewCLI(ClientCLI client) {
         this.client = client;
@@ -32,6 +33,7 @@ public class ViewCLI {
         professors = message.getProfessors();
         coinReserve = message.getCoinReserve();
         characters = message.getCharacters();
+        expert = message.isExpert();
 
         ClientCLI.clrscr();
         print();
@@ -105,5 +107,9 @@ public class ViewCLI {
 
     public List<Character> getCharacters() {
         return characters;
+    }
+
+    public boolean isExpert() {
+        return expert;
     }
 }

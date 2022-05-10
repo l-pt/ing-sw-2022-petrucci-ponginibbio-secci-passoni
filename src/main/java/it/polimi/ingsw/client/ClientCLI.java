@@ -95,7 +95,7 @@ public class ClientCLI extends Client{
                         for (PawnColor color : PawnColor.values()) {
                             if (remaining != 0) {
                                 int finalRemaining = remaining;
-                                int count = readInt("How many " + color.name() + " students do you want to move from entrance to table? (" + remaining + "remaining)",
+                                int count = readInt("How many " + color.name() + " students do you want to move from entrance to table? (" + remaining + " remaining)",
                                         n -> n <= finalRemaining, "You can move up to " + remaining + " " + color.name() + " students");
                                 tableStudents.put(color, tableStudents.getOrDefault(color, 0) + count);
                                 remaining -= count;
@@ -133,9 +133,9 @@ public class ClientCLI extends Client{
     }
 
     public boolean handleCharacter(){
-        if(view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() ||
+        if(view.isExpert() && (view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(1).getCost() ||
-                view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(2).getCost()){
+                view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(2).getCost())){
             String character = null;
             while (character == null) {
                 System.out.println("Do you want to play a character card? (yes/no)");

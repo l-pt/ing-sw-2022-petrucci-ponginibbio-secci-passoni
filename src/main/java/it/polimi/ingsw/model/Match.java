@@ -334,6 +334,10 @@ public class Match {
         } else throw new IllegalMoveException("Too many moves");
     }
 
+    public boolean isExpert() {
+        return expert;
+    }
+
     public int getCoins() {
         return coinsReserve;
     }
@@ -434,7 +438,8 @@ public class Match {
                 clouds,
                 professors,
                 coinsReserve,
-                characters
+                characters,
+                    expert
             );
             try {
                 connection.sendMessage(message);

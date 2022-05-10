@@ -65,12 +65,12 @@ public class Server {
         matchParameters = parameters;
     }
 
-    public Connection getConnectionFromName(String name){
+    public Connection getConnectionFromName(String name) throws IllegalMoveException {
         for(Connection c : connections){
             if (c.getName().equals(name))
                 return c;
         }
-        return null;
+        throw new IllegalMoveException("There is no player with that name");
     }
 
     public List<Connection> getConnectionsFromController(Controller controller) {
@@ -188,7 +188,8 @@ public class Server {
                         controller.getMatch().getClouds(),
                         controller.getMatch().getProfessors(),
                         controller.getMatch().getCoins(),
-                            controller.getMatch().getCharacters()
+                            controller.getMatch().getCharacters(),
+                            controller.getMatch().isExpert()
                     ));
                 }
 

@@ -16,6 +16,7 @@ public class UpdateViewMessage extends Message {
     private List<Professor> professors;
     private int coinReserve;
     private List<Character> characters;
+    private boolean expert;
 
     public UpdateViewMessage(
         List<Assistant> assistants,
@@ -25,7 +26,8 @@ public class UpdateViewMessage extends Message {
         List<Cloud> clouds,
         List<Professor> professors,
         int coinReserve,
-        List<Character> characters
+        List<Character> characters,
+        boolean expert
     ){
         super(MessageId.UPDATE_VIEW);
         this.assistants = assistants;
@@ -36,6 +38,7 @@ public class UpdateViewMessage extends Message {
         this.professors = professors;
         this.coinReserve = coinReserve;
         this.characters = characters;
+        this.expert = expert;
     }
 
     private UpdateViewMessage() {
@@ -72,5 +75,9 @@ public class UpdateViewMessage extends Message {
 
     public List<Character> getCharacters() {
         return characters;
+    }
+
+    public boolean isExpert() {
+        return expert;
     }
 }
