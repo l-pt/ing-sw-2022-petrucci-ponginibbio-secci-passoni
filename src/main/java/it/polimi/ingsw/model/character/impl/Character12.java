@@ -5,8 +5,9 @@ import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.PawnColor;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.model.character.ColorCharacter;
 
-public class Character12 extends Character {
+public class Character12 extends Character implements ColorCharacter {
     public Character12() {
         super(11, 3, "Choose a type of student: every player (including yourself) must return " +
                 "3 students of that type from their dining room to the bag. If any player " +

@@ -4,8 +4,9 @@ import it.polimi.ingsw.model.IllegalMoveException;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.model.character.IslandCharacter;
 
-public class Character3 extends Character {
+public class Character3 extends Character implements IslandCharacter {
     public Character3() {
         super(2, 3, "Choose an island and resolve the island as if mother nature had ended " +
                 "her movement there. Mother nature will still move and the island where she " +

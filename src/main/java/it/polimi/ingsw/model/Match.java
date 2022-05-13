@@ -26,6 +26,7 @@ public class Match {
     private List<Character> characters;
     private boolean drawAllowed;
     private InfluenceCalculationPolicy influencePolicy;
+    private boolean gameFinished;
 
     public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
 
@@ -120,6 +121,7 @@ public class Match {
         }else coinsReserve = 0;
         drawAllowed = false;
         influencePolicy = new InfluenceCalculationPolicy();
+        gameFinished = false;
     }
 
     public void setupTowers(){
@@ -279,7 +281,7 @@ public class Match {
                     }
                     checkIslands(index, noMotherNatureMoves);
                 }
-                else endGame(getTeamFromPlayer(playerOrder.get(pos)));
+                else endGame();
             }
         }else {
             islands.get(index).removeNoEntry();
@@ -311,7 +313,7 @@ public class Match {
         if(!noMotherNatureMoves)
             posMotherNature = min;
         if (islands.size() <= 3)
-            endGame(getWinningTeam());
+            endGame();
     }
 
     public void populateClouds() {
@@ -360,6 +362,15 @@ public class Match {
         return characters.get(characterIndex);
     }
 
+    public Character getCharacterFromType(Class<? extends Character> cl) throws IllegalMoveException {
+        for (Character character : characters) {
+            if (character.getClass().equals(cl)) {
+                return character;
+            }
+        }
+        throw new IllegalMoveException("There are no characters with class " + cl);
+    }
+
     public void resetAbility(){
         drawAllowed = false;
         influencePolicy.setCountTowers(true);
@@ -385,13 +396,16 @@ public class Match {
         }).get();
     }
 
-    public void endGame(Team team) {
-        //TODO
+    public void endGame() {
+        gameFinished = true;
     }
 
-    public void checkLastTurn(){
-        if(lastTurn)
-            endGame(getWinningTeam());
+    public boolean isGameFinished() {
+        return gameFinished;
+    }
+
+    public boolean isLastTurn() {
+        return lastTurn;
     }
 
     public void useAssistant(String playerName, int value) throws IllegalMoveException {

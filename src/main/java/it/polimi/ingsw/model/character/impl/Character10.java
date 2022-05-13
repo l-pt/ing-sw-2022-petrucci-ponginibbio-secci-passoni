@@ -2,12 +2,13 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.character.StudentMapCharacter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Character10 extends Character {
+public class Character10 extends Character implements StudentMapCharacter {
     public Character10() {
         super(9, 1, "You may exchange up to 2 students between your entrance and your dining room.");
     }

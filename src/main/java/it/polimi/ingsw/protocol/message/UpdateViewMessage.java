@@ -2,6 +2,7 @@ package it.polimi.ingsw.protocol.message;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.MessageId;
 
