@@ -4,6 +4,8 @@ import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.List;
 
 public class Character3Test extends TestCase {
@@ -17,6 +19,10 @@ public class Character3Test extends TestCase {
         player1.addCoin();
         player1.addCoin();
         Character3 character = new Character3();
+
+        Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), 13));
+        assertEquals("Island must be between 0 and " + (match.getIslands().size() - 1), e.getMessage());
+
         int posMotherNature = match.getPosMotherNature();
         character.use(match, player1.getName(), 0);
         assertEquals(match.getPosMotherNature(), posMotherNature);

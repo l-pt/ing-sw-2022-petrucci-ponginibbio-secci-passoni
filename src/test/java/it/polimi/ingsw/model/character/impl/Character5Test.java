@@ -1,8 +1,11 @@
 package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.character.Character;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
@@ -15,6 +18,13 @@ public class Character5Test extends TestCase {
         Team team2 = new Team(List.of(player2), TowerColor.BLACK);
         Match match = new Match(List.of(team1, team2), List.of(player1, player2), true);
         Character5 character = new Character5();
+
+        Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), 13));
+        assertEquals("Island must be between 0 and " + (match.getIslands().size() - 1), e.getMessage());
+
+        List<Character> characters = match.getCharacters();
+        characters.set(0, character);
+
         player1.addCoin();
         character.use(match, player1.getName(), 0);
         assertEquals(match.getIslands().get(0).getNoEntry(), 1);
@@ -24,6 +34,14 @@ public class Character5Test extends TestCase {
         match.playerMoveStudent(PawnColor.RED, player1.getName());
         match.islandInfluence(0, false);
         assertEquals(match.getIslands().get(0).getTowers().size(), 0);
+
+        character.setNoEntry(0);
+        player1.addCoin();
+        player1.addCoin();
+        player1.addCoin();
+        player1.addCoin();
+        e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), 0));
+        assertEquals("No Entry tiles absent", e.getMessage());
     }
 
     @Test

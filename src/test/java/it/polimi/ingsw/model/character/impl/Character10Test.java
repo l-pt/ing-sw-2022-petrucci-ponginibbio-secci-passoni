@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,44 @@ public class Character10Test extends TestCase {
             character.use(match, player1.getName(), Map.of(PawnColor.RED, 1), Map.of(PawnColor.RED, 1, PawnColor.GREEN, 2));
         });
         assertEquals(e.getMessage(), "Different map sizes");
+
+        //Move a student from entrance to table
+        PawnColor tableColor = null;
+        for (Student student : player1.getSchool().getEntrance()) {
+            player1.getSchool().addStudentToTable(student.getColor());
+            tableColor = student.getColor();
+            break;
+        }
+
+        //Get a color which is not present on the table
+        List<PawnColor> absentColors = new ArrayList<>(List.of(PawnColor.values()));
+        for (PawnColor color : PawnColor.values()) {
+            if (player1.getSchool().getTableCount(color) > 0) {
+                absentColors.remove(color);
+            }
+        }
+        PawnColor absentColor = absentColors.get(0);
+        PawnColor finalAbsentColor = absentColor;
+        e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), Map.of(PawnColor.RED, 1), Map.of(finalAbsentColor, 1)));
+        assertEquals("There are not enough students with color " + absentColor.name() + " in the dining room", e.getMessage());
+
+        //Get a color which is not present in the entrance
+        absentColors.clear();
+        absentColors.addAll(List.of(PawnColor.values()));
+        for (PawnColor color : PawnColor.values()) {
+            if (player1.getSchool().getEntranceCount(color) > 0) {
+                absentColors.remove(color);
+            }
+        }
+        if (absentColors.size() == 0) {
+            player1.getSchool().removeEntranceStudentsByColor(PawnColor.RED, player1.getSchool().getEntranceCount(PawnColor.RED));
+            absentColors.add(PawnColor.RED);
+        }
+        absentColor = absentColors.get(0);
+        PawnColor finalAbsentColor1 = absentColor;
+        PawnColor finalTableColor = tableColor;
+        e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), Map.of(finalAbsentColor1, 1), Map.of(finalTableColor, 1)));
+        assertEquals("There are not enough students with color " + absentColor.name() + " in the entrance", e.getMessage());
     }
 
     @Test

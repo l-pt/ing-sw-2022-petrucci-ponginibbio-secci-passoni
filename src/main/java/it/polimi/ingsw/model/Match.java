@@ -272,16 +272,21 @@ public class Match {
             }
             if (!draw && max > 0 && (islands.get(index).getTowers().size() == 0 || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
                 if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
-                    List<Tower> t = islands.get(index).removeAllTowers();
-                    if (t.size() > 0) {
-                        getTeamFromColor(t.get(0).getColor()).addTowers(t);
-                        islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+                    if (islands.get(index).getTowers().size() == 0 && getTeamFromPlayer(playerOrder.get(pos)).getTowers().size() == 1) {
+                        gameFinished = true;
                     } else {
-                        islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(1));
+                        List<Tower> t = islands.get(index).removeAllTowers();
+                        if (t.size() > 0) {
+                            getTeamFromColor(t.get(0).getColor()).addTowers(t);
+                            islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+                        } else {
+                            islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(1));
+                        }
+                        checkIslands(index, noMotherNatureMoves);
                     }
-                    checkIslands(index, noMotherNatureMoves);
+                } else {
+                    gameFinished = true;
                 }
-                else endGame();
             }
         }else {
             islands.get(index).removeNoEntry();
@@ -313,7 +318,7 @@ public class Match {
         if(!noMotherNatureMoves)
             posMotherNature = min;
         if (islands.size() <= 3)
-            endGame();
+            gameFinished = true;
     }
 
     public void populateClouds() {
@@ -346,6 +351,10 @@ public class Match {
 
     public void setDrawAllowed(boolean drawAllowed) {
         this.drawAllowed = drawAllowed;
+    }
+
+    public boolean getDrawAllowed() {
+        return drawAllowed;
     }
 
     public InfluenceCalculationPolicy getInfluencePolicy() {
@@ -396,10 +405,6 @@ public class Match {
         }).get();
     }
 
-    public void endGame() {
-        gameFinished = true;
-    }
-
     public boolean isGameFinished() {
         return gameFinished;
     }
@@ -411,7 +416,7 @@ public class Match {
     public void useAssistant(String playerName, int value) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         int playerPos = getPosFromName(playerName);
-        if (value < 0 || value > 10)
+        if (value < 1 || value > 10)
             throw new IllegalMoveException("The value must be between 1 and 10");
         if (player.getAssistantFromValue(value) == null) {
             throw new IllegalMoveException("You don't have an assistant with value " + value);

@@ -57,7 +57,7 @@ public abstract class Character {
             case 9 -> characterClass = Character10.class;
             case 10 -> characterClass = Character11.class;
             case 11 -> characterClass = Character12.class;
-            default -> throw new IllegalMoveException("Wron character id");
+            default -> throw new IllegalMoveException("Wrong character id");
         }
         return characterClass;
     }
