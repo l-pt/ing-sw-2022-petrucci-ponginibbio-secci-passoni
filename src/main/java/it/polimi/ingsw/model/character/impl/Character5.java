@@ -4,8 +4,9 @@ import it.polimi.ingsw.model.IllegalMoveException;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.model.character.IslandCharacter;
 
-public class Character5 extends Character {
+public class Character5 extends Character implements IslandCharacter {
     private int noEntry;
 
     public Character5() {
@@ -31,4 +32,8 @@ public class Character5 extends Character {
     }
 
     public void addNoEntry(){++noEntry;}
+
+    public void setNoEntry(int noEntry) {
+        this.noEntry = noEntry;
+    }
 }

@@ -26,6 +26,7 @@ public class Match {
     private List<Character> characters;
     private boolean drawAllowed;
     private InfluenceCalculationPolicy influencePolicy;
+    private boolean gameFinished;
 
     public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
 
@@ -120,6 +121,7 @@ public class Match {
         }else coinsReserve = 0;
         drawAllowed = false;
         influencePolicy = new InfluenceCalculationPolicy();
+        gameFinished = false;
     }
 
     public void setupTowers(){
@@ -270,16 +272,21 @@ public class Match {
             }
             if (!draw && max > 0 && (islands.get(index).getTowers().size() == 0 || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
                 if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
-                    List<Tower> t = islands.get(index).removeAllTowers();
-                    if (t.size() > 0) {
-                        getTeamFromColor(t.get(0).getColor()).addTowers(t);
-                        islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+                    if (islands.get(index).getTowers().size() == 0 && getTeamFromPlayer(playerOrder.get(pos)).getTowers().size() == 1) {
+                        gameFinished = true;
                     } else {
-                        islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(1));
+                        List<Tower> t = islands.get(index).removeAllTowers();
+                        if (t.size() > 0) {
+                            getTeamFromColor(t.get(0).getColor()).addTowers(t);
+                            islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+                        } else {
+                            islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(1));
+                        }
+                        checkIslands(index, noMotherNatureMoves);
                     }
-                    checkIslands(index, noMotherNatureMoves);
+                } else {
+                    gameFinished = true;
                 }
-                else endGame(getTeamFromPlayer(playerOrder.get(pos)));
             }
         }else {
             islands.get(index).removeNoEntry();
@@ -311,7 +318,7 @@ public class Match {
         if(!noMotherNatureMoves)
             posMotherNature = min;
         if (islands.size() <= 3)
-            endGame(getWinningTeam());
+            gameFinished = true;
     }
 
     public void populateClouds() {
@@ -346,6 +353,10 @@ public class Match {
         this.drawAllowed = drawAllowed;
     }
 
+    public boolean getDrawAllowed() {
+        return drawAllowed;
+    }
+
     public InfluenceCalculationPolicy getInfluencePolicy() {
         return influencePolicy;
     }
@@ -358,6 +369,15 @@ public class Match {
             throw new IllegalMoveException("Invalid character index " + characterIndex);
         }
         return characters.get(characterIndex);
+    }
+
+    public Character getCharacterFromType(Class<? extends Character> cl) throws IllegalMoveException {
+        for (Character character : characters) {
+            if (character.getClass().equals(cl)) {
+                return character;
+            }
+        }
+        throw new IllegalMoveException("There are no characters with class " + cl);
     }
 
     public void resetAbility(){
@@ -385,19 +405,18 @@ public class Match {
         }).get();
     }
 
-    public void endGame(Team team) {
-        //TODO
+    public boolean isGameFinished() {
+        return gameFinished;
     }
 
-    public void checkLastTurn(){
-        if(lastTurn)
-            endGame(getWinningTeam());
+    public boolean isLastTurn() {
+        return lastTurn;
     }
 
     public void useAssistant(String playerName, int value) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         int playerPos = getPosFromName(playerName);
-        if (value < 0 || value > 10)
+        if (value < 1 || value > 10)
             throw new IllegalMoveException("The value must be between 1 and 10");
         if (player.getAssistantFromValue(value) == null) {
             throw new IllegalMoveException("You don't have an assistant with value " + value);

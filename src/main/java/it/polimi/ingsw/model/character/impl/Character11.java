@@ -4,9 +4,10 @@ import it.polimi.ingsw.model.IllegalMoveException;
 import it.polimi.ingsw.model.Match;
 import it.polimi.ingsw.model.PawnColor;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.character.ColorCharacter;
 import it.polimi.ingsw.model.character.StudentCharacter;
 
-public class Character11 extends StudentCharacter {
+public class Character11 extends StudentCharacter implements ColorCharacter {
     public Character11() {
         super(10, 2, "Take 1 student from this card and place it in your dining room. " +
                 "Then, draw a new student from the bag and place it on this card.");

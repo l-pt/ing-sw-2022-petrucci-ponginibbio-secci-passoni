@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Team {
@@ -32,10 +33,13 @@ public class Team {
         if (size > towers.size()) {
             throw new IllegalArgumentException("Team does not have enough towers");
         }
-        List<Tower> towers = new ArrayList<>(size);
-        for (int i=0; i<size; ++i)
-            towers.add(this.towers.remove(i));
-        return towers;
+        List<Tower> removed = new ArrayList<>(size);
+        Iterator<Tower> iterator = towers.iterator();
+        while (removed.size() < size) {
+            removed.add(iterator.next());
+            iterator.remove();
+        }
+        return removed;
     }
 
     public TowerColor getTowerColor() {

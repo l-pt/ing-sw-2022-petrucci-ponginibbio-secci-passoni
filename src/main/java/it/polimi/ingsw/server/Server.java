@@ -305,7 +305,7 @@ public class Server {
      * The MatchParameters class contains the two parameters needed to start a match.
      * They are requested to the first player that connects to the lobby
      */
-    private static class MatchParameters {
+    protected static class MatchParameters {
         private int playerNumber;
         private boolean expert;
 

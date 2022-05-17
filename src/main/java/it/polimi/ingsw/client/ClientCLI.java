@@ -2,8 +2,14 @@ package it.polimi.ingsw.client;
 
 import com.google.gson.JsonSyntaxException;
 import it.polimi.ingsw.model.PawnColor;
+import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.model.character.impl.Character1;
+import it.polimi.ingsw.model.character.impl.Character11;
+import it.polimi.ingsw.model.character.impl.Character7;
 import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.message.*;
+import it.polimi.ingsw.protocol.message.character.*;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,8 +45,9 @@ public class ClientCLI extends Client{
     }
 
     private void gameLoop() throws IOException {
+        boolean running = true;
         System.out.println("Starting game loop");
-        while (true) {
+        while (running) {
             Message msg;
             //Wait for a server message
             try {
@@ -124,15 +131,24 @@ public class ClientCLI extends Client{
                     sendMessage(new EndTurnMessage());
                     System.out.println("Waiting for other players");
                 }
+                case END_GAME -> {
+                    Team winner = ((EndGameMessage) msg).getWinner();
+                    if (view.getPlayersOrder().size() == 4) {
+                        System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(p -> p.getName()).toList()));
+                    } else {
+                        System.out.println("Game over. Winner: " + winner.getPlayers().get(0));
+                    }
+                    running = false;
+                }
                 case ERROR -> {
                     System.out.println(((ErrorMessage)msg).getError());
                 }
             }
         }
-        //closeProgram();
+        closeProgram();
     }
 
-    public boolean handleCharacter(){
+    public boolean handleCharacter() throws IOException {
         if(view.isExpert() && (view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(1).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(2).getCost())){
@@ -146,7 +162,132 @@ public class ClientCLI extends Client{
                 }
             }
             if(character.equals("yes")){
-                //TODO
+                int characterIndex = readInt("Which character do you want to play? [0-2]", n -> n >= 0 && n <= 2,
+                        "Character number must be between 0 and 2");
+                Character c = view.getCharacters().get(characterIndex);
+                switch (c.getId()) {
+                    case 0 -> {
+                        Character1 c1 = (Character1) c;
+                        PawnColor color = null;
+                        while (color == null) {
+                            System.out.println("Choose a student color");
+                            try {
+                                color = PawnColor.valueOf(stdin.nextLine());
+                                if (c1.getStudentsColorCount(color) == 0) {
+                                    System.out.println("There are no student with color " + color + " on the character card");
+                                    color = null;
+                                }
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid color");
+                            }
+                        }
+                        int island = readInt("Choose an island", n -> n >= 0 && n < view.getIslands().size(),
+                                "Island number must be between 0 and " + (view.getIslands().size() - 1));
+                        sendMessage(new UseCharacterColorIslandMessage(color, island));
+                    }
+                    case 1,3,7 -> {
+                        sendMessage(new UseCharacterMessage(c.getId()));
+                    }
+                    case 2,4,5 -> {
+                        int island = readInt("Choose an island", n -> n >= 0 && n < view.getIslands().size(),
+                                "Island number must be between 0 and " + (view.getIslands().size() - 1));
+                        sendMessage(new UseCharacterIslandMessage(c.getId(), island));
+                    }
+                    case 6 -> {
+                        Character7 c7 = (Character7) c;
+                        int students = readInt("How many students do you want to exchange? [1-3]", n -> n >= 1 && n <= 3,
+                                "You can exchange up to 3 students");
+                        Map<PawnColor, Integer> cardToEntrance = new HashMap<>();
+                        Map<PawnColor, Integer> entranceToCard = new HashMap<>();
+                        while (students > 0) {
+                            for (PawnColor color : PawnColor.values()) {
+                                int cardStudents = c7.getStudentsColorCount(color);
+                                if (cardStudents > 0) {
+                                    int finalStudents = students;
+                                    int sel = readInt("How many " + color.name() + " students? [0-" + Math.min(cardStudents, students),
+                                            n -> n >= 0 && n <= Math.min(cardStudents, finalStudents), "Student number must be between 0 and " + Math.min(cardStudents, students));
+                                    students -= sel;
+                                    cardToEntrance.put(color, sel);
+                                }
+                            }
+                        }
+                        students = cardToEntrance.size();
+                        while (students > 0) {
+                            for (PawnColor color : PawnColor.values()) {
+                                int entranceStudent = view.getPlayerFromName(name).getSchool().getEntranceCount(color);
+                                if (entranceStudent > 0) {
+                                    int finalStudents = students;
+                                    int sel = readInt("How many " + color.name() + " students? [0-" + Math.min(entranceStudent, students),
+                                            n -> n >= 0 && n <= Math.min(entranceStudent, finalStudents), "Student number must be between 0 and " + Math.min(entranceStudent, students));
+                                    students -= sel;
+                                    entranceToCard.put(color, sel);
+                                }
+                            }
+                        }
+                        sendMessage(new UseCharacterStudentMapMessage(6, cardToEntrance, entranceToCard));
+                    }
+                    case 8,11 -> {
+                        PawnColor color = null;
+                        while (color == null) {
+                            System.out.println("Choose a student color");
+                            try {
+                                color = PawnColor.valueOf(stdin.nextLine());
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid color");
+                            }
+                        }
+                        sendMessage(new UseCharacterColorMessage(c.getId(), color));
+                    }
+                    case 9 -> {
+                        int students = readInt("How many students do you want to exchange? [1-2]", n -> n >= 1 && n <= 2,
+                                "You can exchange up to 2 students");
+                        Map<PawnColor, Integer> entranceToTable = new HashMap<>();
+                        Map<PawnColor, Integer> tableToEntrance = new HashMap<>();
+                        while (students > 0) {
+                            for (PawnColor color : PawnColor.values()) {
+                                int entranceStudents = view.getPlayerFromName(name).getSchool().getEntranceCount(color);
+                                if (entranceStudents > 0) {
+                                    int finalStudents = students;
+                                    int sel = readInt("How many " + color.name() + " students? [0-" + Math.min(entranceStudents, students),
+                                            n -> n >= 0 && n <= Math.min(entranceStudents, finalStudents), "Student number must be between 0 and " + Math.min(entranceStudents, students));
+                                    students -= sel;
+                                    entranceToTable.put(color, sel);
+                                }
+                            }
+                        }
+                        students = entranceToTable.size();
+                        while (students > 0) {
+                            for (PawnColor color : PawnColor.values()) {
+                                int tableStudents = view.getPlayerFromName(name).getSchool().getTableCount(color);
+                                if (tableStudents > 0) {
+                                    int finalStudents = students;
+                                    int sel = readInt("How many " + color.name() + " students? [0-" + Math.min(tableStudents, students),
+                                            n -> n >= 0 && n <= Math.min(tableStudents, finalStudents), "Student number must be between 0 and " + Math.min(tableStudents, students));
+                                    students -= sel;
+                                    tableToEntrance.put(color, sel);
+                                }
+                            }
+                        }
+                        sendMessage(new UseCharacterStudentMapMessage(9, entranceToTable, tableToEntrance));
+                    }
+                    case 10 -> {
+                        Character11 c11 = (Character11) c;
+                        PawnColor color = null;
+                        while (color == null) {
+                            System.out.println("Choose a student color");
+                            try {
+                                color = PawnColor.valueOf(stdin.nextLine());
+                                if (c11.getStudentsColorCount(color) == 0) {
+                                    System.out.println("There are no students with color " + color.name() + " on the character card");
+                                    color = null;
+                                }
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid color");
+                            }
+                        }
+                        sendMessage(new UseCharacterColorMessage(10, color));
+                    }
+                }
                 return true;
             }
         }

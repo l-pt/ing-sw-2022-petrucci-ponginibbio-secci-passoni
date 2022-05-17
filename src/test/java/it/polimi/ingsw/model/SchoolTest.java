@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SchoolTest extends TestCase {
     @Test
@@ -22,6 +21,7 @@ public class SchoolTest extends TestCase {
         assertEquals(school.getEntranceCount(PawnColor.YELLOW), 0);
         assertEquals(school.getEntranceCount(PawnColor.BLUE), 0);
         assertEquals(school.getEntranceCount(PawnColor.GREEN), 0);
+        assertEquals(students, school.getEntrance());
 
         school.removeEntranceStudentsByColor(PawnColor.PINK, 1);
         assertEquals(school.getEntranceCount(PawnColor.PINK), 0);
@@ -53,11 +53,23 @@ public class SchoolTest extends TestCase {
         assertEquals(school.getEntranceCount(PawnColor.BLUE), 1);
         assertEquals(school.getEntranceCount(PawnColor.GREEN), 1);
 
+        Map<PawnColor, List<Student>> map = new HashMap<>();
+        map.put(PawnColor.PINK, List.of(students.get(0)));
+        map.put(PawnColor.RED, Collections.emptyList());
+        map.put(PawnColor.YELLOW, Collections.emptyList());
+        map.put(PawnColor.GREEN, Collections.emptyList());
+        map.put(PawnColor.BLUE, Collections.emptyList());
+
+        assertEquals(map, school.getTables());
+
         assertEquals(school.getTableCount(PawnColor.PINK), 1);
         assertEquals(school.getTableCount(PawnColor.RED), 0);
         assertEquals(school.getTableCount(PawnColor.YELLOW), 0);
         assertEquals(school.getTableCount(PawnColor.BLUE), 0);
         assertEquals(school.getTableCount(PawnColor.GREEN), 0);
+
+        Exception e = assertThrows(IllegalMoveException.class, () -> school.addStudentToTable(PawnColor.PINK));
+        assertEquals("There are no students with color PINK in the entrance", e.getMessage());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.protocol;
 
 import it.polimi.ingsw.protocol.message.*;
+import it.polimi.ingsw.protocol.message.character.*;
 
 /**
  * An enum that contains all message ids and classes
@@ -22,7 +23,13 @@ public enum MessageId {
     SET_MOTHER_NATURE(SetMotherNatureMessage.class),
     ASK_CLOUD(AskCloudMessage.class),
     SET_CLOUD(SetCloudMessage.class),
-    END_TURN(EndTurnMessage.class);
+    END_TURN(EndTurnMessage.class),
+    USE_CHARACTER_COLOR_ISLAND(UseCharacterColorIslandMessage.class),
+    USE_CHARACTER(UseCharacterMessage.class),
+    USE_CHARACTER_ISLAND(UseCharacterIslandMessage.class),
+    USE_CHARACTER_STUDENT_MAP(UseCharacterStudentMapMessage.class),
+    USE_CHARACTER_COLOR(UseCharacterColorMessage.class),
+    END_GAME(EndGameMessage.class);
 
     private Class<? extends Message> messageClass;
 

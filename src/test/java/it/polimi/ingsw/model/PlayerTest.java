@@ -14,6 +14,8 @@ public class PlayerTest extends TestCase {
         Assistant assistant = player.getAssistantFromValue(1);
         assertNotNull(assistant);
         assertEquals(assistant.getValue(), 1);
+        assertEquals(1, assistant.getMoves());
+        assertEquals(Wizard.BLUE, assistant.getWizard());
     }
 
     @Test

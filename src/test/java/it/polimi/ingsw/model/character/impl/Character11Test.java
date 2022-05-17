@@ -4,6 +4,9 @@ import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Character11Test extends TestCase {
@@ -27,5 +30,16 @@ public class Character11Test extends TestCase {
         assertEquals(player1.getSchool().getTableCount(color), tableCount + 1);
         //Check that one student has been extracted from the bag
         assertEquals(match.getStudentBag().size(), bagCount - 1);
+
+        List<PawnColor> absentColors = new ArrayList<>(List.of(PawnColor.values()));
+        for (Student student : character.getStudents()) {
+            absentColors.remove(student.getColor());
+        }
+        PawnColor absentColor = absentColors.get(0);
+        player1.addCoin();
+        player1.addCoin();
+        player1.addCoin();
+        Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), absentColor));
+        assertEquals("There are no students with color " + absentColor.name() + " on this character", e.getMessage());
     }
 }
