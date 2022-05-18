@@ -7,12 +7,13 @@ public class Player {
     private String name;
     private School school;
     private TowerColor towerColor;
-    private transient List<Assistant> assistants;
+    private List<Assistant> assistants;
     private Assistant currentAssistant;
     private Assistant discardPile;
     private int coins;
     private int additionalInfluence;
     private int additionalMoves;
+    private Wizard wizard;
 
     public Player(String name, TowerColor towerColor, Wizard wizard) {
         this.name = name;
@@ -34,6 +35,7 @@ public class Player {
         this.coins = 0;
         this.additionalInfluence = 0;
         this.additionalMoves = 0;
+        this.wizard = wizard;
     }
 
     public String getName() {
@@ -102,5 +104,9 @@ public class Player {
 
     public void setAdditionalMoves(int additionalMoves) {
         this.additionalMoves = additionalMoves;
+    }
+
+    public Wizard getWizard() {
+        return wizard;
     }
 }
