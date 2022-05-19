@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.gui;
+package it.polimi.ingsw.client.gui.component;
 
 import java.awt.Component;
 import java.awt.Container;

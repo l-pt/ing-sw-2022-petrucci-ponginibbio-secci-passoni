@@ -30,8 +30,11 @@ public class TwoPlayersViewGUI extends ViewGUI {
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setPreferredSize(new Dimension(4 * 1000, 1));
         expertPanel = new JPanel();
+        expertPanel.setPreferredSize(new Dimension(1, 3 * 1000));
         cpPanel = new JPanel();
+        cpPanel.setPreferredSize(new Dimension(1, 3 * 1000));
         assistantsPanel = new JPanel();
+        assistantsPanel.setPreferredSize(new Dimension(1, 3 * 1000));
         rightPanel.add(expertPanel);
         rightPanel.add(cpPanel);
         rightPanel.add(assistantsPanel);
