@@ -7,12 +7,9 @@ import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.Character5;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
-import java.io.Console;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.Formatter;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class ViewCLI {
     private ClientCLI client;
@@ -80,31 +77,31 @@ public class ViewCLI {
             formatter.format(counter + "°ISLAND →");
             for (Student student : island.getStudents()) {
                 if (student.getColor().equals(PawnColor.RED)) {
-                    formatter.format("\u001b[1;91m ●");
+                    formatter.format("\u001b[1;91m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.YELLOW)) {
-                    formatter.format("\u001b[1;93m ●");
+                    formatter.format("\u001b[1;93m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.GREEN)) {
-                    formatter.format("\u001b[1;92m ●");
+                    formatter.format("\u001b[1;92m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.BLUE)) {
-                    formatter.format("\u001b[1;94m ●");
+                    formatter.format("\u001b[1;94m ●\u001b[0m");
                 } else {
-                    formatter.format("\u001b[1;95m ●");
+                    formatter.format("\u001b[1;95m ●\u001b[0m");
                 }
             }
             for (Tower tower : island.getTowers()) {
                 if (tower.getColor().equals(TowerColor.BLACK)) {
-                    formatter.format("\u001b[1;90m █");
+                    formatter.format("\u001b[1;90m █\u001b[0m");
                 } else if (tower.getColor().equals(TowerColor.WHITE)) {
-                    formatter.format("\u001b[1;97m █");
+                    formatter.format("\u001b[1;97m █\u001b[0m");
                 } else {
-                    formatter.format("\u001b[38;5;247m █");
+                    formatter.format("\u001b[38;5;247m █\u001b[0m");
                 }
             }
             if (posMotherNature == counter - 1) {
-                formatter.format("\u001b[38;5;208 Ϻ"); //♦?
+                formatter.format("\u001b[38;5;208 Ϻ\u001b[0m"); //♦?
             }
             if ((expert == true) && (island.getNoEntry() > 0)) {
-                formatter.format("\u001b[1;91m Ꭓ\n");
+                formatter.format("\u001b[1;91m Ꭓ\u001b[0m\n");
             } else {
                 formatter.format("\n");
             }
@@ -117,15 +114,15 @@ public class ViewCLI {
             formatter.format(counter + "°CLOUD →");
             for (Student student : cloud.getStudents()) {
                 if (student.getColor().equals(PawnColor.RED)) {
-                    formatter.format("\u001b[1;91m ●");
+                    formatter.format("\u001b[1;91m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.YELLOW)) {
-                    formatter.format("\u001b[1;93m ●");
+                    formatter.format("\u001b[1;93m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.GREEN)) {
-                    formatter.format("\u001b[1;92m ●");
+                    formatter.format("\u001b[1;92m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.BLUE)) {
-                    formatter.format("\u001b[1;94m ●");
+                    formatter.format("\u001b[1;94m ●\u001b[0m");
                 } else {
-                    formatter.format("\u001b[1;95m ●");
+                    formatter.format("\u001b[1;95m ●\u001b[0m");
                 }
             }
             formatter.format("\n");
@@ -139,22 +136,22 @@ public class ViewCLI {
                 formatter.format("  STUDENTS:");
                 for (Student student : ((StudentCharacter) character).getStudents()) {
                     if (student.getColor().equals(PawnColor.RED)) {
-                        formatter.format("\u001b[1;91m ●");
+                        formatter.format("\u001b[1;91m ●\u001b[0m");
                     } else if (student.getColor().equals(PawnColor.YELLOW)) {
-                        formatter.format("\u001b[1;93m ●");
+                        formatter.format("\u001b[1;93m ●\u001b[0m");
                     } else if (student.getColor().equals(PawnColor.GREEN)) {
-                        formatter.format("\u001b[1;92m ●");
+                        formatter.format("\u001b[1;92m ●\u001b[0m");
                     } else if (student.getColor().equals(PawnColor.BLUE)) {
-                        formatter.format("\u001b[1;94m ●");
+                        formatter.format("\u001b[1;94m ●\u001b[0m");
                     } else {
-                        formatter.format("\u001b[1;95m ●");
+                        formatter.format("\u001b[1;95m ●\u001b[0m");
                     }
                 }
             }
             if (character instanceof Character5) {
                 formatter.format("  NO ENTRY:");
                 for (counter = 1; counter <= ((Character5) character).getNoEntry(); ++counter) {
-                    formatter.format("\u001b[1;91m Ꭓ");
+                    formatter.format("\u001b[1;91m Ꭓ\u001b[0m");
                 }
             }
             formatter.format("\n");
@@ -173,15 +170,15 @@ public class ViewCLI {
             formatter.format("ENTRANCE →");
             for (Student student : player.getSchool().getEntrance()) {
                 if (student.getColor().equals(PawnColor.RED)) {
-                    formatter.format("\u001b[1;91m ●");
+                    formatter.format("\u001b[1;91m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.YELLOW)) {
-                    formatter.format("\u001b[1;93m ●");
+                    formatter.format("\u001b[1;93m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.GREEN)) {
-                    formatter.format("\u001b[1;92m ●");
+                    formatter.format("\u001b[1;92m ●\u001b[0m");
                 } else if (student.getColor().equals(PawnColor.BLUE)) {
-                    formatter.format("\u001b[1;94m ●");
+                    formatter.format("\u001b[1;94m ●\u001b[0m");
                 } else {
-                    formatter.format("\u001b[1;95m ●");
+                    formatter.format("\u001b[1;95m ●\u001b[0m");
                 }
             }
             formatter.format("\n");
@@ -189,15 +186,15 @@ public class ViewCLI {
                 formatter.format(pawncolor.toString().toUpperCase() + " TABLE →");
                 for (Student student : player.getSchool().getTables().get(pawncolor)) {
                     if (pawncolor.equals(PawnColor.RED)) {
-                        formatter.format("\u001b[1;91m ●");
+                        formatter.format("\u001b[1;91m ●\u001b[0m");
                     } else if (pawncolor.equals(PawnColor.YELLOW)) {
-                        formatter.format("\u001b[1;93m ●");
+                        formatter.format("\u001b[1;93m ●\u001b[0m");
                     } else if (pawncolor.equals(PawnColor.GREEN)) {
-                        formatter.format("\u001b[1;92m ●");
+                        formatter.format("\u001b[1;92m ●\u001b[0m");
                     } else if (pawncolor.equals(PawnColor.BLUE)) {
-                        formatter.format("\u001b[1;94m ●");
+                        formatter.format("\u001b[1;94m ●\u001b[0m");
                     } else {
-                        formatter.format("\u001b[1;95m ●");
+                        formatter.format("\u001b[1;95m ●\u001b[0m");
                     }
                 }
                 formatter.format("\n");
@@ -205,15 +202,15 @@ public class ViewCLI {
             formatter.format("PROFESSORS →");
             for (Professor professor : player.getSchool().getProfessors()) {
                 if (professor.getColor().equals(PawnColor.RED)) {
-                    formatter.format("\u001b[1;91m ■");
+                    formatter.format("\u001b[1;91m ■\u001b[0m");
                 } else if (professor.getColor().equals(PawnColor.YELLOW)) {
-                    formatter.format("\u001b[1;93m ■");
+                    formatter.format("\u001b[1;93m ■\u001b[0m");
                 } else if (professor.getColor().equals(PawnColor.GREEN)) {
-                    formatter.format("\u001b[1;92m ■");
+                    formatter.format("\u001b[1;92m ■\u001b[0m");
                 } else if (professor.getColor().equals(PawnColor.BLUE)) {
-                    formatter.format("\u001b[1;94m ■");
+                    formatter.format("\u001b[1;94m ■\u001b[0m");
                 } else {
-                    formatter.format("\u001b[1;95m ■");
+                    formatter.format("\u001b[1;95m ■\u001b[0m");
                 }
             }
             formatter.format("\n");
@@ -224,7 +221,7 @@ public class ViewCLI {
             for (Player player : playersOrder) {
                 formatter.format(player.getName().toUpperCase() + "'S COIN RESERVE →");
                 for (counter = 1; counter <= player.getCoins(); ++counter) {
-                    formatter.format("\u001b[1;92m $");
+                    formatter.format("\u001b[1;92m $\u001b[0m");
                 }
                 formatter.format("\n");
             }
@@ -233,7 +230,7 @@ public class ViewCLI {
         //Print towers
         //TODO
 
-        System.out.println(formatter.toString());
+        System.out.println("\r" + formatter.toString());
         formatter.close();
     }
 
