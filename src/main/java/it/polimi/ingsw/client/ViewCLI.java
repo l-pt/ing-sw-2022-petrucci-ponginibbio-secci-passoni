@@ -40,7 +40,161 @@ public class ViewCLI {
         print();
     }
 
+    //To call when game starts
+    public void printTitle() {
+        String eryantis = "░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
+                "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
+                " ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
+                " ░░  ░░ ░░  ░░    ░░    ░░  ░░      ░░ ░░    ░░░░  ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
+                " ░░░░░░     ░░   ░░░     ░░░░       ░░ ░░    ░░ ░  ░░  ░░  ░░  ░░     ░░      ░░░░      \n" +
+                " ░░░░░░     ░░░░░░░      ░░░░      ░░   ░░   ░░ ░░ ░░      ░░         ░░       ░░░░░░   \n" +
+                " ░░  ░░     ░░░░░░        ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░          ░░░░  \n" +
+                " ░░     ░░  ░░  ░░░       ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░      ░░    ░░  \n" +
+                " ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
+                "░░░░░░░░░░ ░░░░░  ░░░   ░░░░░░   ░░░░   ░░░░░░░░░ ░░░    ░░░░░░    ░░░░░░░░   ░░░░░░░   \n" +
+                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \n";
+        System.out.println(eryantis);
+    }
+
+    //Disposizione nell'interfaccia di gioco ancora da vedere
     public void print() {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+        int counter;
+
+        //Student(●)|Tower(█)|Professor(■)|MotherNature(Ϻ/♦)
+        //Print islands
+        counter = 1;
+        for (Island island : islands) {
+            formatter.format(counter + "°ISLAND →");
+            for (Student student : island.getStudents()) {
+                if (student.getColor().equals(PawnColor.RED)) {
+                    formatter.format("\u001b[1;91m ●");
+                } else if (student.getColor().equals(PawnColor.YELLOW)) {
+                    formatter.format("\u001b[1;93m ●");
+                } else if (student.getColor().equals(PawnColor.GREEN)) {
+                    formatter.format("\u001b[1;92m ●");
+                } else if (student.getColor().equals(PawnColor.BLUE)) {
+                    formatter.format("\u001b[1;94m ●");
+                } else {
+                    formatter.format("\u001b[1;95m ●");
+                }
+            }
+            for (Tower tower : island.getTowers()) {
+                if (tower.getColor().equals(TowerColor.BLACK)) {
+                    formatter.format("\u001b[1;90m █");
+                } else if (tower.getColor().equals(TowerColor.WHITE)) {
+                    formatter.format("\u001b[1;97m █");
+                } else {
+                    formatter.format("\u001b[38;5;247m █");
+                }
+            }
+
+            if (posMotherNature == counter - 1) {
+                formatter.format("\u001b[38;5;208 Ϻ\n"); //♦?
+            } else {
+                formatter.format("\n");
+            }
+            ++counter;
+        }
+
+        //Print clouds
+        counter = 1;
+        for (Cloud cloud : clouds) {
+            formatter.format(counter + "°CLOUD →");
+            for (Student student : cloud.getStudents()) {
+                if (student.getColor().equals(PawnColor.RED)) {
+                    formatter.format("\u001b[1;91m ●");
+                } else if (student.getColor().equals(PawnColor.YELLOW)) {
+                    formatter.format("\u001b[1;93m ●");
+                } else if (student.getColor().equals(PawnColor.GREEN)) {
+                    formatter.format("\u001b[1;92m ●");
+                } else if (student.getColor().equals(PawnColor.BLUE)) {
+                    formatter.format("\u001b[1;94m ●");
+                } else {
+                    formatter.format("\u001b[1;95m ●");
+                }
+            }
+            formatter.format("\n");
+            ++counter;
+        }
+
+        //Print assistants
+        counter = 1;
+        for (Assistant assistant : assistants) {
+            formatter.format(counter + "°ASSISTANT → Value:%1$d  Moves:%2$d\n", assistant.getValue(), assistant.getMoves());
+            ++counter;
+        }
+
+        //Print players' schools
+        for (Player player : playersOrder) {
+            formatter.format(player.getName().toUpperCase() + "'S SCHOOL\n");
+            formatter.format("ENTRANCE →");
+            for (Student student : player.getSchool().getEntrance()) {
+                if (student.getColor().equals(PawnColor.RED)) {
+                    formatter.format("\u001b[1;91m ●");
+                } else if (student.getColor().equals(PawnColor.YELLOW)) {
+                    formatter.format("\u001b[1;93m ●");
+                } else if (student.getColor().equals(PawnColor.GREEN)) {
+                    formatter.format("\u001b[1;92m ●");
+                } else if (student.getColor().equals(PawnColor.BLUE)) {
+                    formatter.format("\u001b[1;94m ●");
+                } else {
+                    formatter.format("\u001b[1;95m ●");
+                }
+            }
+            formatter.format("\n");
+            for (PawnColor pawncolor : player.getSchool().getTables().keySet()) {
+                formatter.format(pawncolor.toString().toUpperCase() + " TABLE →");
+                for (Student student : player.getSchool().getTables().get(pawncolor)) {
+                    if (pawncolor.equals(PawnColor.RED)) {
+                        formatter.format("\u001b[1;91m ●");
+                    } else if (pawncolor.equals(PawnColor.YELLOW)) {
+                        formatter.format("\u001b[1;93m ●");
+                    } else if (pawncolor.equals(PawnColor.GREEN)) {
+                        formatter.format("\u001b[1;92m ●");
+                    } else if (pawncolor.equals(PawnColor.BLUE)) {
+                        formatter.format("\u001b[1;94m ●");
+                    } else {
+                        formatter.format("\u001b[1;95m ●");
+                    }
+                }
+                formatter.format("\n");
+            }
+            formatter.format("PROFESSORS →");
+            for (Professor professor : player.getSchool().getProfessors()) {
+                if (professor.getColor().equals(PawnColor.RED)) {
+                    formatter.format("\u001b[1;91m ■");
+                } else if (professor.getColor().equals(PawnColor.YELLOW)) {
+                    formatter.format("\u001b[1;93m ■");
+                } else if (professor.getColor().equals(PawnColor.GREEN)) {
+                    formatter.format("\u001b[1;92m ■");
+                } else if (professor.getColor().equals(PawnColor.BLUE)) {
+                    formatter.format("\u001b[1;94m ■");
+                } else {
+                    formatter.format("\u001b[1;95m ■");
+                }
+            }
+            formatter.format("\n");
+        }
+
+        //Print players' coin reserve
+        for (Player player : playersOrder) {
+            formatter.format(player.getName().toUpperCase() + "'S COIN RESERVE →");
+            for (counter = 1; counter <= player.getCoins(); ++counter) {
+                formatter.format("\u001b[1;92m $");
+            }
+            formatter.format("\n");
+        }
+
+        //Print towers
+        //TODO
+
+        System.out.println(formatter.toString());
+        formatter.close();
+    }
+
+    public void printTab() {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);
 
@@ -73,7 +227,7 @@ public class ViewCLI {
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
         formatter.format("*                                                                ISLANDS                                                                *\n");
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        formatter.format("*    NUMBER     *  TOWERS' NUMBER   *   TOWERS' COLOR   *    RED PAWN   *  YELLOW PAWN  *  GREEN PAWN   *   BLUE PAWN   *   PINK PAWN   *\n");
+        formatter.format("*    NUMBER     *   TOWERS NUMBER   *    TOWERS COLOR   *    RED PAWN   *  YELLOW PAWN  *  GREEN PAWN   *   BLUE PAWN   *   PINK PAWN   *\n");
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
         counter = 0;
         for (Island island : islands) {
