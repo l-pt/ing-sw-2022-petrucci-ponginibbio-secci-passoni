@@ -14,7 +14,7 @@ public class TwoPlayersViewGUI extends ViewGUI {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
 
         islandsPanel = new JPanel();
-        islandsPanel.setPreferredSize(new Dimension(5 * 1000, 1));
+        islandsPanel.setPreferredSize(new Dimension(4 * 1000, 1));
         mainPanel.add(islandsPanel);
 
         JPanel boardsPanel = new JPanel();
@@ -28,7 +28,7 @@ public class TwoPlayersViewGUI extends ViewGUI {
 
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        rightPanel.setPreferredSize(new Dimension(4 * 1000, 1));
+        rightPanel.setPreferredSize(new Dimension(3 * 1000, 1));
         expertPanel = new JPanel();
         expertPanel.setPreferredSize(new Dimension(1, 3 * 1000));
         cpPanel = new JPanel();

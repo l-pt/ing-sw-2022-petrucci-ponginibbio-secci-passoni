@@ -25,11 +25,6 @@ public class CloudPanel extends JPanel {
             };
         }
         JLabel[] grid = new JLabel[DIM * DIM];
-        for (int i = 0; i < DIM; ++i) {
-            for (int j = 0; j < DIM; ++j) {
-                grid[i * DIM + j] = new JLabel();
-            }
-        }
         int studentsIndex = 0;
         for (int i = DIM / 2 - 1; i <= DIM / 2 && studentsIndex < students.size(); ++i) {
             for (int j = DIM / 2 - 1; j <= DIM / 2 && studentsIndex < students.size(); ++j) {
@@ -40,6 +35,11 @@ public class CloudPanel extends JPanel {
                     throw new RuntimeException(e);
                 };
                 grid[i * DIM + j] = new JLabel(" ", new DynamicIcon(studentImage), SwingConstants.TRAILING);
+            }
+        }
+        for (int i = 0; i < DIM * DIM; ++i) {
+            if (grid[i] == null) {
+                grid[i] = new JLabel();
             }
         }
         for (JLabel lbl : grid) {

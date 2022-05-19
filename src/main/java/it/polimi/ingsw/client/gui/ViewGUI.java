@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.gui.component.CloudPanel;
 import it.polimi.ingsw.client.gui.component.DynamicIcon;
+import it.polimi.ingsw.client.gui.component.IslandPanel;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
@@ -101,7 +102,27 @@ public abstract class ViewGUI {
     private void drawIslands() {
         islandsPanel.removeAll();
         islandsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Islands", TitledBorder.CENTER, TitledBorder.CENTER));
-        //TODO
+        islandsPanel.setLayout(new GridLayout(5, 3));
+
+        JPanel[] islandsGrid = new JPanel[5 * 3];
+        int[] islandIndexes = new int[]{0, 1, 2, 5, 8, 11, 14, 13, 12, 9, 6, 3};
+        int distance = islandIndexes.length / islands.size();
+
+        int i = 0;
+        for (Island island : islands) {
+            islandsGrid[islandIndexes[i]] = new IslandPanel(island);
+            i += distance;
+        }
+
+        for (i = 0; i < islandsGrid.length; ++i) {
+            if (islandsGrid[i] == null) {
+                islandsGrid[i] = new JPanel();
+            }
+        }
+
+        for (JPanel panel : islandsGrid) {
+            islandsPanel.add(panel);
+        }
     }
 
     private void drawCloudsAndProfessors() {
