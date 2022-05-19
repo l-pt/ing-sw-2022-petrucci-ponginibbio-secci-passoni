@@ -3,8 +3,13 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.model.character.StudentCharacter;
+import it.polimi.ingsw.model.character.impl.Character5;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
+import java.io.Console;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +45,7 @@ public class ViewCLI {
         print();
     }
 
-    //To call when game starts
+    //To call when the game starts
     public void printTitle() {
         String eryantis = "░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
                 "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
@@ -56,13 +61,19 @@ public class ViewCLI {
         System.out.println(eryantis);
     }
 
-    //Disposizione nell'interfaccia di gioco ancora da vedere
+    //Print the description of the elements of the game interface
+    public void printDescription() {
+        String description = "To write";
+        System.out.println(description);
+    }
+
+    //Arrangement to see
     public void print() {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);
         int counter;
 
-        //Student(●)|Tower(█)|Professor(■)|MotherNature(Ϻ/♦)
+        //Student(●)|Tower(█)|Professor(■)|MotherNature(Ϻ/♦)|NoEntry(Ꭓ)
         //Print islands
         counter = 1;
         for (Island island : islands) {
@@ -89,9 +100,11 @@ public class ViewCLI {
                     formatter.format("\u001b[38;5;247m █");
                 }
             }
-
             if (posMotherNature == counter - 1) {
-                formatter.format("\u001b[38;5;208 Ϻ\n"); //♦?
+                formatter.format("\u001b[38;5;208 Ϻ"); //♦?
+            }
+            if ((expert == true) && (island.getNoEntry() > 0)) {
+                formatter.format("\u001b[1;91m Ꭓ\n");
             } else {
                 formatter.format("\n");
             }
@@ -119,16 +132,44 @@ public class ViewCLI {
             ++counter;
         }
 
+        //Print characters
+        for (Character character : characters) {
+            formatter.format("%1$d°CHARACTER →  COST: %2$d", character.getId(), character.getCost());
+            if (character instanceof StudentCharacter) {
+                formatter.format("  STUDENTS:");
+                for (Student student : ((StudentCharacter) character).getStudents()) {
+                    if (student.getColor().equals(PawnColor.RED)) {
+                        formatter.format("\u001b[1;91m ●");
+                    } else if (student.getColor().equals(PawnColor.YELLOW)) {
+                        formatter.format("\u001b[1;93m ●");
+                    } else if (student.getColor().equals(PawnColor.GREEN)) {
+                        formatter.format("\u001b[1;92m ●");
+                    } else if (student.getColor().equals(PawnColor.BLUE)) {
+                        formatter.format("\u001b[1;94m ●");
+                    } else {
+                        formatter.format("\u001b[1;95m ●");
+                    }
+                }
+            }
+            if (character instanceof Character5) {
+                formatter.format("  NO ENTRY:");
+                for (counter = 1; counter <= ((Character5) character).getNoEntry(); ++counter) {
+                    formatter.format("\u001b[1;91m Ꭓ");
+                }
+            }
+            formatter.format("\n");
+        }
+
         //Print assistants
         counter = 1;
         for (Assistant assistant : assistants) {
-            formatter.format(counter + "°ASSISTANT → Value:%1$d  Moves:%2$d\n", assistant.getValue(), assistant.getMoves());
+            formatter.format("%1$d°ASSISTANT →  Value: %2$d  Moves: %3$d\n", counter, assistant.getValue(), assistant.getMoves());
             ++counter;
         }
 
         //Print players' schools
         for (Player player : playersOrder) {
-            formatter.format(player.getName().toUpperCase() + "'S SCHOOL\n");
+            formatter.format(player.getName().toUpperCase() + "'S SCHOOL ↓\n");
             formatter.format("ENTRANCE →");
             for (Student student : player.getSchool().getEntrance()) {
                 if (student.getColor().equals(PawnColor.RED)) {
@@ -179,12 +220,14 @@ public class ViewCLI {
         }
 
         //Print players' coin reserve
-        for (Player player : playersOrder) {
-            formatter.format(player.getName().toUpperCase() + "'S COIN RESERVE →");
-            for (counter = 1; counter <= player.getCoins(); ++counter) {
-                formatter.format("\u001b[1;92m $");
+        if (expert == true) {
+            for (Player player : playersOrder) {
+                formatter.format(player.getName().toUpperCase() + "'S COIN RESERVE →");
+                for (counter = 1; counter <= player.getCoins(); ++counter) {
+                    formatter.format("\u001b[1;92m $");
+                }
+                formatter.format("\n");
             }
-            formatter.format("\n");
         }
 
         //Print towers

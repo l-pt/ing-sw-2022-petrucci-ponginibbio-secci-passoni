@@ -36,4 +36,6 @@ public class Character5 extends Character implements IslandCharacter {
     public void setNoEntry(int noEntry) {
         this.noEntry = noEntry;
     }
+
+    public int getNoEntry() {return noEntry;}
 }
