@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.gui;
 
+import it.polimi.ingsw.client.gui.component.CloudPanel;
+import it.polimi.ingsw.client.gui.component.DynamicIcon;
+import it.polimi.ingsw.client.gui.component.IslandPanel;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
@@ -99,40 +102,65 @@ public abstract class ViewGUI {
     private void drawIslands() {
         islandsPanel.removeAll();
         islandsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Islands", TitledBorder.CENTER, TitledBorder.CENTER));
-        //TODO
+        islandsPanel.setLayout(new GridLayout(5, 3));
+
+        JPanel[] islandsGrid = new JPanel[5 * 3];
+        int[] islandIndexes = new int[]{0, 1, 2, 5, 8, 11, 14, 13, 12, 9, 6, 3};
+        int distance = islandIndexes.length / islands.size();
+
+        int i = 0;
+        for (Island island : islands) {
+            islandsGrid[islandIndexes[i]] = new IslandPanel(island);
+            i += distance;
+        }
+
+        for (i = 0; i < islandsGrid.length; ++i) {
+            if (islandsGrid[i] == null) {
+                islandsGrid[i] = new JPanel();
+            }
+        }
+
+        for (JPanel panel : islandsGrid) {
+            islandsPanel.add(panel);
+        }
     }
 
-    protected void drawCloudsAndProfessors() {
+    private void drawCloudsAndProfessors() {
         cpPanel.removeAll();
         cpPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Clouds & Professors", TitledBorder.CENTER, TitledBorder.CENTER));
         cpPanel.setLayout(new BoxLayout(cpPanel, BoxLayout.Y_AXIS));
 
-        JPanel cloudsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        /*BufferedImage cloudImage;
-        try {
-            cloudImage = ImageIO.read(getClass().getResource("/Moneta_base.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        JPanel cloudsPanel = new JPanel(new GridLayout(1, clouds.size()));
+        cloudsPanel.setPreferredSize(new Dimension(1, 85 * 1000));
         for (Cloud cloud : clouds) {
-            cloudsPanel.add(new JLabel(" ", new StretchIcon(cloudImage, false), SwingConstants.TRAILING));
-            //TODO draw students on top of this
-        }*/
+            cloudsPanel.add(new CloudPanel(cloud.getStudents()));
+        }
         cpPanel.add(cloudsPanel);
 
-        JPanel professorsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //TODO draw professors
+        JPanel professorsPanel = new JPanel(new GridLayout(1, professors.size() + 2, 10, 5));
+        professorsPanel.setPreferredSize(new Dimension(1, 15 * 1000));
+        professorsPanel.add(new JLabel());
+        for (Professor professor : professors) {
+            BufferedImage professorImage;
+            try {
+                professorImage = ImageIO.read(getClass().getResource("/professors/" + professor.getColor().name() + ".png"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            professorsPanel.add(new JLabel(" ", new DynamicIcon(professorImage), SwingConstants.TRAILING));
+        }
+        professorsPanel.add(new JLabel());
         cpPanel.add(professorsPanel);
     }
 
-    protected void drawExpertMode() {
+    private void drawExpertMode() {
         expertPanel.removeAll();
         expertPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Expert mode", TitledBorder.CENTER, TitledBorder.CENTER));
         if (!expert) {
             expertPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
             expertPanel.add(new JLabel("Expert mode is not enabled for this match"));
         } else {
-            expertPanel.setLayout(new BoxLayout(expertPanel, BoxLayout.Y_AXIS));
+            expertPanel.setLayout(new BorderLayout(10, 10));
             JPanel coinsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
             BufferedImage coinImage;
             try {
@@ -144,7 +172,7 @@ public abstract class ViewGUI {
             lbl.setPreferredSize(new Dimension(40, 40));
             coinsPanel.add(lbl);
             coinsPanel.add(new JLabel(Integer.toString(coinReserve)));
-            expertPanel.add(coinsPanel);
+            expertPanel.add(coinsPanel, BorderLayout.PAGE_START);
 
             JPanel charactersPanel = new JPanel(new GridLayout(1, 3, 7, 0));
             for (Character character : characters) {
@@ -159,7 +187,7 @@ public abstract class ViewGUI {
                 charactersPanel.add(lbl);
                 //TODO draw characters on them
             }
-            expertPanel.add(charactersPanel);
+            expertPanel.add(charactersPanel, BorderLayout.CENTER);
         }
     }
 
@@ -206,6 +234,10 @@ public abstract class ViewGUI {
         }
 
         playerPanel.add(playerInfoPanel, BorderLayout.PAGE_START);
+        drawBoard(playerPanel, player);
+    }
+
+    private void drawBoard(JPanel playerPanel, Player player) {
         //Add school
         BufferedImage boardImage;
         try {
@@ -214,11 +246,11 @@ public abstract class ViewGUI {
             throw new RuntimeException(e);
         }
         //TODO draw students, towers, professors on the board
-        lbl = new JLabel(new DynamicIcon(boardImage));
+        JLabel lbl = new JLabel(new DynamicIcon(boardImage));
         playerPanel.add(lbl, BorderLayout.CENTER);
     }
 
-    protected void drawAssistants() {
+    private void drawAssistants() {
         assistantsPanel.removeAll();
         assistantsPanel.setLayout(new GridLayout(2, 5, 5, 5));
         assistantsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Your assistants", TitledBorder.CENTER, TitledBorder.CENTER));
