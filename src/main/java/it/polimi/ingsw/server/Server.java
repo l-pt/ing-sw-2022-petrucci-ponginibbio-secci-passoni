@@ -47,6 +47,10 @@ public class Server {
     }
 
     //methods
+    public List<Controller> getControllers() {
+        return controllers;
+    }
+
     public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
 
     public synchronized MatchParameters getMatchParameters() {
@@ -144,66 +148,25 @@ public class Server {
             List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
             if(readyConnections.size() >= matchParameters.getPlayerNumber()){
                 System.out.println("Starting match now...");
-
-                List<Player> players = new ArrayList<>(matchParameters.getPlayerNumber());
-                List<Team> teams = new ArrayList<>(matchParameters.getPlayerNumber() == 4 ? 2 : matchParameters.getPlayerNumber());
-                switch (matchParameters.getPlayerNumber()) {
-                    case 4 -> {
-                        List<Player> white = List.of(
-                                new Player(readyConnections.get(0).getName(), TowerColor.WHITE, Wizard.values()[0]),
-                                new Player(readyConnections.get(1).getName(), TowerColor.WHITE, Wizard.values()[1])
-                        );
-                        List<Player> black = List.of(
-                                new Player(readyConnections.get(2).getName(), TowerColor.BLACK, Wizard.values()[2]),
-                                new Player(readyConnections.get(3).getName(), TowerColor.BLACK, Wizard.values()[3])
-                        );
-                        players.addAll(white);
-                        players.addAll(black);
-                        teams.add(new Team(white, TowerColor.WHITE));
-                        teams.add(new Team(black, TowerColor.BLACK));
-                    }
-                    case 3, 2 -> {
-                        for (int i = 0; i < matchParameters.getPlayerNumber(); ++i) {
-                            players.add(new Player(readyConnections.get(i).getName(), TowerColor.values()[i], Wizard.values()[i]));
-                        }
-                        //2/3 player matches have teams made of just one player
-                        for (Player player : players) {
-                            teams.add(new Team(List.of(player), player.getTowerColor()));
-                        }
-                    }
-                    default -> throw new AssertionError();
-                }
-
-                Controller controller = new Controller(this, teams, players, matchParameters.isExpert());
+                Controller controller = new Controller(this, readyConnections);
                 controllers.add(controller);
                 for (Connection c : readyConnections) {
                     connectionControllerMap.put(c, controller);
                 }
-                for (int i = 0; i < readyConnections.size(); ++i){
-                    readyConnections.get(i).sendMessage(new UpdateViewMessage(
-                        controller.getMatch().getPlayersOrder().get(i).getAssistants(),
-                        controller.getMatch().getIslands(),
-                        controller.getMatch().getPlayersOrder(),
-                        controller.getMatch().getPosMotherNature(),
-                        controller.getMatch().getClouds(),
-                        controller.getMatch().getProfessors(),
-                        controller.getMatch().getCoins(),
-                            controller.getMatch().getCharacters(),
-                            controller.getMatch().isExpert()
-                    ));
-                }
-
-                readyConnections.get(0).sendMessage(new AskAssistantMessage());
 
                 matchParameters = null;
                 firstConnection = null;
-                waitingConnections.removeAll(readyConnections);
                 for (Connection c : waitingConnections) {
                     c.close();
                 }
+                waitingConnections.removeAll(readyConnections);
                 waitingConnections.clear();
             }
         }
+    }
+
+    public void close(){
+        serverSocketThread.close();
     }
 
     /**
@@ -229,7 +192,6 @@ public class Server {
                 controller.handleClientMessage(connection, message);
             }
         }
-
         //TODO call this when the match finishes
         //serverSocketThread.close();
     }
@@ -283,7 +245,7 @@ public class Server {
         }
     }
 
-    private static class MessageQueueEntry {
+    static class MessageQueueEntry {
         private Connection connection;
         private Message message;
 
@@ -305,7 +267,7 @@ public class Server {
      * The MatchParameters class contains the two parameters needed to start a match.
      * They are requested to the first player that connects to the lobby
      */
-    protected static class MatchParameters {
+    public static class MatchParameters {
         private int playerNumber;
         private boolean expert;
 

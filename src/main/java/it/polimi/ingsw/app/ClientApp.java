@@ -8,8 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class ClientApp
-{
+public class ClientApp {
     public static void main(String[] args){
         Scanner stdin = new Scanner(System.in);
         String ip, mod;
