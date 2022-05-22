@@ -152,6 +152,11 @@ public class ClientCLI extends Client{
         if(view.isExpert() && (view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(1).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(2).getCost())){
+
+
+            System.out.println(view.getPlayerFromName(this.name).getCoins());
+
+
             String character = null;
             while (character == null) {
                 System.out.println("Do you want to play a character card? (yes/no)");
@@ -374,25 +379,6 @@ public class ClientCLI extends Client{
             } catch (NumberFormatException e) {
                 System.out.println("Invalid number formatting");
             }
-        }
-    }
-    
-    public static void clrscr(){
-        try{
-            String operatingSystem = System.getProperty("os.name"); //Check the current operating system
-
-            if(operatingSystem.contains("Windows")){
-                ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "cls");
-                Process startProcess = pb.inheritIO().start();
-                startProcess.waitFor();
-            } else {
-                ProcessBuilder pb = new ProcessBuilder("clear");
-                Process startProcess = pb.inheritIO().start();
-
-                startProcess.waitFor();
-            }
-        }catch(Exception e){
-            System.out.println(e);
         }
     }
 }

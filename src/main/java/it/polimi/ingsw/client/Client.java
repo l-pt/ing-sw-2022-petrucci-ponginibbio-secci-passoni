@@ -23,6 +23,10 @@ public abstract class Client {
         usedCharacter = false;
     }
 
+    public String getName() {
+        return name;
+    }
+
     /**
      * Send a message to the server
      */
@@ -70,5 +74,4 @@ public abstract class Client {
         }
         System.exit(0);
     }
-
 }

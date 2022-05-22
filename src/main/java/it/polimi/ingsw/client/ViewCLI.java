@@ -40,7 +40,6 @@ public class ViewCLI {
         characters = message.getCharacters();
         expert = message.isExpert();
 
-        ClientCLI.clrscr();
         print();
     }
 

@@ -47,6 +47,10 @@ public class Server {
     }
 
     //methods
+    public List<Controller> getControllers() {
+        return controllers;
+    }
+
     public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
 
     public synchronized MatchParameters getMatchParameters() {
@@ -232,6 +236,10 @@ public class Server {
 
         //TODO call this when the match finishes
         //serverSocketThread.close();
+    }
+
+    public void close() {
+        serverSocketThread.close();
     }
 
     /**
