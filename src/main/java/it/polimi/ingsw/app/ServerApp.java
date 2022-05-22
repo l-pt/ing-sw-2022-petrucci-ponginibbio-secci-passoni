@@ -4,10 +4,10 @@ import it.polimi.ingsw.server.Server;
 
 import java.io.IOException;
 
-public class ServerApp
-{
+public class ServerApp {
+    private static Server server;
+
     public static void main( String[] args ) {
-        Server server;
         try {
             server = new Server();
             server.run();
@@ -16,6 +16,9 @@ public class ServerApp
         } catch (InterruptedException e) {
             System.err.println("Concurrency system error");
         }
+    }
 
+    public static Server getServer() {
+        return server;
     }
 }
