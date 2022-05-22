@@ -59,6 +59,7 @@ public class Controller {
 
         for (int i = 0; i < readyConnections.size(); ++i){
             readyConnections.get(i).sendMessage(new UpdateViewMessage(
+                    getMatch().getTeams(),
                     getMatch().getPlayersOrder().get(i).getAssistants(),
                     getMatch().getIslands(),
                     getMatch().getPlayersOrder(),
