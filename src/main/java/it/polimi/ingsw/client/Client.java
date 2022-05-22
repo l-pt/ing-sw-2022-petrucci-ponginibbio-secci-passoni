@@ -74,5 +74,4 @@ public abstract class Client {
         }
         System.exit(0);
     }
-
 }

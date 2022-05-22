@@ -1,17 +1,17 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.app.ServerApp;
 import it.polimi.ingsw.client.ClientCLI;
 import it.polimi.ingsw.model.IllegalMoveException;
-import it.polimi.ingsw.protocol.message.*;
+import it.polimi.ingsw.server.Server.MatchParameters;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class ServerTest extends TestCase {
     @Test
-    public void connectionCLITest() throws IOException {
+    public void setupMatchParameters() throws IOException, InterruptedException, IllegalMoveException {
         Server server = new Server();
         Thread t = new Thread(() -> {
             try {
@@ -24,39 +24,57 @@ public class ServerTest extends TestCase {
         });
         t.start();
 
-        System.setIn(new ByteArrayInputStream("test\nt\n1\n2\ny\nyes\n5\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("test\nt\n1\n2\ny\nyes\n2\n".getBytes()));
         ClientCLI client1 = new ClientCLI("127.0.0.1", 61863);
+        Thread t1 = new Thread(() -> {
+            try {
+                client1.run();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        t1.start();
 
+        do{
 
-        client1.handleLobbyMessage(new AskUsernameMessage());
+        }while (server.getMatchParameters() == null);
+        t1.interrupt();
+
         assertEquals("test", client1.getName());
-        client1.handleLobbyMessage(new AskPlayerNumberMessage());
-
-        client1.handleLobbyMessage(new AskExpertMessage());
-
+        assertEquals(2, server.getMatchParameters().getPlayerNumber());
+        assertEquals(true, server.getMatchParameters().isExpert());
         assertEquals(1, server.getWaitingConnections().size());
 
-        System.setIn(new ByteArrayInputStream("test1\n4\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("test\ntest1\n2\n4\n".getBytes()));
         ClientCLI client2 = new ClientCLI("127.0.0.1", 61863);
-        client2.handleLobbyMessage(new AskUsernameMessage());
+        Thread t2 = new Thread(() -> {
+            try {
+                client2.run();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        t2.start();
+        do{
 
+        }while (server.getControllers().size() == 0);
+        t1.interrupt();
         assertEquals("test1", client2.getName());
-        assertEquals(2, server.getWaitingConnections().size());
+        assertEquals(0, server.getWaitingConnections().size());
+        assertEquals(1, server.getControllers().size());
+        do{
 
-
-        client1.handleGameMessage(new AskAssistantMessage());
-
-        client2.handleGameMessage(new AskAssistantMessage());
-
-
-        assertEquals(2, server.getWaitingConnections().size());
+        }while (server.getControllers().get(0).getMatch().getPlayersOrder().get(0).getCurrentAssistant() == null ||
+                server.getControllers().get(0).getMatch().getPlayersOrder().get(1).getCurrentAssistant() == null);
+        assertEquals(2, server.getControllers().get(0).getMatch().getPlayerFromName("test").getCurrentAssistant().getValue());
+        assertEquals(4, server.getControllers().get(0).getMatch().getPlayerFromName("test1").getCurrentAssistant().getValue());
+        assertEquals("test", server.getControllers().get(0).getMatch().getPlayersOrder().get(0).getName());
+        assertEquals("test1", server.getControllers().get(0).getMatch().getPlayersOrder().get(1).getName());
 
         //server.getControllers().get(0).getMatch().updateView(server.getConnectionsFromController(server.getControllers().get(0)));
 
         /*System.setIn(new ByteArrayInputStream("3\n".getBytes()));
         client2.handleGameMessage(new AskAssistantMessage());*/
-
         server.close();
     }
-
 }

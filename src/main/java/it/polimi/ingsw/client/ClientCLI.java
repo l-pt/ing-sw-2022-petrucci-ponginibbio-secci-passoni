@@ -211,6 +211,11 @@ public class ClientCLI extends Client{
         if(view.isExpert() && (view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(1).getCost() ||
                 view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(2).getCost())){
+
+
+            System.out.println(view.getPlayerFromName(this.name).getCoins());
+
+
             String character = null;
             while (character == null) {
                 System.out.println("Do you want to play a character card? (yes/no)");

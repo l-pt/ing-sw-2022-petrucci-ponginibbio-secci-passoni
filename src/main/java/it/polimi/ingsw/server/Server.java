@@ -196,6 +196,10 @@ public class Server {
         //serverSocketThread.close();
     }
 
+    public void close() {
+        serverSocketThread.close();
+    }
+
     /**
      * The ServerSocketThread class starts the ServerSocket to listen for new TCP connections.
      * It adds new connections to the following Lists: connections, waitingConnections
