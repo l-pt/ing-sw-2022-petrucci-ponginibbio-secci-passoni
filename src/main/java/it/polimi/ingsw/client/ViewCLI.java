@@ -76,6 +76,7 @@ public class ViewCLI {
         //Student(●)|Tower(█)|Professor(■)|MotherNature(Ϻ/♦)|NoEntry(Ꭓ)
         //Print islands
         counter = 1;
+        formatter.format("ISLANDS ↓\n");
         for (Island island : islands) {
             formatter.format(counter + "°ISLAND →");
             for (Student student : island.getStudents()) {
@@ -113,6 +114,7 @@ public class ViewCLI {
 
         //Print clouds
         counter = 1;
+        formatter.format("CLOUDS ↓\n");
         for (Cloud cloud : clouds) {
             formatter.format(counter + "°CLOUD →");
             for (Student student : cloud.getStudents()) {
@@ -133,6 +135,7 @@ public class ViewCLI {
         }
 
         //Print characters
+        formatter.format("CHARACTERS ↓\n");
         for (Character character : characters) {
             formatter.format("%1$d°CHARACTER →  COST: %2$d", character.getId(), character.getCost());
             if (character instanceof StudentCharacter) {
@@ -162,12 +165,14 @@ public class ViewCLI {
 
         //Print assistants
         counter = 1;
+        formatter.format("YOUR ASSISTANTS ↓\n");
         for (Assistant assistant : assistants) {
             formatter.format("%1$d°ASSISTANT →  Value: %2$d  Moves: %3$d\n", counter, assistant.getValue(), assistant.getMoves());
             ++counter;
         }
 
         //Print current assistants
+        formatter.format("ASSISTANTS PLAYED IN THIS ROUND ↓\n");
         for (Player player : playersOrder) {
             if (player.getCurrentAssistant() == null) {
                 formatter.format("%1$s HASN'T PLAYED AN ASSISTANT YET\n", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
@@ -178,6 +183,7 @@ public class ViewCLI {
         }
 
         //Print discard piles
+        formatter.format("DISCARD PILES ↓\n");
         for (Player player : playersOrder) {
             if (player.getDiscardPile() == null) {
                 formatter.format("%1$s'S DISCARD PILE IS EMPTY\n");
@@ -239,6 +245,7 @@ public class ViewCLI {
         }
 
         //Print players' coin reserve
+        formatter.format("COIN RESERVES ↓\n");
         if (expert == true) {
             for (Player player : playersOrder) {
                 formatter.format(player.getName().toUpperCase() + "'S COIN RESERVE →");
@@ -251,6 +258,7 @@ public class ViewCLI {
 
         //Print teams
         counter = 1;
+        formatter.format("TEAMS ↓\n");
         for (Team team : teams) {
             formatter.format("%1$d°TEAM →  MEMBERS:", counter);
             for (Player player : team.getPlayers()) {
