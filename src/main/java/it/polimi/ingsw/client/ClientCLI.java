@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.character.impl.Character1;
 import it.polimi.ingsw.model.character.impl.Character11;
 import it.polimi.ingsw.model.character.impl.Character7;
 import it.polimi.ingsw.protocol.Message;
+import it.polimi.ingsw.protocol.MessageId;
 import it.polimi.ingsw.protocol.message.*;
 import it.polimi.ingsw.protocol.message.character.*;
 
@@ -24,27 +25,82 @@ public class ClientCLI extends Client{
     private Scanner stdin;
     private ViewCLI view;
 
-    public ClientCLI(String ip, int port){
+    public ClientCLI(String ip, int port) throws IOException {
         super(ip, port);
         stdin = new Scanner(System.in);
+        socket = new Socket(ip, port);
+        in = new InputStreamReader(socket.getInputStream());
+        out = new OutputStreamWriter(socket.getOutputStream());
     }
 
     @Override
     public void run() throws IOException {
-        socket = new Socket(ip, port);
-        in = new InputStreamReader(socket.getInputStream());
-        out = new OutputStreamWriter(socket.getOutputStream());
+
 
         try {
-            lobbyLoop();
-            gameLoop();
+            lobby();
+            game();
         } catch (IOException e) {
             System.out.println("Disconnected : " + e.getMessage());
             closeProgram();
         }
     }
 
-    private void gameLoop() throws IOException {
+    /**
+     * Loop executed when the client is inside the lobby
+     * Client waits for server questions about username, max player number and expert mode
+     */
+    public void lobby() throws IOException {
+        Message msg;
+        while (true) {
+            //Wait for a server message
+            try {
+                msg = readMessage();
+                handleLobbyMessage(msg);
+            } catch (JsonSyntaxException e) {
+                System.out.println("Server sent invalid message");
+                closeProgram();
+                return;
+            }
+        }
+    }
+    public void handleLobbyMessage(Message msg) throws IOException {
+        //We have received a server message, check its Type to answer appropriately
+        switch (msg.getMessageId()) {
+            case ERROR -> {
+                System.out.println("Server error: " + ((ErrorMessage) msg).getError());
+            }
+            case ASK_USERNAME -> {
+                System.out.println("Insert username: ");
+                String username = stdin.nextLine();
+                sendMessage(new SetUsernameMessage(username));
+                name = username;
+            }
+            case ASK_PLAYER_NUMBER -> {
+                int playerNumber = readInt("Insert player number: ", n -> n >= 2 && n <= 4, "Player number must be between 2 and 4");
+                sendMessage(new SetPlayerNumberMessage(playerNumber));
+            }
+            case ASK_EXPERT -> {
+                String expert = null;
+                while (expert == null) {
+                    System.out.println("Activate expert mode? yes/no: ");
+                    expert = stdin.nextLine();
+                    if (!expert.equals("yes") && !expert.equals("no")) {
+                        System.out.println("Answer must be yes or no");
+                        expert = null;
+                    }
+                }
+                sendMessage(new SetExpertMessage(expert.equals("yes")));
+            }
+            case UPDATE_VIEW -> {
+                view = new ViewCLI(this);
+                view.handleUpdateView((UpdateViewMessage) msg);
+                return;
+            }
+        }
+    }
+
+    public void game() throws IOException {
         boolean running = true;
         System.out.println("Starting game loop");
         while (running) {
@@ -52,100 +108,103 @@ public class ClientCLI extends Client{
             //Wait for a server message
             try {
                 msg = readMessage();
+                handleGameMessage(msg);
+                if(msg.getMessageId().equals(MessageId.END_GAME))
+                    running = false;
             } catch (JsonSyntaxException e) {
                 System.out.println("Server sent invalid message");
                 closeProgram();
                 return;
             }
-            switch (msg.getMessageId()) {
-                case UPDATE_VIEW -> {
-                    view.handleUpdateView((UpdateViewMessage) msg);
+        }
+        closeProgram();
+    }
+
+    public void handleGameMessage(Message msg) throws IOException {
+        switch (msg.getMessageId()) {
+            case UPDATE_VIEW -> {
+                view.handleUpdateView((UpdateViewMessage) msg);
+            }
+            case ASK_ASSISTANT -> {
+                int assistant = readInt("What assistant do you want to play?");
+                sendMessage(new SetAssistantMessage(assistant));
+                System.out.println("Waiting for other players");
+            }
+            case ASK_ENTRANCE_STUDENT -> {
+                usedCharacter = handleCharacter();
+                int remaining = 3;
+                Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
+                for (PawnColor color : PawnColor.values()) {
+                    if (remaining != 0) {
+                        int finalRemaining = remaining;
+                        int count = readInt("How many " + color.name() + " students do you want to move from entrance to an island? (" + remaining + "remaining)",
+                                n -> n <= finalRemaining, "You can move up to " + remaining + " " + color.name() + " students");
+                        while (count > 0) {
+                            int island = readInt("Choose an island index: (0 - " + (view.getIslands().size() - 1) + ")",
+                                    n -> n >= 0 && n < view.getIslands().size(), "Island index must be between 0 and " + (view.getIslands().size() - 1));
+                            int finalCount = count;
+                            int student;
+                            if (count > 1) {
+                                student = readInt("How many " + color.name() + " student in island n°" + island + "?",
+                                        n -> n <= finalCount, "You can move up to " + count + " " + color.name() + " students");
+                            } else {
+                                student = 1;
+                            }
+                            if (!islandsStudents.containsKey(island)) {
+                                islandsStudents.put(island, new HashMap<>());
+                            }
+                            islandsStudents.get(island).put(color, islandsStudents.get(island).getOrDefault(color, 0) + count);
+                            count -= student;
+                            remaining -= student;
+                        }
+                    }
                 }
-                case ASK_ASSISTANT -> {
-                    int assistant = readInt("What assistant do you want to play?");
-                    sendMessage(new SetAssistantMessage(assistant));
-                    System.out.println("Waiting for other players");
-                }
-                case ASK_ENTRANCE_STUDENT -> {
-                    usedCharacter = handleCharacter();
-                    int remaining = 3;
-                    Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
+                Map<PawnColor, Integer> tableStudents = new HashMap<>();
+                while (remaining != 0) {
                     for (PawnColor color : PawnColor.values()) {
                         if (remaining != 0) {
                             int finalRemaining = remaining;
-                            int count = readInt("How many " + color.name() + " students do you want to move from entrance to an island? (" + remaining + "remaining)",
+                            int count = readInt("How many " + color.name() + " students do you want to move from entrance to table? (" + remaining + " remaining)",
                                     n -> n <= finalRemaining, "You can move up to " + remaining + " " + color.name() + " students");
-                            while (count > 0) {
-                                int island = readInt("Choose an island index: (0 - " + (view.getIslands().size() - 1) + ")",
-                                        n -> n >= 0 && n < view.getIslands().size(), "Island index must be between 0 and " + (view.getIslands().size() - 1));
-                                int finalCount = count;
-                                int student;
-                                if (count > 1) {
-                                    student = readInt("How many " + color.name() + " student in island n°" + island + "?",
-                                            n -> n <= finalCount, "You can move up to " + count + " " + color.name() + " students");
-                                } else {
-                                    student = 1;
-                                }
-
-                                if (!islandsStudents.containsKey(island)) {
-                                    islandsStudents.put(island, new HashMap<>());
-                                }
-                                islandsStudents.get(island).put(color, islandsStudents.get(island).getOrDefault(color, 0) + count);
-
-                                count -= student;
-                                remaining -= student;
-                            }
+                            tableStudents.put(color, tableStudents.getOrDefault(color, 0) + count);
+                            remaining -= count;
                         }
                     }
-                    Map<PawnColor, Integer> tableStudents = new HashMap<>();
-                    while (remaining != 0) {
-                        for (PawnColor color : PawnColor.values()) {
-                            if (remaining != 0) {
-                                int finalRemaining = remaining;
-                                int count = readInt("How many " + color.name() + " students do you want to move from entrance to table? (" + remaining + " remaining)",
-                                        n -> n <= finalRemaining, "You can move up to " + remaining + " " + color.name() + " students");
-                                tableStudents.put(color, tableStudents.getOrDefault(color, 0) + count);
-                                remaining -= count;
-                            }
-                        }
-                    }
-                    sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
                 }
-                case ASK_MOTHER_NATURE -> {
-                    if (!usedCharacter) {
-                        usedCharacter = handleCharacter();
-                    }
-                    int motherNatureMoves = readInt("Insert mother nature moves: (1-" + view.getPlayerFromName(name).getCurrentAssistant().getMoves()+")");
-                    sendMessage(new SetMotherNatureMessage(motherNatureMoves));
+                sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
+            }
+            case ASK_MOTHER_NATURE -> {
+                if (!usedCharacter) {
+                    usedCharacter = handleCharacter();
                 }
-                case ASK_CLOUD -> {
-                    if (!usedCharacter) {
-                        usedCharacter = handleCharacter();
-                    }
-                    int cloud = readInt("Choose a cloud: (0-" + (view.getClouds().size() - 1));
-                    sendMessage(new SetCloudMessage(cloud));
-                    if (!usedCharacter) {
-                        handleCharacter();
-                    }
-                    usedCharacter = false;
-                    sendMessage(new EndTurnMessage());
-                    System.out.println("Waiting for other players");
+                int motherNatureMoves = readInt("Insert mother nature moves: (1-" + view.getPlayerFromName(name).getCurrentAssistant().getMoves()+")");
+                sendMessage(new SetMotherNatureMessage(motherNatureMoves));
+            }
+            case ASK_CLOUD -> {
+                if (!usedCharacter) {
+                    usedCharacter = handleCharacter();
                 }
-                case END_GAME -> {
-                    Team winner = ((EndGameMessage) msg).getWinner();
-                    if (view.getPlayersOrder().size() == 4) {
-                        System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(p -> p.getName()).toList()));
-                    } else {
-                        System.out.println("Game over. Winner: " + winner.getPlayers().get(0));
-                    }
-                    running = false;
+                int cloud = readInt("Choose a cloud: (0-" + (view.getClouds().size() - 1));
+                sendMessage(new SetCloudMessage(cloud));
+                if (!usedCharacter) {
+                    handleCharacter();
                 }
-                case ERROR -> {
-                    System.out.println(((ErrorMessage)msg).getError());
+                usedCharacter = false;
+                sendMessage(new EndTurnMessage());
+                System.out.println("Waiting for other players");
+            }
+            case END_GAME -> {
+                Team winner = ((EndGameMessage) msg).getWinner();
+                if (view.getPlayersOrder().size() == 4) {
+                    System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(p -> p.getName()).toList()));
+                } else {
+                    System.out.println("Game over. Winner: " + winner.getPlayers().get(0));
                 }
             }
+            case ERROR -> {
+                System.out.println(((ErrorMessage)msg).getError());
+            }
         }
-        closeProgram();
     }
 
     public boolean handleCharacter() throws IOException {
@@ -297,58 +356,6 @@ public class ClientCLI extends Client{
             }
         }
         return false;
-    }
-
-    /**
-     * Loop executed when the client is inside the lobby
-     * Client waits for server questions about username, max player number and expert mode
-     */
-    private void lobbyLoop() throws IOException {
-        Message msg;
-
-        while (true) {
-            //Wait for a server message
-            try {
-                msg = readMessage();
-            } catch (JsonSyntaxException e) {
-                System.out.println("Server sent invalid message");
-                closeProgram();
-                return;
-            }
-            //We have received a server message, check its Type to answer appropriately
-            switch (msg.getMessageId()) {
-                case ERROR -> {
-                    System.out.println("Server error: " + ((ErrorMessage) msg).getError());
-                }
-                case ASK_USERNAME -> {
-                    System.out.println("Insert username: ");
-                    String username = stdin.nextLine();
-                    sendMessage(new SetUsernameMessage(username));
-                    name = username;
-                }
-                case ASK_PLAYER_NUMBER -> {
-                    int playerNumber = readInt("Insert player number: ", n -> n >= 2 && n <= 4, "Player number must be between 2 and 4");
-                    sendMessage(new SetPlayerNumberMessage(playerNumber));
-                }
-                case ASK_EXPERT -> {
-                    String expert = null;
-                    while (expert == null) {
-                        System.out.println("Activate expert mode? yes/no: ");
-                        expert = stdin.nextLine();
-                        if (!expert.equals("yes") && !expert.equals("no")) {
-                            System.out.println("Answer must be yes or no");
-                            expert = null;
-                        }
-                    }
-                    sendMessage(new SetExpertMessage(expert.equals("yes")));
-                }
-                case UPDATE_VIEW -> {
-                    view = new ViewCLI(this);
-                    view.handleUpdateView((UpdateViewMessage) msg);
-                    return;
-                }
-            }
-        }
     }
 
     public void closeProgram() {

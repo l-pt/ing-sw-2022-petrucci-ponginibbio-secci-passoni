@@ -9,6 +9,7 @@ import it.polimi.ingsw.protocol.MessageId;
 import java.util.List;
 
 public class UpdateViewMessage extends Message {
+    private List<Team> teams;
     private List<Assistant> assistants;
     private List<Island> islands;
     private List<Player> playersOrder;
@@ -20,6 +21,7 @@ public class UpdateViewMessage extends Message {
     private boolean expert;
 
     public UpdateViewMessage(
+        List<Team> teams,
         List<Assistant> assistants,
         List<Island> islands,
         List<Player> playersOrder,
@@ -31,6 +33,7 @@ public class UpdateViewMessage extends Message {
         boolean expert
     ){
         super(MessageId.UPDATE_VIEW);
+        this.teams = teams;
         this.assistants = assistants;
         this.islands = islands;
         this.playersOrder = playersOrder;
@@ -45,6 +48,8 @@ public class UpdateViewMessage extends Message {
     private UpdateViewMessage() {
         super(MessageId.UPDATE_VIEW);
     }
+
+    public List<Team> getTeams() {return teams;}
 
     public List<Assistant> getAssistants() {
         return assistants;

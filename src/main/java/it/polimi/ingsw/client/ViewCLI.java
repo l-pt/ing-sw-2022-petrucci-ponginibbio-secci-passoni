@@ -15,6 +15,7 @@ import java.util.List;
 
 public class ViewCLI {
     private ClientCLI client;
+    private List<Team> teams;
     private List<Assistant> assistants;
     private List<Island> islands;
     private List<Player> playersOrder;
@@ -30,6 +31,7 @@ public class ViewCLI {
     }
 
     public void handleUpdateView(UpdateViewMessage message) {
+        teams = message.getTeams();
         assistants = message.getAssistants();
         islands = message.getIslands();
         playersOrder = message.getPlayersOrder();
@@ -99,7 +101,7 @@ public class ViewCLI {
                 }
             }
             if (posMotherNature == counter - 1) {
-                formatter.format("\u001b[38;5;208 Ϻ\u001b[0m"); //♦?
+                formatter.format(" ♦"); //♦?
             }
             if ((expert == true) && (island.getNoEntry() > 0)) {
                 formatter.format("\u001b[1;91m Ꭓ\u001b[0m\n");
@@ -165,6 +167,25 @@ public class ViewCLI {
             ++counter;
         }
 
+        //Print current assistants
+        for (Player player : playersOrder) {
+            if (player.getCurrentAssistant() == null) {
+                formatter.format("%1$s HASN'T PLAYED AN ASSISTANT YET\n", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+            } else {
+                formatter.format("%1$s HAS PLAYED AN ASSISTANT →  VALUE: %2$d  MOVES: %3$d\n", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+            }
+
+        }
+
+        //Print discard piles
+        for (Player player : playersOrder) {
+            if (player.getDiscardPile() == null) {
+                formatter.format("%1$s'S DISCARD PILE IS EMPTY\n");
+            } else {
+                formatter.format("LAST ASSISTANT PLAYED BY %1$s →  VALUE: %2$d  MOVES: %3$d\n", player.getName().toUpperCase(), player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+            }
+        }
+
         //Print players' schools
         for (Player player : playersOrder) {
             formatter.format(player.getName().toUpperCase() + "'S SCHOOL ↓\n");
@@ -228,11 +249,29 @@ public class ViewCLI {
             }
         }
 
-        //Print towers
-        //TODO
+        //Print teams
+        counter = 1;
+        for (Team team : teams) {
+            formatter.format("%1$d°TEAM →  MEMBERS:", counter);
+            for (Player player : team.getPlayers()) {
+                formatter.format(" %1$s", player.getName().toUpperCase());
+            }
+            formatter.format("  TOWERS:");
+            for (Tower tower : team.getTowers()) {
+                if (tower.getColor().equals(TowerColor.BLACK)) {
+                    formatter.format("\u001b[1;90m █\u001b[0m");
+                } else if (tower.getColor().equals(TowerColor.WHITE)) {
+                    formatter.format("\u001b[1;97m █\u001b[0m");
+                } else {
+                    formatter.format("\u001b[38;5;247m █\u001b[0m");
+                }
+            }
+            formatter.format("\n");
+            ++counter;
+        }
 
-        System.out.println("\r" + formatter.toString());
-        formatter.close();
+        //System.out.println("\r" + formatter.toString());
+        //formatter.close();
     }
 
     public void printTab() {
@@ -261,8 +300,8 @@ public class ViewCLI {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print islands
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
@@ -277,7 +316,7 @@ public class ViewCLI {
             } else {
                 formatter.format("*      # %1$d      ", counter);
             }
-            if (island.getTowers() == null) {
+            if (island.getTowers().isEmpty()) {
                 formatter.format("*         0         *       NONE        ");
             } else {
                 if (island.getTowers().get(0).getColor().equals(TowerColor.GRAY)) {
@@ -314,8 +353,8 @@ public class ViewCLI {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print players' schools
         for (Player player : playersOrder) {
@@ -367,8 +406,8 @@ public class ViewCLI {
             formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
             formatter.format("*       %1$d       *\n", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            System.out.println(formatter.toString());
-            formatter.close();
+            //System.out.println(formatter.toString());
+            //formatter.close();
         }
 
         //Print mother nature position
@@ -379,8 +418,8 @@ public class ViewCLI {
             formatter.format("*                  MOTHER NATURE POSITION                   *         %1$d         *\n", posMotherNature);
         }
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print coin reserve
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
