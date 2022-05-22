@@ -6,7 +6,9 @@ import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.Character5;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
+import jline.console.ConsoleReader;
 
+import java.io.IOException;
 import java.util.Formatter;
 import java.util.List;
 
