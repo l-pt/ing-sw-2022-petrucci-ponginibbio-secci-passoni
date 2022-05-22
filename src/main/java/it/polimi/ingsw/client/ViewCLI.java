@@ -231,8 +231,8 @@ public class ViewCLI {
         //Print towers
         //TODO
 
-        System.out.println("\r" + formatter.toString());
-        formatter.close();
+        //System.out.println("\r" + formatter.toString());
+        //formatter.close();
     }
 
     public void printTab() {
@@ -261,8 +261,8 @@ public class ViewCLI {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print islands
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
@@ -277,7 +277,7 @@ public class ViewCLI {
             } else {
                 formatter.format("*      # %1$d      ", counter);
             }
-            if (island.getTowers() == null) {
+            if (island.getTowers().isEmpty()) {
                 formatter.format("*         0         *       NONE        ");
             } else {
                 if (island.getTowers().get(0).getColor().equals(TowerColor.GRAY)) {
@@ -314,8 +314,8 @@ public class ViewCLI {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print players' schools
         for (Player player : playersOrder) {
@@ -367,8 +367,8 @@ public class ViewCLI {
             formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
             formatter.format("*       %1$d       *\n", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            System.out.println(formatter.toString());
-            formatter.close();
+            //System.out.println(formatter.toString());
+            //formatter.close();
         }
 
         //Print mother nature position
@@ -379,8 +379,8 @@ public class ViewCLI {
             formatter.format("*                  MOTHER NATURE POSITION                   *         %1$d         *\n", posMotherNature);
         }
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print coin reserve
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
