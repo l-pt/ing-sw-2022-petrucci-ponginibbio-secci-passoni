@@ -156,10 +156,10 @@ public class Server {
 
                 matchParameters = null;
                 firstConnection = null;
+                waitingConnections.removeAll(readyConnections);
                 for (Connection c : waitingConnections) {
                     c.close();
                 }
-                waitingConnections.removeAll(readyConnections);
                 waitingConnections.clear();
             }
         }
