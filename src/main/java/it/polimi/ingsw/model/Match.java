@@ -130,6 +130,8 @@ public class Match {
                 team.addTower(new Tower(team.getTowerColor()));
     }
 
+    public List<Team> getTeams() {return teams;}
+
     public Team getTeamFromColor(TowerColor color) throws IllegalMoveException {
         for(Team team : teams)
             if(team.getTowers().get(0).getColor().equals(color))
@@ -450,6 +452,7 @@ public class Match {
                 throw new RuntimeException(e);
             }
             UpdateViewMessage message = new UpdateViewMessage(
+                teams,
                 player.getAssistants(),
                 islands,
                 playerOrder,

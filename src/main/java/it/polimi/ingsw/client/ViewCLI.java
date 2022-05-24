@@ -6,15 +6,14 @@ import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.Character5;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
-import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.util.Formatter;
 import java.util.List;
 
 
 public class ViewCLI {
     private ClientCLI client;
+    private List<Team> teams;
     private List<Assistant> assistants;
     private List<Island> islands;
     private List<Player> playersOrder;
@@ -30,6 +29,7 @@ public class ViewCLI {
     }
 
     public void handleUpdateView(UpdateViewMessage message) {
+        teams = message.getTeams();
         assistants = message.getAssistants();
         islands = message.getIslands();
         playersOrder = message.getPlayersOrder();
@@ -45,17 +45,17 @@ public class ViewCLI {
 
     //To call when the game starts
     public void printTitle() {
-        String eryantis = "░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
+        String eryantis = "\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
                 "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
-                " ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
+                "\u001b[1;93m ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
                 " ░░  ░░ ░░  ░░    ░░    ░░  ░░      ░░ ░░    ░░░░  ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
-                " ░░░░░░     ░░   ░░░     ░░░░       ░░ ░░    ░░ ░  ░░  ░░  ░░  ░░     ░░      ░░░░      \n" +
+                "\u001b[1;92m ░░░░░░     ░░   ░░░     ░░░░       ░░ ░░    ░░ ░  ░░  ░░  ░░  ░░     ░░      ░░░░      \n" +
                 " ░░░░░░     ░░░░░░░      ░░░░      ░░   ░░   ░░ ░░ ░░      ░░         ░░       ░░░░░░   \n" +
-                " ░░  ░░     ░░░░░░        ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░          ░░░░  \n" +
+                "\u001b[1;94m ░░  ░░     ░░░░░░        ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░          ░░░░  \n" +
                 " ░░     ░░  ░░  ░░░       ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░      ░░    ░░  \n" +
-                " ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
+                "\u001b[1;95m ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
                 "░░░░░░░░░░ ░░░░░  ░░░   ░░░░░░   ░░░░   ░░░░░░░░░ ░░░    ░░░░░░    ░░░░░░░░   ░░░░░░░   \n" +
-                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \n";
+                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n";
         System.out.println(eryantis);
     }
 
@@ -74,8 +74,9 @@ public class ViewCLI {
         //Student(●)|Tower(█)|Professor(■)|MotherNature(Ϻ/♦)|NoEntry(Ꭓ)
         //Print islands
         counter = 1;
+        formatter.format("\u001b[97mISLANDS ↓\u001b[0m\n");
         for (Island island : islands) {
-            formatter.format(counter + "°ISLAND →");
+            formatter.format("\u001b[97m" + counter + "°ISLAND →\u001b[0m");
             for (Student student : island.getStudents()) {
                 if (student.getColor().equals(PawnColor.RED)) {
                     formatter.format("\u001b[1;91m ●\u001b[0m");
@@ -99,10 +100,10 @@ public class ViewCLI {
                 }
             }
             if (posMotherNature == counter - 1) {
-                formatter.format("\u001b[38;5;208 Ϻ\u001b[0m"); //♦?
+                formatter.format("\u001b[97m ♦\u001b[0m"); //♦?
             }
             if ((expert == true) && (island.getNoEntry() > 0)) {
-                formatter.format("\u001b[1;91m Ꭓ\u001b[0m\n");
+                formatter.format("\u001b[1;31m Ꭓ\u001b[0m\n");
             } else {
                 formatter.format("\n");
             }
@@ -111,8 +112,9 @@ public class ViewCLI {
 
         //Print clouds
         counter = 1;
+        formatter.format("\u001b[97mCLOUDS ↓\u001b[0m\n");
         for (Cloud cloud : clouds) {
-            formatter.format(counter + "°CLOUD →");
+            formatter.format("\u001b[97m" + counter + "°CLOUD →\u001b[0m");
             for (Student student : cloud.getStudents()) {
                 if (student.getColor().equals(PawnColor.RED)) {
                     formatter.format("\u001b[1;91m ●\u001b[0m");
@@ -131,44 +133,69 @@ public class ViewCLI {
         }
 
         //Print characters
-        for (Character character : characters) {
-            formatter.format("%1$d°CHARACTER →  COST: %2$d", character.getId(), character.getCost());
-            if (character instanceof StudentCharacter) {
-                formatter.format("  STUDENTS:");
-                for (Student student : ((StudentCharacter) character).getStudents()) {
-                    if (student.getColor().equals(PawnColor.RED)) {
-                        formatter.format("\u001b[1;91m ●\u001b[0m");
-                    } else if (student.getColor().equals(PawnColor.YELLOW)) {
-                        formatter.format("\u001b[1;93m ●\u001b[0m");
-                    } else if (student.getColor().equals(PawnColor.GREEN)) {
-                        formatter.format("\u001b[1;92m ●\u001b[0m");
-                    } else if (student.getColor().equals(PawnColor.BLUE)) {
-                        formatter.format("\u001b[1;94m ●\u001b[0m");
-                    } else {
-                        formatter.format("\u001b[1;95m ●\u001b[0m");
+        if (expert == true) {
+            formatter.format("\u001b[97mCHARACTERS ↓\u001b[0m\n");
+            for (Character character : characters) {
+                formatter.format("\u001b[97m%1$d°CHARACTER →  COST: %2$d\u001b[0m", character.getId(), character.getCost());
+                if (character instanceof StudentCharacter) {
+                    formatter.format("\u001b[97m  STUDENTS:\u001b[0m");
+                    for (Student student : ((StudentCharacter) character).getStudents()) {
+                        if (student.getColor().equals(PawnColor.RED)) {
+                            formatter.format("\u001b[1;91m ●\u001b[0m");
+                        } else if (student.getColor().equals(PawnColor.YELLOW)) {
+                            formatter.format("\u001b[1;93m ●\u001b[0m");
+                        } else if (student.getColor().equals(PawnColor.GREEN)) {
+                            formatter.format("\u001b[1;92m ●\u001b[0m");
+                        } else if (student.getColor().equals(PawnColor.BLUE)) {
+                            formatter.format("\u001b[1;94m ●\u001b[0m");
+                        } else {
+                            formatter.format("\u001b[1;95m ●\u001b[0m");
+                        }
                     }
                 }
-            }
-            if (character instanceof Character5) {
-                formatter.format("  NO ENTRY:");
-                for (counter = 1; counter <= ((Character5) character).getNoEntry(); ++counter) {
-                    formatter.format("\u001b[1;91m Ꭓ\u001b[0m");
+                if (character instanceof Character5) {
+                    formatter.format("\u001b[97m  NO ENTRY:\u001b[0m");
+                    for (counter = 1; counter <= ((Character5) character).getNoEntry(); ++counter) {
+                        formatter.format("\u001b[1;91m Ꭓ\u001b[0m");
+                    }
                 }
+                formatter.format("\n");
             }
-            formatter.format("\n");
         }
 
         //Print assistants
         counter = 1;
+        formatter.format("\u001b[97mYOUR ASSISTANTS ↓\u001b[0m\n");
         for (Assistant assistant : assistants) {
-            formatter.format("%1$d°ASSISTANT →  Value: %2$d  Moves: %3$d\n", counter, assistant.getValue(), assistant.getMoves());
+            formatter.format("\u001b[97m%1$d°ASSISTANT →  Value: %2$d  Moves: %3$d\u001b[0m\n", counter, assistant.getValue(), assistant.getMoves());
             ++counter;
+        }
+
+        //Print current assistants
+        formatter.format("\u001b[97mASSISTANTS PLAYED IN THIS ROUND ↓\u001b[0m\n");
+        for (Player player : playersOrder) {
+            if (player.getCurrentAssistant() == null) {
+                formatter.format("\u001b[97m%1$s HASN'T PLAYED AN ASSISTANT YET\u001b[0m\n", player.getName().toUpperCase());
+            } else {
+                formatter.format("\u001b[97m%1$s HAS PLAYED AN ASSISTANT →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+            }
+
+        }
+
+        //Print discard piles
+        formatter.format("\u001b[97mDISCARD PILES ↓\u001b[0m\n");
+        for (Player player : playersOrder) {
+            if (player.getDiscardPile() == null) {
+                formatter.format("\u001b[97m%1$s'S DISCARD PILE IS EMPTY\u001b[0m\n", player.getName().toUpperCase());
+            } else {
+                formatter.format("\u001b[97mLAST ASSISTANT PLAYED BY %1$s →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+            }
         }
 
         //Print players' schools
         for (Player player : playersOrder) {
-            formatter.format(player.getName().toUpperCase() + "'S SCHOOL ↓\n");
-            formatter.format("ENTRANCE →");
+            formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S SCHOOL ↓\u001b[0m\n");
+            formatter.format("\u001b[97mENTRANCE →\u001b[0m");
             for (Student student : player.getSchool().getEntrance()) {
                 if (student.getColor().equals(PawnColor.RED)) {
                     formatter.format("\u001b[1;91m ●\u001b[0m");
@@ -184,7 +211,7 @@ public class ViewCLI {
             }
             formatter.format("\n");
             for (PawnColor pawncolor : player.getSchool().getTables().keySet()) {
-                formatter.format(pawncolor.toString().toUpperCase() + " TABLE →");
+                formatter.format("\u001b[97m" + pawncolor.toString().toUpperCase() + " TABLE →\u001b[0m");
                 for (Student student : player.getSchool().getTables().get(pawncolor)) {
                     if (pawncolor.equals(PawnColor.RED)) {
                         formatter.format("\u001b[1;91m ●\u001b[0m");
@@ -200,7 +227,7 @@ public class ViewCLI {
                 }
                 formatter.format("\n");
             }
-            formatter.format("PROFESSORS →");
+            formatter.format("\u001b[97mPROFESSORS →\u001b[0m");
             for (Professor professor : player.getSchool().getProfessors()) {
                 if (professor.getColor().equals(PawnColor.RED)) {
                     formatter.format("\u001b[1;91m ■\u001b[0m");
@@ -218,9 +245,10 @@ public class ViewCLI {
         }
 
         //Print players' coin reserve
+        formatter.format("\u001b[97mCOIN RESERVES ↓\u001b[0m\n");
         if (expert == true) {
             for (Player player : playersOrder) {
-                formatter.format(player.getName().toUpperCase() + "'S COIN RESERVE →");
+                formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S COIN RESERVE →\u001b[0m");
                 for (counter = 1; counter <= player.getCoins(); ++counter) {
                     formatter.format("\u001b[1;92m $\u001b[0m");
                 }
@@ -228,10 +256,29 @@ public class ViewCLI {
             }
         }
 
-        //Print towers
-        //TODO
+        //Print teams
+        counter = 1;
+        formatter.format("\u001b[97mTEAMS ↓\n\u001b[0m");
+        for (Team team : teams) {
+            formatter.format("\u001b[97m%1$d°TEAM →  MEMBERS:\u001b[0m", counter);
+            for (Player player : team.getPlayers()) {
+                formatter.format("\u001b[97m %1$s\u001b[0m", player.getName().toUpperCase());
+            }
+            formatter.format("\u001b[97m  TOWERS:\u001b[0m");
+            for (Tower tower : team.getTowers()) {
+                if (tower.getColor().equals(TowerColor.BLACK)) {
+                    formatter.format("\u001b[1;90m █\u001b[0m");
+                } else if (tower.getColor().equals(TowerColor.WHITE)) {
+                    formatter.format("\u001b[1;97m █\u001b[0m");
+                } else {
+                    formatter.format("\u001b[38;5;247m █\u001b[0m");
+                }
+            }
+            formatter.format("\n");
+            ++counter;
+        }
 
-        System.out.println("\r" + formatter.toString());
+        System.out.println(formatter.toString());
         formatter.close();
     }
 
@@ -261,8 +308,8 @@ public class ViewCLI {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print islands
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
@@ -277,7 +324,7 @@ public class ViewCLI {
             } else {
                 formatter.format("*      # %1$d      ", counter);
             }
-            if (island.getTowers() == null) {
+            if (island.getTowers().isEmpty()) {
                 formatter.format("*         0         *       NONE        ");
             } else {
                 if (island.getTowers().get(0).getColor().equals(TowerColor.GRAY)) {
@@ -314,8 +361,8 @@ public class ViewCLI {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print players' schools
         for (Player player : playersOrder) {
@@ -367,8 +414,8 @@ public class ViewCLI {
             formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
             formatter.format("*       %1$d       *\n", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            System.out.println(formatter.toString());
-            formatter.close();
+            //System.out.println(formatter.toString());
+            //formatter.close();
         }
 
         //Print mother nature position
@@ -379,8 +426,8 @@ public class ViewCLI {
             formatter.format("*                  MOTHER NATURE POSITION                   *         %1$d         *\n", posMotherNature);
         }
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        System.out.println(formatter.toString());
-        formatter.close();
+        //System.out.println(formatter.toString());
+        //formatter.close();
 
         //Print coin reserve
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
