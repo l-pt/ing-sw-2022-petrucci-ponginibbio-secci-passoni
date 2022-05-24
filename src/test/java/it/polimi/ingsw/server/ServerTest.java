@@ -2,7 +2,6 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.client.ClientCLI;
 import it.polimi.ingsw.model.IllegalMoveException;
-import it.polimi.ingsw.server.Server.MatchParameters;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,7 @@ import java.io.IOException;
 
 public class ServerTest extends TestCase {
     @Test
-    public void setupMatchParameters() throws IOException, InterruptedException, IllegalMoveException {
+    public void setupMatchParameters() throws IOException, IllegalMoveException {
         Server server = new Server();
         Thread t = new Thread(() -> {
             try {
@@ -35,9 +34,7 @@ public class ServerTest extends TestCase {
         });
         t1.start();
 
-        do{
-
-        }while (server.getMatchParameters() == null);
+        while (server.getMatchParameters() == null);
         t1.interrupt();
 
         assertEquals("test", client1.getName());
@@ -55,26 +52,20 @@ public class ServerTest extends TestCase {
             }
         });
         t2.start();
-        do{
 
-        }while (server.getControllers().size() == 0);
+        while (server.getControllers().size() == 0);
         t1.interrupt();
         assertEquals("test1", client2.getName());
         assertEquals(0, server.getWaitingConnections().size());
         assertEquals(1, server.getControllers().size());
-        do{
 
-        }while (server.getControllers().get(0).getMatch().getPlayersOrder().get(0).getCurrentAssistant() == null ||
+        while (server.getControllers().get(0).getMatch().getPlayersOrder().get(0).getCurrentAssistant() == null ||
                 server.getControllers().get(0).getMatch().getPlayersOrder().get(1).getCurrentAssistant() == null);
         assertEquals(2, server.getControllers().get(0).getMatch().getPlayerFromName("test").getCurrentAssistant().getValue());
         assertEquals(4, server.getControllers().get(0).getMatch().getPlayerFromName("test1").getCurrentAssistant().getValue());
         assertEquals("test", server.getControllers().get(0).getMatch().getPlayersOrder().get(0).getName());
         assertEquals("test1", server.getControllers().get(0).getMatch().getPlayersOrder().get(1).getName());
 
-        //server.getControllers().get(0).getMatch().updateView(server.getConnectionsFromController(server.getControllers().get(0)));
-
-        /*System.setIn(new ByteArrayInputStream("3\n".getBytes()));
-        client2.handleGameMessage(new AskAssistantMessage());*/
         server.close();
     }
 }
