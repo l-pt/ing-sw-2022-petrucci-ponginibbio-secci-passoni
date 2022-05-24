@@ -165,10 +165,6 @@ public class Server {
         }
     }
 
-    public void close(){
-        serverSocketThread.close();
-    }
-
     /**
      * Main server loop: process all messages in the messageQueue
      */
