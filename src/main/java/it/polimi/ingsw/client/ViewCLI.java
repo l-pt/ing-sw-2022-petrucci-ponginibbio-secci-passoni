@@ -45,17 +45,17 @@ public class ViewCLI {
 
     //To call when the game starts
     public void printTitle() {
-        String eryantis = "░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
+        String eryantis = "\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
                 "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
-                " ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
+                "\u001b[1;93m ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
                 " ░░  ░░ ░░  ░░    ░░    ░░  ░░      ░░ ░░    ░░░░  ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
-                " ░░░░░░     ░░   ░░░     ░░░░       ░░ ░░    ░░ ░  ░░  ░░  ░░  ░░     ░░      ░░░░      \n" +
+                "\u001b[1;92m ░░░░░░     ░░   ░░░     ░░░░       ░░ ░░    ░░ ░  ░░  ░░  ░░  ░░     ░░      ░░░░      \n" +
                 " ░░░░░░     ░░░░░░░      ░░░░      ░░   ░░   ░░ ░░ ░░      ░░         ░░       ░░░░░░   \n" +
-                " ░░  ░░     ░░░░░░        ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░          ░░░░  \n" +
+                "\u001b[1;94m ░░  ░░     ░░░░░░        ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░          ░░░░  \n" +
                 " ░░     ░░  ░░  ░░░       ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░      ░░    ░░  \n" +
-                " ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
+                "\u001b[1;95m ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
                 "░░░░░░░░░░ ░░░░░  ░░░   ░░░░░░   ░░░░   ░░░░░░░░░ ░░░    ░░░░░░    ░░░░░░░░   ░░░░░░░   \n" +
-                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \n";
+                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n";
         System.out.println(eryantis);
     }
 
@@ -76,7 +76,7 @@ public class ViewCLI {
         counter = 1;
         formatter.format("\u001b[97mISLANDS ↓\u001b[0m\n");
         for (Island island : islands) {
-            formatter.format(counter + "\u001b[97m°ISLAND →\u001b[0m");
+            formatter.format("\u001b[97m" + counter + "°ISLAND →\u001b[0m");
             for (Student student : island.getStudents()) {
                 if (student.getColor().equals(PawnColor.RED)) {
                     formatter.format("\u001b[1;91m ●\u001b[0m");
@@ -100,7 +100,7 @@ public class ViewCLI {
                 }
             }
             if (posMotherNature == counter - 1) {
-                formatter.format(" ♦"); //♦?
+                formatter.format("\u001b[97m ♦\u001b[0m"); //♦?
             }
             if ((expert == true) && (island.getNoEntry() > 0)) {
                 formatter.format("\u001b[1;31m Ꭓ\u001b[0m\n");
@@ -114,7 +114,7 @@ public class ViewCLI {
         counter = 1;
         formatter.format("\u001b[97mCLOUDS ↓\u001b[0m\n");
         for (Cloud cloud : clouds) {
-            formatter.format(counter + "\u001b[97m°CLOUD →\u001b[0m");
+            formatter.format("\u001b[97m" + counter + "°CLOUD →\u001b[0m");
             for (Student student : cloud.getStudents()) {
                 if (student.getColor().equals(PawnColor.RED)) {
                     formatter.format("\u001b[1;91m ●\u001b[0m");
@@ -248,7 +248,7 @@ public class ViewCLI {
         formatter.format("\u001b[97mCOIN RESERVES ↓\u001b[0m\n");
         if (expert == true) {
             for (Player player : playersOrder) {
-                formatter.format(player.getName().toUpperCase() + "\u001b[97m'S COIN RESERVE →\u001b[0m");
+                formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S COIN RESERVE →\u001b[0m");
                 for (counter = 1; counter <= player.getCoins(); ++counter) {
                     formatter.format("\u001b[1;92m $\u001b[0m");
                 }
@@ -278,8 +278,8 @@ public class ViewCLI {
             ++counter;
         }
 
-        //System.out.println("\r" + formatter.toString());
-        //formatter.close();
+        System.out.println(formatter.toString());
+        formatter.close();
     }
 
     public void printTab() {
