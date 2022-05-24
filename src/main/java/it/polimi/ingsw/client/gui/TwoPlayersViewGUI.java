@@ -1,9 +1,13 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.Tower;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TwoPlayersViewGUI extends ViewGUI {
     private JPanel playerPanel;
@@ -45,15 +49,27 @@ public class TwoPlayersViewGUI extends ViewGUI {
     protected void draw() {
         super.draw();
         Player clientPlayer = getPlayerFromName(client.getName());
+        List<Tower> clientPlayerTowers = new ArrayList<>();
+        for (Team team : teams) {
+            if (team.isTeamMember(clientPlayer)) {
+                clientPlayerTowers.addAll(team.getTowers());
+            }
+        }
         Player opponent = null;
         for (Player player : originalPlayersOrder) {
-            if (player != clientPlayer) {
+            if (!player.equals(clientPlayer)) {
                 opponent = player;
                 break;
             }
         }
-        drawPlayer(playerPanel, clientPlayer);
-        drawPlayer(opponentPanel, opponent);
+        List<Tower> opponentTowers = new ArrayList<>();
+        for (Team team : teams) {
+            if (team.isTeamMember(opponent)) {
+                opponentTowers.addAll(team.getTowers());
+            }
+        }
+        drawPlayer(playerPanel, clientPlayer, clientPlayerTowers);
+        drawPlayer(opponentPanel, opponent, opponentTowers);
         client.getFrame().revalidate();
         client.getFrame().repaint();
     }

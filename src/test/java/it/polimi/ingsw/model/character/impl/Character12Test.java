@@ -20,14 +20,14 @@ public class Character12Test extends TestCase {
         player1.addCoin();
         player1.addCoin();
 
-        Map<Player, Integer> redStudents = new HashMap<>();
+        Map<String, Integer> redStudents = new HashMap<>();
         for (Player player : match.getPlayersOrder()) {
-            redStudents.put(player, player.getSchool().getTableCount(PawnColor.RED));
+            redStudents.put(player.getName(), player.getSchool().getTableCount(PawnColor.RED));
         }
         character.use(match, player1.getName(), PawnColor.RED);
         //Check that every player has returned 3 red students
         for (Player player : match.getPlayersOrder()) {
-            assertEquals(player.getSchool().getTableCount(PawnColor.RED), Math.max(redStudents.get(player) - 3, 0));
+            assertEquals(player.getSchool().getTableCount(PawnColor.RED), Math.max(redStudents.get(player.getName()) - 3, 0));
         }
     }
 }

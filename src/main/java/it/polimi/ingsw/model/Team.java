@@ -15,6 +15,19 @@ public class Team {
         this.towerColor = towerColor;
     }
 
+    /**
+     * @return boolean true if there is a player in the team with the same
+     * name, false otherwise
+     */
+    public boolean isTeamMember(Player player) {
+        for (Player p : players) {
+            if (p.getName().equals(player.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Player> getPlayers() {
         return players;
     }
