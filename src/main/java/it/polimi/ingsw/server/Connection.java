@@ -1,13 +1,14 @@
 package it.polimi.ingsw.server;
 
 import com.google.gson.*;
+import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.protocol.*;
 import it.polimi.ingsw.protocol.message.*;
 
 import java.io.*;
 import java.net.Socket;
 
-public class Connection implements Runnable{
+public class Connection implements Runnable, Observer<UpdateViewMessage> {
     private final Socket socket;
     private final InputStreamReader in;
     private final OutputStreamWriter out;
@@ -156,6 +157,16 @@ public class Connection implements Runnable{
         }
         finally{
             //Notify the server with a null message to signal that the connection is broken
+            server.notifyMessage(this, null);
+        }
+    }
+
+    @Override
+    public void notifyObserver(UpdateViewMessage msg) {
+        try {
+            sendMessage(msg);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
             server.notifyMessage(this, null);
         }
     }

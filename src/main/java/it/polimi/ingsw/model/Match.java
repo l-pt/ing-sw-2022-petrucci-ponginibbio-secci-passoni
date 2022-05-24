@@ -3,16 +3,14 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.*;
+import it.polimi.ingsw.observer.Observable;
+import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
-import it.polimi.ingsw.server.Connection;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-public class Match {
+public class Match implements Observable<UpdateViewMessage> {
     protected List<Team> teams;
     private List<Player> playerOrder;
     private int posMotherNature;
@@ -27,6 +25,7 @@ public class Match {
     private boolean drawAllowed;
     private InfluenceCalculationPolicy influencePolicy;
     private boolean gameFinished;
+    private Set<Observer<UpdateViewMessage>> observers;
 
     public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
 
@@ -122,6 +121,19 @@ public class Match {
         drawAllowed = false;
         influencePolicy = new InfluenceCalculationPolicy();
         gameFinished = false;
+        observers = new HashSet<>();
+    }
+
+    @Override
+    public void addObserver(Observer<UpdateViewMessage> observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void notifyObservers(UpdateViewMessage msg) {
+        for (Observer<UpdateViewMessage> observer : observers) {
+            observer.notifyObserver(msg);
+        }
     }
 
     public void setupTowers(){
@@ -443,31 +455,17 @@ public class Match {
             orderPlayers();
     }
 
-    public void updateView(List<Connection> connections) {
-        for (Connection connection : connections) {
-            Player player = null;
-            try {
-                player = getPlayerFromName(connection.getName());
-            } catch (IllegalMoveException e) {
-                throw new RuntimeException(e);
-            }
-            UpdateViewMessage message = new UpdateViewMessage(
-                teams,
-                player.getAssistants(),
-                islands,
-                playerOrder,
-                posMotherNature,
-                clouds,
-                professors,
-                coinsReserve,
-                characters,
-                    expert
-            );
-            try {
-                connection.sendMessage(message);
-            } catch (IOException e) {
-                System.out.println("Error update view");
-            }
-        }
+    public void updateView() {
+        notifyObservers(new UpdateViewMessage(
+            teams,
+            islands,
+            playerOrder,
+            posMotherNature,
+            clouds,
+            professors,
+            coinsReserve,
+            characters,
+            expert
+        ));
     }
 }

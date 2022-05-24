@@ -30,9 +30,9 @@ public class ViewCLI {
 
     public void handleUpdateView(UpdateViewMessage message) {
         teams = message.getTeams();
-        assistants = message.getAssistants();
         islands = message.getIslands();
         playersOrder = message.getPlayersOrder();
+        assistants = getPlayerFromName(client.name).getAssistants();
         posMotherNature = message.getPosMotherNature();
         clouds = message.getClouds();
         professors = message.getProfessors();
