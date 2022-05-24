@@ -56,7 +56,9 @@ public class ClientCLI extends Client{
             //Wait for a server message
             try {
                 msg = readMessage();
-                handleLobbyMessage(msg);
+                if (handleLobbyMessage(msg)) {
+                    return;
+                }
             } catch (JsonSyntaxException e) {
                 System.out.println("Server sent invalid message");
                 closeProgram();
@@ -64,7 +66,11 @@ public class ClientCLI extends Client{
             }
         }
     }
-    public void handleLobbyMessage(Message msg) throws IOException {
+
+    /**
+     * @return boolean true if the match has started, false otherwise
+     */
+    public boolean handleLobbyMessage(Message msg) throws IOException {
         //We have received a server message, check its Type to answer appropriately
         switch (msg.getMessageId()) {
             case ERROR -> {
@@ -95,9 +101,10 @@ public class ClientCLI extends Client{
             case UPDATE_VIEW -> {
                 view = new ViewCLI(this);
                 view.handleUpdateView((UpdateViewMessage) msg);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public void game() throws IOException {
