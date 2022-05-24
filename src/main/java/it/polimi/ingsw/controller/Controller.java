@@ -5,16 +5,15 @@ import it.polimi.ingsw.model.character.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.impl.*;
 import it.polimi.ingsw.protocol.Message;
+import it.polimi.ingsw.protocol.MessageId;
 import it.polimi.ingsw.protocol.message.*;
 import it.polimi.ingsw.protocol.message.character.*;
 import it.polimi.ingsw.server.Connection;
 import it.polimi.ingsw.server.Server;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Controller {
     private Match match;
@@ -60,7 +59,6 @@ public class Controller {
         for (int i = 0; i < readyConnections.size(); ++i){
             readyConnections.get(i).sendMessage(new UpdateViewMessage(
                     getMatch().getTeams(),
-                    getMatch().getPlayersOrder().get(i).getAssistants(),
                     getMatch().getIslands(),
                     getMatch().getPlayersOrder(),
                     getMatch().getPosMotherNature(),
@@ -70,6 +68,7 @@ public class Controller {
                     getMatch().getCharacters(),
                     getMatch().isExpert()
             ));
+            match.addObserver(readyConnections.get(i));
         }
 
         readyConnections.get(0).sendMessage(new AskAssistantMessage());
@@ -79,69 +78,69 @@ public class Controller {
         return match;
     }
 
-    public List<Message> handleMessage(String name, Message message) throws IOException{
+    public Map<String, List<Message>> handleMessage(String name, Message message) {
         switch (message.getMessageId()) {
             case SET_ASSISTANT -> {
                 try {
                     int pos = match.getPosFromName(name);
                     useAssistant(name, ((SetAssistantMessage) message).getAssisant());
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                     if (pos != match.getPlayersOrder().size() - 1)
-                        server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskAssistantMessage());
+                        return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskAssistantMessage()));
                     else
-                        server.getConnectionFromName(match.getPlayersOrder().get(0).getName()).sendMessage(new AskEntranceStudentMessage());
+                        return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskEntranceStudentMessage()));
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()), new AskAssistantMessage());
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskAssistantMessage()));
                 }
             }
             case SET_ENTRANCE_STUDENT -> {
                 SetEntranceStudentMessage entranceStudentMessage = (SetEntranceStudentMessage) message;
                 try {
                     moveStudentsToIslandsAndTable(name, entranceStudentMessage.getIslandStudents(), entranceStudentMessage.getTableStudents());
-                    match.updateView(server.getConnectionsFromController(this));
-                    return List.of(new AskMotherNatureMessage());
+                    match.updateView();
+                    return Map.of(name, List.of(new AskMotherNatureMessage()));
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()), new AskEntranceStudentMessage());
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskEntranceStudentMessage()));
 
                 }
             }
             case SET_MOTHER_NATURE -> {
                 try {
                     moveMotherNature(((SetMotherNatureMessage) message).getMotherNatureMoves(), name);
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                     if (match.isGameFinished()) {
-                        endGame();
+                        return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                     } else {
-                        return List.of(new AskCloudMessage());
+                        return Map.of(name, List.of(new AskCloudMessage()));
                     }
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()), new AskMotherNatureMessage());
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskMotherNatureMessage()));
                 }
             }
             case SET_CLOUD -> {
                 try {
                     moveStudentsFromCloud(((SetCloudMessage) message).getCloud(), name);
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()), new AskMotherNatureMessage());
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskMotherNatureMessage()));
                 }
             }
             case END_TURN -> {
                 try {
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                     int pos = match.getPosFromName(name);
                     match.resetAbility();
                     if (pos != match.getPlayersOrder().size() - 1)
-                        server.getConnectionFromName(match.getPlayersOrder().get(pos + 1).getName()).sendMessage(new AskEntranceStudentMessage());
+                        return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskEntranceStudentMessage()));
                     else {
                         if (match.isLastTurn()) {
-                            endGame();
+                            return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                         } else {
-                            server.getConnectionFromName(match.getPlayersOrder().get(0).getName()).sendMessage(new AskAssistantMessage());
+                            return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskAssistantMessage()));
                         }
                     }
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()));
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
                 }
             }
             case USE_CHARACTER_COLOR_ISLAND -> {
@@ -149,67 +148,74 @@ public class Controller {
                     UseCharacterColorIslandMessage colorIslandMessage = (UseCharacterColorIslandMessage) message;
                     Character1 c1 = (Character1) match.getCharacterFromType(Character1.class);
                     c1.use(match, name, colorIslandMessage.getColor(), colorIslandMessage.getIsland());
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()));
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
                 }
             }
             case USE_CHARACTER_COLOR -> {
                 try {
                     UseCharacterColorMessage colorMessage = (UseCharacterColorMessage) message;
                     ((ColorCharacter) match.getCharacterFromType(Character.getClassFromId(colorMessage.getCharacterId()))).use(match, name, colorMessage.getColor());
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()));
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
                 }
             }
             case USE_CHARACTER -> {
                 try {
                     UseCharacterMessage useCharacterMessage = (UseCharacterMessage) message;
                     ((NoParametersCharacter) match.getCharacterFromType(Character.getClassFromId(useCharacterMessage.getCharacterId()))).use(match, name);
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()));
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
                 }
             }
             case USE_CHARACTER_ISLAND -> {
                 try {
                     UseCharacterIslandMessage islandMessage = (UseCharacterIslandMessage) message;
                     ((IslandCharacter) match.getCharacterFromType(Character.getClassFromId(islandMessage.getCharacterId()))).use(match, name, islandMessage.getIsland());
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                     if (match.isGameFinished()) {
-                        endGame();
+                        return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                     }
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()));
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
                 }
             }
             case USE_CHARACTER_STUDENT_MAP -> {
                 try {
                     UseCharacterStudentMapMessage mapMessage = (UseCharacterStudentMapMessage) message;
                     ((StudentMapCharacter) match.getCharacterFromType(Character.getClassFromId(mapMessage.getCharacterId()))).use(match, name, mapMessage.getInMap(), mapMessage.getOutMap());
-                    match.updateView(server.getConnectionsFromController(this));
+                    match.updateView();
                 } catch (IllegalMoveException e) {
-                    return List.of(new ErrorMessage(e.getMessage()));
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
                 }
             }
         }
-        return Collections.emptyList();
+        return Collections.emptyMap();
     }
 
     public void handleClientMessage(Connection connection, Message message) throws IOException {
-        for (Message m : handleMessage(connection.getName(), message))
-            connection.sendMessage(m);
-    }
-
-    public void endGame() throws IOException {
-        List<Connection> connections = server.getConnectionsFromController(this);
-        Team winner = match.getWinningTeam();
-        for (Connection connection : connections) {
-            connection.sendMessage(new EndGameMessage(winner));
+        boolean gameFinished = false;
+        for (Map.Entry<String, List<Message>> entry : handleMessage(connection.getName(), message).entrySet()) {
+            Connection c;
+            try {
+                c = server.getConnectionFromName(entry.getKey());
+            } catch (IllegalMoveException e) {
+                throw new AssertionError();
+            }
+            for (Message m : entry.getValue()) {
+                if (m.getMessageId() == MessageId.END_GAME) {
+                    gameFinished = true;
+                }
+                c.sendMessage(m);
+            }
         }
-        for (Connection connection : connections) {
-            server.deregisterConnection(connection);
+        if (gameFinished) {
+            for (Connection c : server.getConnectionsFromController(this)) {
+                server.deregisterConnection(c);
+            }
         }
     }
 

@@ -66,9 +66,9 @@ public abstract class ViewGUI {
     }
 
     public void handleUpdateView(UpdateViewMessage message) {
-        assistants = message.getAssistants();
         islands = message.getIslands();
         playersOrder = message.getPlayersOrder();
+        assistants = getPlayerFromName(client.getName()).getAssistants();
         if (originalPlayersOrder == null) {
             originalPlayersOrder = Collections.unmodifiableList(playersOrder);
         }

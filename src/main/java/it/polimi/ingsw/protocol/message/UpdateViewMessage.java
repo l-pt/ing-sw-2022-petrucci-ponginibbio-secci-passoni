@@ -10,7 +10,6 @@ import java.util.List;
 
 public class UpdateViewMessage extends Message {
     private List<Team> teams;
-    private List<Assistant> assistants;
     private List<Island> islands;
     private List<Player> playersOrder;
     private int posMotherNature;
@@ -22,7 +21,6 @@ public class UpdateViewMessage extends Message {
 
     public UpdateViewMessage(
         List<Team> teams,
-        List<Assistant> assistants,
         List<Island> islands,
         List<Player> playersOrder,
         int posMotherNature,
@@ -34,7 +32,6 @@ public class UpdateViewMessage extends Message {
     ){
         super(MessageId.UPDATE_VIEW);
         this.teams = teams;
-        this.assistants = assistants;
         this.islands = islands;
         this.playersOrder = playersOrder;
         this.posMotherNature = posMotherNature;
@@ -50,10 +47,6 @@ public class UpdateViewMessage extends Message {
     }
 
     public List<Team> getTeams() {return teams;}
-
-    public List<Assistant> getAssistants() {
-        return assistants;
-    }
 
     public List<Island> getIslands() {
         return islands;
