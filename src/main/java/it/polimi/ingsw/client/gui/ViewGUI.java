@@ -3,16 +3,14 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.gui.component.CloudPanel;
 import it.polimi.ingsw.client.gui.component.DynamicIcon;
 import it.polimi.ingsw.client.gui.component.IslandPanel;
+import it.polimi.ingsw.client.gui.component.SchoolPanel;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +18,7 @@ public abstract class ViewGUI {
     protected ClientGUI client;
     private List<Assistant> assistants;
     private List<Island> islands;
+    protected List<Team> teams;
     protected List<Player> originalPlayersOrder;
     private List<Player> playersOrder;
     private int posMotherNature;
@@ -28,6 +27,8 @@ public abstract class ViewGUI {
     private int coinReserve;
     private List<Character> characters;
     private boolean expert;
+
+    private ImageProvider imageProvider;
 
     protected JPanel mainPanel;
     protected JPanel islandsPanel;
@@ -53,6 +54,7 @@ public abstract class ViewGUI {
 
     protected ViewGUI(ClientGUI client) {
         this.client = client;
+        imageProvider = new ImageProvider();
         client.getFrame().getContentPane().removeAll();
         client.getFrame().getContentPane().setLayout(new BoxLayout(client.getFrame().getContentPane(), BoxLayout.Y_AXIS));
         mainPanel = new JPanel();
@@ -67,6 +69,7 @@ public abstract class ViewGUI {
 
     public void handleUpdateView(UpdateViewMessage message) {
         islands = message.getIslands();
+        teams = message.getTeams();
         playersOrder = message.getPlayersOrder();
         assistants = getPlayerFromName(client.getName()).getAssistants();
         if (originalPlayersOrder == null) {
@@ -110,7 +113,7 @@ public abstract class ViewGUI {
 
         int i = 0;
         for (Island island : islands) {
-            islandsGrid[islandIndexes[i]] = new IslandPanel(island);
+            islandsGrid[islandIndexes[i]] = new IslandPanel(island, imageProvider);
             i += distance;
         }
 
@@ -133,7 +136,7 @@ public abstract class ViewGUI {
         JPanel cloudsPanel = new JPanel(new GridLayout(1, clouds.size()));
         cloudsPanel.setPreferredSize(new Dimension(1, 85 * 1000));
         for (Cloud cloud : clouds) {
-            cloudsPanel.add(new CloudPanel(cloud.getStudents()));
+            cloudsPanel.add(new CloudPanel(cloud.getStudents(), imageProvider));
         }
         cpPanel.add(cloudsPanel);
 
@@ -141,13 +144,7 @@ public abstract class ViewGUI {
         professorsPanel.setPreferredSize(new Dimension(1, 15 * 1000));
         professorsPanel.add(new JLabel());
         for (Professor professor : professors) {
-            BufferedImage professorImage;
-            try {
-                professorImage = ImageIO.read(getClass().getResource("/professors/" + professor.getColor().name() + ".png"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            professorsPanel.add(new JLabel(" ", new DynamicIcon(professorImage), SwingConstants.TRAILING));
+            professorsPanel.add(new JLabel(" ", new DynamicIcon(imageProvider.getProfessor(professor.getColor())), SwingConstants.TRAILING));
         }
         professorsPanel.add(new JLabel());
         cpPanel.add(professorsPanel);
@@ -162,13 +159,7 @@ public abstract class ViewGUI {
         } else {
             expertPanel.setLayout(new BorderLayout(10, 10));
             JPanel coinsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            BufferedImage coinImage;
-            try {
-                coinImage = ImageIO.read(getClass().getResource("/Moneta_base.png"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            JLabel lbl = new JLabel(" ", new DynamicIcon(coinImage), SwingConstants.TRAILING);
+            JLabel lbl = new JLabel(" ", new DynamicIcon(imageProvider.getCoin()), SwingConstants.TRAILING);
             lbl.setPreferredSize(new Dimension(40, 40));
             coinsPanel.add(lbl);
             coinsPanel.add(new JLabel(Integer.toString(coinReserve)));
@@ -176,78 +167,44 @@ public abstract class ViewGUI {
 
             JPanel charactersPanel = new JPanel(new GridLayout(1, 3, 7, 0));
             for (Character character : characters) {
-                BufferedImage characterImage;
-                try {
-                    characterImage = ImageIO.read(getClass().getResource("/characters/" + character.getId() + ".jpg"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                lbl = new JLabel(" ", new DynamicIcon(characterImage), SwingConstants.TRAILING);
+                lbl = new JLabel(" ", new DynamicIcon(imageProvider.getCharacter(character)), SwingConstants.TRAILING);
                 lbl.setToolTipText("<html>Character " + (character.getId() + 1) + "<br>" + character.getDescription() + "</html>");
                 charactersPanel.add(lbl);
-                //TODO draw characters on them
+                //TODO draw students and noentry cards on them
             }
             expertPanel.add(charactersPanel, BorderLayout.CENTER);
         }
     }
 
-    protected void drawPlayer(JPanel playerPanel, Player player) {
+    protected void drawPlayer(JPanel playerPanel, Player player, List<Tower> towers) {
         playerPanel.removeAll();
         playerPanel.setLayout(new BorderLayout());
         playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), player.getName(), TitledBorder.CENTER, TitledBorder.CENTER));
 
         JPanel playerInfoPanel = new JPanel(new FlowLayout());
         //Coins
-        BufferedImage coinImage;
-        try {
-            coinImage = ImageIO.read(getClass().getResource("/Moneta_base.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        JLabel lbl = new JLabel(" ", new DynamicIcon(coinImage), SwingConstants.TRAILING);
+        JLabel lbl = new JLabel(" ", new DynamicIcon(imageProvider.getCoin()), SwingConstants.TRAILING);
         lbl.setPreferredSize(new Dimension(40, 40));
         playerInfoPanel.add(lbl);
         playerInfoPanel.add(new JLabel(Integer.toString(player.getCoins())));
 
         //Number of assistants
-        BufferedImage assistantImage;
-        try {
-            assistantImage = ImageIO.read(getClass().getResource("/assistants/" + player.getWizard().name() + ".png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        lbl = new JLabel(" ", new DynamicIcon(assistantImage), SwingConstants.TRAILING);
+        lbl = new JLabel(" ", new DynamicIcon(imageProvider.getWizard(player.getWizard())), SwingConstants.TRAILING);
         lbl.setPreferredSize(new Dimension(30, 40));
         playerInfoPanel.add(lbl);
         playerInfoPanel.add(new JLabel(Integer.toString(player.getAssistants().size())));
 
         if (player.getCurrentAssistant() != null) {
-            try {
-                assistantImage = ImageIO.read(getClass().getResource("/assistants/" + player.getCurrentAssistant().getValue() + ".png"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            lbl = new JLabel(" ", new DynamicIcon(assistantImage), SwingConstants.TRAILING);
+            lbl = new JLabel(" ", new DynamicIcon(imageProvider.getAssistant(player.getCurrentAssistant())), SwingConstants.TRAILING);
             lbl.setToolTipText("<html>Current Assistant<br>Value: " + player.getCurrentAssistant().getValue() + "<br>Moves: " + player.getCurrentAssistant().getMoves() + "</html>");
             lbl.setPreferredSize(new Dimension(30, 40));
             playerInfoPanel.add(lbl);
         }
 
         playerPanel.add(playerInfoPanel, BorderLayout.PAGE_START);
-        drawBoard(playerPanel, player);
-    }
-
-    private void drawBoard(JPanel playerPanel, Player player) {
-        //Add school
-        BufferedImage boardImage;
-        try {
-            boardImage = ImageIO.read(getClass().getResource("/Plancia_DEF.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //TODO draw students, towers, professors on the board
-        JLabel lbl = new JLabel(new DynamicIcon(boardImage));
-        playerPanel.add(lbl, BorderLayout.CENTER);
+        //School
+        JPanel schoolPanel = new SchoolPanel(player, towers, imageProvider);
+        playerPanel.add(schoolPanel, BorderLayout.CENTER);
     }
 
     private void drawAssistants() {
@@ -255,13 +212,7 @@ public abstract class ViewGUI {
         assistantsPanel.setLayout(new GridLayout(2, 5, 5, 5));
         assistantsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Your assistants", TitledBorder.CENTER, TitledBorder.CENTER));
         for (Assistant assistant : assistants) {
-            BufferedImage assistantImage;
-            try {
-                assistantImage = ImageIO.read(getClass().getResource("/assistants/" + assistant.getValue() + ".png"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            JLabel lbl = new JLabel(" ", new DynamicIcon(assistantImage), SwingConstants.TRAILING);
+            JLabel lbl = new JLabel(" ", new DynamicIcon(imageProvider.getAssistant(assistant)), SwingConstants.TRAILING);
             lbl.setToolTipText("<html>Value: " + assistant.getValue() + "<br>Moves: " + assistant.getMoves() + "</html>");
             assistantsPanel.add(lbl);
         }
