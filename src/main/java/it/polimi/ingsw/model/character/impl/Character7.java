@@ -47,6 +47,7 @@ public class Character7 extends StudentCharacter implements StudentMapCharacter 
         addStudents(studentsIn);
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 
     @Override

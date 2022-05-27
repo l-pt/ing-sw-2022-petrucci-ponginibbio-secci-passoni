@@ -17,5 +17,6 @@ public class Character8 extends Character implements NoParametersCharacter {
         player.setAdditionalInfluence(2);
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 }

@@ -45,5 +45,6 @@ public class Character10 extends Character implements StudentMapCharacter {
         player.getSchool().addStudentsToTable(entranceStudents);
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 }

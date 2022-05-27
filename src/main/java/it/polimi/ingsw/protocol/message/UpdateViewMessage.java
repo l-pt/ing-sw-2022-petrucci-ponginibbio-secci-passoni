@@ -18,6 +18,7 @@ public class UpdateViewMessage extends Message {
     private int coinReserve;
     private List<Character> characters;
     private boolean expert;
+    private String currentPlayer;
 
     public UpdateViewMessage(
         List<Team> teams,
@@ -28,7 +29,8 @@ public class UpdateViewMessage extends Message {
         List<Professor> professors,
         int coinReserve,
         List<Character> characters,
-        boolean expert
+        boolean expert,
+        String currentPlayer
     ){
         super(MessageId.UPDATE_VIEW);
         this.teams = teams;
@@ -40,6 +42,7 @@ public class UpdateViewMessage extends Message {
         this.coinReserve = coinReserve;
         this.characters = characters;
         this.expert = expert;
+        this.currentPlayer = currentPlayer;
     }
 
     private UpdateViewMessage() {
@@ -78,5 +81,9 @@ public class UpdateViewMessage extends Message {
 
     public boolean isExpert() {
         return expert;
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
     }
 }

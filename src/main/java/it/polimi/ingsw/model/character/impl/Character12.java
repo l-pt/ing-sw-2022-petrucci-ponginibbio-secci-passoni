@@ -21,5 +21,6 @@ public class Character12 extends Character implements ColorCharacter {
             match.addStudents(p.getSchool().removeStudentsByColor(color, Math.min(3, p.getSchool().getTableCount(color))));
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 }

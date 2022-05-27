@@ -29,6 +29,7 @@ public class Character5 extends Character implements IslandCharacter {
         --noEntry;
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 
     public void addNoEntry(){++noEntry;}

@@ -23,6 +23,7 @@ public class ViewCLI {
     private int coinReserve;
     private List<Character> characters;
     private boolean expert;
+    private String currentPlayer;
 
     public ViewCLI(ClientCLI client) {
         this.client = client;
@@ -39,6 +40,7 @@ public class ViewCLI {
         coinReserve = message.getCoinReserve();
         characters = message.getCharacters();
         expert = message.isExpert();
+        currentPlayer = message.getCurrentPlayer();
 
         print();
     }
@@ -274,6 +276,12 @@ public class ViewCLI {
             }
             formatter.format("\n");
             ++counter;
+        }
+
+        if (!client.name.equals(currentPlayer)) {
+            formatter.format("\n");
+            formatter.format("Waiting for %1$s...", currentPlayer);
+            formatter.format("\n");
         }
 
         System.out.println(formatter.toString());

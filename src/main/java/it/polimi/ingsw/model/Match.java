@@ -26,6 +26,7 @@ public class Match implements Observable<UpdateViewMessage> {
     private InfluenceCalculationPolicy influencePolicy;
     private boolean gameFinished;
     private Set<Observer<UpdateViewMessage>> observers;
+    private String currentPlayer;
 
     public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
 
@@ -69,6 +70,7 @@ public class Match implements Observable<UpdateViewMessage> {
         for (int i = 0; i < playerOrder.size(); ++i)
             clouds.add(new Cloud());
 
+        observers = new HashSet<>();
         populateClouds();
 
         //create a professor for each color
@@ -121,7 +123,7 @@ public class Match implements Observable<UpdateViewMessage> {
         drawAllowed = false;
         influencePolicy = new InfluenceCalculationPolicy();
         gameFinished = false;
-        observers = new HashSet<>();
+        currentPlayer = playerOrder.get(0).getName();
     }
 
     @Override
@@ -339,6 +341,7 @@ public class Match implements Observable<UpdateViewMessage> {
         for (Cloud c : clouds)
             if (!studentBag.isEmpty())
                 c.addStudents(extractStudent(3));
+        updateView();
     }
 
     public void moveStudentsFromCloud(int cloudIndex, String playerName) throws IllegalMoveException {
@@ -347,6 +350,7 @@ public class Match implements Observable<UpdateViewMessage> {
                 throw new IllegalMoveException("Cloud already chosen by another player this turn");
             } else {
                 getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
+                updateView();
             }
         } else throw new IllegalMoveException("Invalid cloud index");
     }
@@ -356,6 +360,7 @@ public class Match implements Observable<UpdateViewMessage> {
         if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1) {
             posMotherNature = (posMotherNature + moves) % islands.size();
             islandInfluence(posMotherNature, false);
+            updateView();
         } else throw new IllegalMoveException("Mother nature moves must be between 1 and " + (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()));
     }
 
@@ -457,6 +462,11 @@ public class Match implements Observable<UpdateViewMessage> {
             lastTurn = true;
         if(getPosFromName(playerName) == playerOrder.size()-1)
             orderPlayers();
+        updateView();
+    }
+
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 
     public void updateView() {
@@ -469,7 +479,8 @@ public class Match implements Observable<UpdateViewMessage> {
             professors,
             coinsReserve,
             characters,
-            expert
+            expert,
+            currentPlayer
         ));
     }
 }

@@ -26,6 +26,7 @@ public class Character11 extends StudentCharacter implements ColorCharacter {
             addStudents(match.extractStudent(1));
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 
     @Override

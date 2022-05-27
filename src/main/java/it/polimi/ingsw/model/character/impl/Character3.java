@@ -22,5 +22,6 @@ public class Character3 extends Character implements IslandCharacter {
         match.islandInfluence(island, true);
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 }

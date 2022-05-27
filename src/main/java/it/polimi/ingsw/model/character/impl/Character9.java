@@ -19,5 +19,6 @@ public class Character9 extends Character implements ColorCharacter {
         match.getInfluencePolicy().setExcludedColor(color);
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 }

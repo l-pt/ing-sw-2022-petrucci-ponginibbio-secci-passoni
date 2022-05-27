@@ -59,6 +59,7 @@ public class Character7Test extends TestCase {
             absentColors.add(PawnColor.RED);
         }
         absentColor = absentColors.get(0);
+        character.addStudents(List.of(new Student(absentColor)));
         PawnColor finalAbsentColor1 = absentColor;
         PawnColor finalCharacterColor = characterColor;
         e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), Map.of(finalAbsentColor1, 1), Map.of(finalCharacterColor, 1)));

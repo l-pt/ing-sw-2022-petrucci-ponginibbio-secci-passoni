@@ -18,5 +18,6 @@ public class Character4 extends Character implements NoParametersCharacter {
         player.setAdditionalMoves(2);
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 }

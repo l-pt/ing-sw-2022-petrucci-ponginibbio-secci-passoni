@@ -17,5 +17,6 @@ public class Character6 extends Character implements NoParametersCharacter {
         match.getInfluencePolicy().setCountTowers(false);
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 }

@@ -26,6 +26,7 @@ public class Character1 extends StudentCharacter {
             addStudents(match.extractStudent(1));
         player.removeCoins(cost);
         incrementCost();
+        match.updateView();
     }
 
     @Override

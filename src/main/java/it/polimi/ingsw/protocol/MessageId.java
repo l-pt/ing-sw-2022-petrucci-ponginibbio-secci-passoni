@@ -29,7 +29,9 @@ public enum MessageId {
     USE_CHARACTER_ISLAND(UseCharacterIslandMessage.class),
     USE_CHARACTER_STUDENT_MAP(UseCharacterStudentMapMessage.class),
     USE_CHARACTER_COLOR(UseCharacterColorMessage.class),
-    END_GAME(EndGameMessage.class);
+    END_GAME(EndGameMessage.class),
+    ASK_CHARACTER(AskCharacterMessage.class),
+    USE_NO_CHARACTER(UseNoCharacterMessage.class);
 
     private Class<? extends Message> messageClass;
 
