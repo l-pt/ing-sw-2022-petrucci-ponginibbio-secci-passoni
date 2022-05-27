@@ -19,8 +19,8 @@ public abstract class ViewGUI {
     private List<Assistant> assistants;
     private List<Island> islands;
     protected List<Team> teams;
-    protected List<Player> originalPlayersOrder;
-    private List<Player> playersOrder;
+    private List<Player> originalPlayersOrder;
+    protected List<Player> playersOrder;
     private int posMotherNature;
     private List<Cloud> clouds;
     private List<Professor> professors;
@@ -112,8 +112,9 @@ public abstract class ViewGUI {
         int distance = islandIndexes.length / islands.size();
 
         int i = 0;
+        int islandIndex = 0;
         for (Island island : islands) {
-            islandsGrid[islandIndexes[i]] = new IslandPanel(island, imageProvider);
+            islandsGrid[islandIndexes[i]] = new IslandPanel(island, islandIndex++, imageProvider);
             i += distance;
         }
 
@@ -216,5 +217,53 @@ public abstract class ViewGUI {
             lbl.setToolTipText("<html>Value: " + assistant.getValue() + "<br>Moves: " + assistant.getMoves() + "</html>");
             assistantsPanel.add(lbl);
         }
+    }
+
+    public List<Assistant> getAssistants() {
+        return assistants;
+    }
+
+    public List<Island> getIslands() {
+        return islands;
+    }
+
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public List<Player> getOriginalPlayersOrder() {
+        return originalPlayersOrder;
+    }
+
+    public List<Player> getPlayersOrder() {
+        return playersOrder;
+    }
+
+    public int getPosMotherNature() {
+        return posMotherNature;
+    }
+
+    public List<Cloud> getClouds() {
+        return clouds;
+    }
+
+    public List<Professor> getProfessors() {
+        return professors;
+    }
+
+    public int getCoinReserve() {
+        return coinReserve;
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
+    }
+
+    public boolean isExpert() {
+        return expert;
+    }
+
+    public JPanel getBottomPanel() {
+        return bottomPanel;
     }
 }

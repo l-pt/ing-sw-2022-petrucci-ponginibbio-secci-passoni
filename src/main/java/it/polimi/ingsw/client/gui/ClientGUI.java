@@ -1,8 +1,13 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.gui.component.EntranceStudentSelectorPanel;
+import it.polimi.ingsw.model.PawnColor;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.Student;
 import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.message.*;
+import it.polimi.ingsw.protocol.message.character.UseNoCharacterMessage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +16,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientGUI extends Client {
     private JFrame frame;
@@ -157,6 +164,90 @@ public class ClientGUI extends Client {
                     view = ViewGUI.create(this, ((UpdateViewMessage) msg).getPlayersOrder().size());
                 }
                 view.handleUpdateView((UpdateViewMessage) msg);
+            }
+            case ASK_ASSISTANT -> {
+                view.getBottomPanel().removeAll();
+                view.getBottomPanel().add(new JLabel("Choose an assistant"));
+                JComboBox<Integer> comboBox = new JComboBox<>(view.getAssistants().stream().map(a -> a.getValue()).toArray(Integer[]::new));
+                view.getBottomPanel().add(comboBox);
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    try {
+                        sendMessage(new SetAssistantMessage((Integer) comboBox.getSelectedItem()));
+                        view.getBottomPanel().removeAll();
+                        frame.revalidate();
+                        frame.repaint();
+                    } catch (IOException e) {
+                        closeProgram();
+                    }
+                });
+                view.getBottomPanel().add(confirm);
+                frame.revalidate();
+                frame.repaint();
+            }
+            case ASK_ENTRANCE_STUDENT -> {
+                Player player = view.getPlayerFromName(name);
+
+                view.getBottomPanel().removeAll();
+                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
+                view.getBottomPanel().add(new JLabel("Move 3 entrance students"));
+
+                int i = 0;
+                JPanel selectorsPanel = new JPanel();
+                EntranceStudentSelectorPanel[] studentSelectors = new EntranceStudentSelectorPanel[player.getSchool().getEntrance().size()];
+                for (Student student : player.getSchool().getEntrance()) {
+                    selectorsPanel.add(studentSelectors[i++] = new EntranceStudentSelectorPanel(student, view.getIslands()));
+                }
+                view.getBottomPanel().add(selectorsPanel);
+
+                JLabel errorLbl = new JLabel("You must select exactly three students");
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
+                    Map<PawnColor, Integer> tableStudents = new HashMap<>();
+                    int totalStudents = 0;
+                    for (EntranceStudentSelectorPanel pan : studentSelectors) {
+                        if (pan.getSelection() == EntranceStudentSelectorPanel.SELECTION_TABLE) {
+                            ++totalStudents;
+                            tableStudents.put(pan.getStudent().getColor(), tableStudents.getOrDefault(pan.getStudent().getColor(), 0) + 1);
+                        } else if (pan.getSelection() >= 0) {
+                            ++totalStudents;
+                            if (!islandsStudents.containsKey(pan.getSelection())) {
+                                islandsStudents.put(pan.getSelection(), new HashMap<>());
+                            }
+                            islandsStudents.get(pan.getSelection()).put(pan.getStudent().getColor(), islandsStudents.get(pan.getSelection()).getOrDefault(pan.getStudent().getColor(), 0) + 1);
+                        }
+                    }
+                    if (totalStudents == 3) {
+                        try {
+                            sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
+                            view.getBottomPanel().removeAll();
+                            frame.revalidate();
+                            frame.repaint();
+                        } catch (IOException e) {
+                            closeProgram();
+                        }
+                    } else {
+                        view.getBottomPanel().remove(confirm);
+                        view.getBottomPanel().remove(errorLbl);
+                        view.getBottomPanel().add(errorLbl);
+                        view.getBottomPanel().add(confirm);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                });
+
+                view.getBottomPanel().add(confirm);
+                frame.revalidate();
+                frame.repaint();
+            }
+            case ASK_CHARACTER -> {
+                try {
+                    //TODO IMPLEMENT CHARACTERS
+                    sendMessage(new UseNoCharacterMessage());
+                } catch (IOException e) {
+                    closeProgram();
+                }
             }
         }
     }

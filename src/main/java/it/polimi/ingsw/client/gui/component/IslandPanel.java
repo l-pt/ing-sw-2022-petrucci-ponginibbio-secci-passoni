@@ -18,10 +18,11 @@ public class IslandPanel extends JPanel {
     private Island island;
     private ImageProvider imageProvider;
 
-    public IslandPanel(Island island, ImageProvider imageProvider) {
+    public IslandPanel(Island island, int index, ImageProvider imageProvider) {
         super(new GridLayout(DIM, DIM));
         this.island = island;
         this.imageProvider = imageProvider;
+        setBorder(BorderFactory.createTitledBorder("Island " + (index + 1)));
         JLabel[] grid = new JLabel[DIM * DIM];
         List<Object> pieces = new ArrayList<>(island.getStudents().size() + island.getTowers().size());
         pieces.addAll(island.getStudents());

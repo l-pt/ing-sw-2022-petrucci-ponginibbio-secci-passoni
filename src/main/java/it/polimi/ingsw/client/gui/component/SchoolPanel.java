@@ -10,7 +10,7 @@ import java.util.List;
 
 public class SchoolPanel extends JPanel {
     private static int rows = 19;
-    private static int columns = 39;
+    private static int columns = 53;
     private ImageProvider imageProvider;
 
     public SchoolPanel(Player player, List<Tower> towers, ImageProvider imageProvider) {
@@ -25,14 +25,14 @@ public class SchoolPanel extends JPanel {
                 PawnColor.BLUE, List.of(805, 807, 810, 813, 815, 818, 821, 823, 826, 829)
         );
         Map<PawnColor, Integer> profPosMap = Map.of(
-                PawnColor.GREEN, 145,
-                PawnColor.RED, 262,
-                PawnColor.YELLOW, 379,
-                PawnColor.PINK, 496,
-                PawnColor.BLUE, 613
+                PawnColor.GREEN, 198,
+                PawnColor.RED, 357,
+                PawnColor.YELLOW, 516,
+                PawnColor.PINK, 675,
+                PawnColor.BLUE, 834
         );
-        int[] entrancePos = new int[]{196, 198, 274, 276, 352, 354, 430, 433, 508, 510};
-        int[] towersPos = new int[]{228, 230, 306, 308, 384, 386, 462, 464};
+        int[] entrancePos = new int[]{478, 584, 587, 690, 693, 796, 799};
+        int[] towersPos = new int[]{469, 473, 575, 579, 681, 685, 787, 791};
 
         JLabel[] grid = new JLabel[rows * columns];
 
@@ -47,13 +47,17 @@ public class SchoolPanel extends JPanel {
         }
 
         for (Professor professor : player.getSchool().getProfessors()) {
-            grid[profPosMap.get(professor.getColor())] = new JLabel(new DynamicIcon(imageProvider.getProfessor(professor.getColor())));
+            JLabel profLabel = new JLabel(new DynamicIcon(imageProvider.getProfessor(professor.getColor())));
+            profLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            grid[profPosMap.get(professor.getColor())] = profLabel;
         }
 
         for (Map.Entry<PawnColor, List<Student>> entry : player.getSchool().getTables().entrySet()) {
             i = 0;
             for (Student student : entry.getValue()) {
-                grid[studentsPosMap.get(entry.getKey()).get(i++)] = new JLabel(new DynamicIcon(imageProvider.getStudent(entry.getKey())));
+                JLabel studentLabel = new JLabel(new DynamicIcon(imageProvider.getStudent(entry.getKey())));
+                studentLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                grid[studentsPosMap.get(entry.getKey()).get(i++)] = studentLabel;
             }
         }
 

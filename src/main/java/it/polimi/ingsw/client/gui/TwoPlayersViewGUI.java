@@ -48,28 +48,14 @@ public class TwoPlayersViewGUI extends ViewGUI {
     @Override
     protected void draw() {
         super.draw();
-        Player clientPlayer = getPlayerFromName(client.getName());
-        List<Tower> clientPlayerTowers = new ArrayList<>();
-        for (Team team : teams) {
-            if (team.isTeamMember(clientPlayer)) {
-                clientPlayerTowers.addAll(team.getTowers());
-            }
-        }
-        Player opponent = null;
-        for (Player player : originalPlayersOrder) {
-            if (!player.equals(clientPlayer)) {
-                opponent = player;
-                break;
-            }
-        }
-        List<Tower> opponentTowers = new ArrayList<>();
-        for (Team team : teams) {
-            if (team.isTeamMember(opponent)) {
-                opponentTowers.addAll(team.getTowers());
-            }
-        }
-        drawPlayer(playerPanel, clientPlayer, clientPlayerTowers);
-        drawPlayer(opponentPanel, opponent, opponentTowers);
+        Player me = getPlayerFromName(client.getName());
+        Team myTeam = teams.stream().filter(t -> t.isTeamMember(me)).findAny().get();
+
+        Player other = playersOrder.stream().filter(p -> !p.getName().equals(me.getName())).findAny().get();
+        Team otherTeam = teams.stream().filter(t -> t.isTeamMember(other)).findAny().get();
+
+        drawPlayer(playerPanel, me, myTeam.getTowers());
+        drawPlayer(opponentPanel, other, otherTeam.getTowers());
         client.getFrame().revalidate();
         client.getFrame().repaint();
     }
