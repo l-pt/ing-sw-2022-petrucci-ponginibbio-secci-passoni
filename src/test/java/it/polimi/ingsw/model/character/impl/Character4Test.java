@@ -21,7 +21,7 @@ public class Character4Test extends TestCase {
 
         character.use(match, player1.getName());
         Exception e = assertThrows(IllegalMoveException.class, () -> match.moveMotherNature(4, player1.getName()));
-        assertEquals(e.getMessage(), "Too many moves");
+        assertEquals(e.getMessage(), "Mother nature moves must be between 1 and " + (player1.getCurrentAssistant().getMoves() + player1.getAdditionalMoves()));
 
         int posMotherNature = match.getPosMotherNature();
         match.moveMotherNature(3, player1.getName());

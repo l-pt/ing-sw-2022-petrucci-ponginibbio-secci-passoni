@@ -70,7 +70,6 @@ public class Controller {
             ));
             match.addObserver(readyConnections.get(i));
         }
-
         readyConnections.get(0).sendMessage(new AskAssistantMessage());
     }
 
@@ -110,9 +109,15 @@ public class Controller {
                     match.updateView();
                     if (match.isGameFinished()) {
                         return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
-                    } else {
-                        return Map.of(name, List.of(new AskCloudMessage()));
-                    }
+                    } else if (match.isLastTurn()) {
+                        int pos = match.getPosFromName(name);
+                        match.resetAbility();
+                        if (pos != match.getPlayersOrder().size() - 1)
+                            return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskEntranceStudentMessage()));
+                        else {
+                            return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
+                        }
+                    }else return Map.of(name, List.of(new AskCloudMessage()));
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskMotherNatureMessage()));
                 }
@@ -122,7 +127,7 @@ public class Controller {
                     moveStudentsFromCloud(((SetCloudMessage) message).getCloud(), name);
                     match.updateView();
                 } catch (IllegalMoveException e) {
-                    return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskMotherNatureMessage()));
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskCloudMessage()));
                 }
             }
             case END_TURN -> {
@@ -136,6 +141,7 @@ public class Controller {
                         if (match.isLastTurn()) {
                             return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                         } else {
+                            match.populateClouds();
                             return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskAssistantMessage()));
                         }
                     }

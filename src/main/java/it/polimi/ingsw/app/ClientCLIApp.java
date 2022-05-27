@@ -1,17 +1,18 @@
 package it.polimi.ingsw.app;
 
 import it.polimi.ingsw.client.ClientCLI;
-import it.polimi.ingsw.client.gui.ClientGUI;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class ClientApp {
+public class ClientCLIApp {
+    private static ClientCLI client;
+
     public static void main(String[] args){
         Scanner stdin = new Scanner(System.in);
-        String ip, mod;
+        String ip;
         try{
             System.out.println("Insert server ip:");
             ip = stdin.nextLine();
@@ -19,20 +20,8 @@ public class ClientApp {
                 System.out.println("Wrong address format. Insert server ip:");
                 ip = stdin.nextLine();
             }
-
-            System.out.println("cli/gui?");
-            mod = stdin.nextLine();
-            while (!(mod.equals("cli") || mod.equals("gui"))){
-                System.out.println("Answer must be cli or gui. cli/gui?");
-                mod = stdin.nextLine();
-            }
-            if (mod.equals("cli")) {
-                ClientCLI client = new ClientCLI(ip, 61863);
-                client.run();
-            } else {
-                ClientGUI client = new ClientGUI(ip, 61863);
-                client.run();
-            }
+            client = new ClientCLI(ip, 61863);
+            client.run();
         }catch (IOException e){
             System.err.println(e.getMessage());
         }
@@ -45,5 +34,9 @@ public class ClientApp {
         } catch(UnknownHostException e){
             return true;
         }
+    }
+
+    public static ClientCLI getClient() {
+        return client;
     }
 }

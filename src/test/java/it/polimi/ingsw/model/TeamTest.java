@@ -17,11 +17,14 @@ public class TeamTest extends TestCase {
 
         Player player1 = new Player("test1", TowerColor.WHITE, Wizard.BLUE);
         Player player2 = new Player("test2", TowerColor.WHITE, Wizard.GREEN);
+        Player player3 = new Player("test3", TowerColor.GRAY, Wizard.PINK);
         List<Player> players = new ArrayList<>();
         players.add(player1);
         players.add(player2);
 
         Team team = new Team(players, TowerColor.WHITE);
+        assertTrue(team.isTeamMember(player1));
+        assertFalse(team.isTeamMember(player3));
         assertEquals(team.getTowers().size(), 0);
         Tower tower = new Tower(TowerColor.WHITE);
         team.addTower(tower);

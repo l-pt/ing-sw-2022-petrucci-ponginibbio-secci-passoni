@@ -136,7 +136,7 @@ public class ViewCLI {
         if (expert == true) {
             formatter.format("\u001b[97mCHARACTERS ↓\u001b[0m\n");
             for (Character character : characters) {
-                formatter.format("\u001b[97m%1$d°CHARACTER →  COST: %2$d\u001b[0m", character.getId(), character.getCost());
+                formatter.format("\u001b[97m%1$d°CHARACTER →  COST: %2$d\u001b[0m", character.getId() + 1, character.getCost());
                 if (character instanceof StudentCharacter) {
                     formatter.format("\u001b[97m  STUDENTS:\u001b[0m");
                     for (Student student : ((StudentCharacter) character).getStudents()) {
@@ -164,11 +164,9 @@ public class ViewCLI {
         }
 
         //Print assistants
-        counter = 1;
         formatter.format("\u001b[97mYOUR ASSISTANTS ↓\u001b[0m\n");
         for (Assistant assistant : assistants) {
-            formatter.format("\u001b[97m%1$d°ASSISTANT →  Value: %2$d  Moves: %3$d\u001b[0m\n", counter, assistant.getValue(), assistant.getMoves());
-            ++counter;
+            formatter.format("\u001b[97mValue: %1$d  Moves: %2$d\u001b[0m\n", assistant.getValue(), assistant.getMoves());
         }
 
         //Print current assistants

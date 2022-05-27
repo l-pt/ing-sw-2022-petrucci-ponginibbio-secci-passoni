@@ -363,6 +363,12 @@ public class MatchTest extends TestCase {
             assertEquals(oldEntranceState.get(c) + cloudMap.getOrDefault(c, 0), player1.getSchool().getEntranceCount(c));
         }
         assertEquals(0, match.getClouds().get(0).getStudents().size());
+
+        Exception e = assertThrows(IllegalMoveException.class, () -> match.moveStudentsFromCloud(0, player2.getName()));
+        assertEquals("Cloud already chosen by another player this turn", e.getMessage());
+
+
+
     }
 
     @Test

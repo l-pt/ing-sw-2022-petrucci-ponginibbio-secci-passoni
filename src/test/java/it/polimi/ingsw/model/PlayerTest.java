@@ -10,12 +10,12 @@ public class PlayerTest extends TestCase {
     public void assistantFromValueTest() {
         Player player = new Player("test", TowerColor.BLACK, Wizard.BLUE);
         assertNull(player.getAssistantFromValue(11));
+        assertEquals(Wizard.BLUE, player.getWizard());
 
         Assistant assistant = player.getAssistantFromValue(1);
         assertNotNull(assistant);
         assertEquals(assistant.getValue(), 1);
         assertEquals(1, assistant.getMoves());
-        assertEquals(Wizard.BLUE, assistant.getWizard());
     }
 
     @Test

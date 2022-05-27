@@ -342,9 +342,13 @@ public class Match implements Observable<UpdateViewMessage> {
     }
 
     public void moveStudentsFromCloud(int cloudIndex, String playerName) throws IllegalMoveException {
-        if (cloudIndex >= 0 && cloudIndex < clouds.size())
-            getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
-        else throw new IllegalMoveException("Invalid cloud index");
+        if (cloudIndex >= 0 && cloudIndex < clouds.size()) {
+            if (clouds.get(cloudIndex).getStudents().size() == 0) {
+                throw new IllegalMoveException("Cloud already chosen by another player this turn");
+            } else {
+                getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
+            }
+        } else throw new IllegalMoveException("Invalid cloud index");
     }
 
     public void moveMotherNature(int moves, String playerName) throws IllegalMoveException {
@@ -352,7 +356,7 @@ public class Match implements Observable<UpdateViewMessage> {
         if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1) {
             posMotherNature = (posMotherNature + moves) % islands.size();
             islandInfluence(posMotherNature, false);
-        } else throw new IllegalMoveException("Too many moves");
+        } else throw new IllegalMoveException("Mother nature moves must be between 1 and " + (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()));
     }
 
     public boolean isExpert() {

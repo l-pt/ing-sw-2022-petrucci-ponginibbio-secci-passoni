@@ -15,7 +15,7 @@ public class Character3 extends Character implements IslandCharacter {
 
     public void use(Match match, String playerName, int island) throws IllegalMoveException {
         if (island < 0 || island >= match.getIslands().size()) {
-            throw new IllegalMoveException("Island must be between 0 and " + (match.getIslands().size() - 1));
+            throw new IllegalMoveException("Island must be between 1 and " + match.getIslands().size());
         }
         Player player = match.getPlayerFromName(playerName);
         checkCost(player);

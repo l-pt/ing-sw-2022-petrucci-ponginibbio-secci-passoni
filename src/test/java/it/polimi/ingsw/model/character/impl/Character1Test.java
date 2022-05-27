@@ -24,7 +24,7 @@ public class Character1Test extends TestCase {
         PawnColor finalColor1 = color;
 
         Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), finalColor1, 50));
-        assertEquals(e.getMessage(), "Island must be between 0 and " + (match.getIslands().size() - 1));
+        assertEquals(e.getMessage(), "Island must be between 1 and " + match.getIslands().size());
 
         int initialStudentCount = (int) match.getIslands().get(0).getStudents().stream().filter(s -> s.getColor() == finalColor1).count();
         int bagCount = match.getStudentBag().size();

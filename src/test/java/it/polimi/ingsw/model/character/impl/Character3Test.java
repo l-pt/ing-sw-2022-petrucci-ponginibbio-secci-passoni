@@ -21,7 +21,7 @@ public class Character3Test extends TestCase {
         Character3 character = new Character3();
 
         Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), 13));
-        assertEquals("Island must be between 0 and " + (match.getIslands().size() - 1), e.getMessage());
+        assertEquals("Island must be between 1 and " + match.getIslands().size(), e.getMessage());
 
         int posMotherNature = match.getPosMotherNature();
         character.use(match, player1.getName(), 0);
