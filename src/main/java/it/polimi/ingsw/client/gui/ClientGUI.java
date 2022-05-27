@@ -15,7 +15,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,11 +23,8 @@ import java.util.Map;
 public class ClientGUI extends Client {
     private JFrame frame;
     private JPanel questionsPanel;
+    private JLabel errorLabel;
     private ViewGUI view;
-
-    public ClientGUI(String ip, int port){
-        super(ip, port);
-    }
 
     public JFrame getFrame() {
         return frame;
@@ -39,65 +36,97 @@ public class ClientGUI extends Client {
 
     @Override
     public void run() throws IOException {
-        socket = new Socket(ip, port);
-        in = new InputStreamReader(socket.getInputStream());
-        out = new OutputStreamWriter(socket.getOutputStream());
+        SwingUtilities.invokeLater(() -> {
+            frame = new JFrame("Eriantys");
 
-        try {
-            SwingUtilities.invokeAndWait(() -> {
-                frame = new JFrame("Eriantys");
+            JPanel contentPane = new JPanel();
+            contentPane.setOpaque(true);
+            contentPane.setBackground(Color.WHITE);
+            contentPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+            contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
-                JPanel contentPane = new JPanel();
-                contentPane.setOpaque(true);
-                contentPane.setBackground(Color.WHITE);
-                contentPane.setAlignmentX(Component.CENTER_ALIGNMENT);
-                contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+            questionsPanel = new JPanel();
+            questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));
+            questionsPanel.setMaximumSize(new Dimension(320, 90));
+            questionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            contentPane.add(questionsPanel);
 
-                questionsPanel = new JPanel();
-                questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));
-                questionsPanel.setMaximumSize(new Dimension(320, 90));
-                questionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-                contentPane.add(questionsPanel);
+            errorLabel = new JLabel();
+            errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                frame.setContentPane(contentPane);
+            frame.setContentPane(contentPane);
 
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.pack();
-                frame.setVisible(true);
+            JLabel titleLbl = new JLabel("Insert IP address and port");
+            titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+            questionsPanel.add(titleLbl);
+            JTextField ipField = new JTextField();
+            ipField.setAlignmentX(Component.CENTER_ALIGNMENT);
+            questionsPanel.add(ipField);
+            JTextField portField = new JTextField("61863");
+            portField.setAlignmentX(Component.CENTER_ALIGNMENT);
+            questionsPanel.add(portField);
+            JButton confirm = new JButton("Connect");
+            confirm.setAlignmentX(Component.CENTER_ALIGNMENT);
+            confirm.addActionListener(actionEvent -> {
+                int port;
+                try {
+                    port = Integer.parseInt(portField.getText());
+                } catch (NumberFormatException e) {
+                    errorLabel.setText("Invalid port");
+                    frame.revalidate();
+                    frame.repaint();
+                    return;
+                }
+                try {
+                    socket = new Socket();
+                    socket.connect(new InetSocketAddress(ipField.getText(), port), 5000);
+                    in = new InputStreamReader(socket.getInputStream());
+                    out = new OutputStreamWriter(socket.getOutputStream());
+                    errorLabel.setText("");
+                    Thread t = new Thread(new ClientSocketWorker(this));
+                    t.start();
+                } catch (IOException e) {
+                    errorLabel.setText("Connection failed: " + e.getMessage());
+                    frame.revalidate();
+                    frame.repaint();
+                }
             });
-        } catch (InterruptedException | InvocationTargetException e) {
-            e.printStackTrace();
-            closeProgram();
-        }
-        Thread t = new Thread(new ClientSocketWorker(this));
-        t.start();
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            questionsPanel.add(errorLabel);
+            questionsPanel.add(confirm);
+
+            frame.pack();
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+        });
     }
 
     public void processMessage(Message msg) {
         //We have received a server message, check its Type to answer appropriately
         switch (msg.getMessageId()) {
             case ERROR -> {
-                System.out.println("Server error: " + ((ErrorMessage) msg).getError());
+                errorLabel.setText("Server error: " + ((ErrorMessage) msg).getError());
+                frame.revalidate();
+                frame.repaint();
             }
             case ASK_USERNAME -> {
                 questionsPanel.removeAll();
-                questionsPanel.add(new JLabel("Insert username"));
-                JTextField usernameTextField = new JTextField("");
+                JLabel titleLbl = new JLabel("Insert username");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                questionsPanel.add(titleLbl);
+                JTextField usernameTextField = new JTextField();
                 usernameTextField.setPreferredSize(new Dimension(320, 40));
-                usernameTextField.setAlignmentX(Component.LEFT_ALIGNMENT);
+                usernameTextField.setAlignmentX(Component.CENTER_ALIGNMENT);
                 usernameTextField.addActionListener(actionEvent -> {
                     if (usernameTextField.getText().isEmpty()) {
                         return;
                     }
                     try {
                         questionsPanel.removeAll();
-                        questionsPanel.add(new JLabel("Waiting for other players..."));
+                        JLabel waitLbl = new JLabel("Waiting for other players...");
+                        waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                        questionsPanel.add(waitLbl);
+                        errorLabel.setText("");
                         frame.revalidate();
                         frame.repaint();
                         name = usernameTextField.getText();
@@ -107,22 +136,26 @@ public class ClientGUI extends Client {
                     }
                 });
                 questionsPanel.add(usernameTextField);
+                questionsPanel.add(errorLabel);
                 frame.revalidate();
                 frame.repaint();
             }
             case ASK_PLAYER_NUMBER -> {
                 questionsPanel.removeAll();
-                questionsPanel.add(new JLabel("Choose player number"));
+                JLabel titleLbl = new JLabel("Choose player number");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                questionsPanel.add(titleLbl);
                 JComboBox<Integer> comboBox = new JComboBox<>(new Integer[]{2, 3, 4});
                 comboBox.setMaximumSize(new Dimension(320, 40));
-                comboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+                comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
                 questionsPanel.add(comboBox);
                 JButton confirmPlayers = new JButton("Confirm");
                 confirmPlayers.setMaximumSize(new Dimension(320, 40));
-                confirmPlayers.setAlignmentX(Component.LEFT_ALIGNMENT);
+                confirmPlayers.setAlignmentX(Component.CENTER_ALIGNMENT);
                 confirmPlayers.addActionListener(actionEvent -> {
                     try {
                         questionsPanel.removeAll();
+                        errorLabel.setText("");
                         frame.revalidate();
                         frame.repaint();
                         sendMessage(new SetPlayerNumberMessage((Integer) comboBox.getSelectedItem()));
@@ -130,32 +163,39 @@ public class ClientGUI extends Client {
                         closeProgram();
                     }
                 });
+                questionsPanel.add(errorLabel);
                 questionsPanel.add(confirmPlayers);
                 frame.revalidate();
                 frame.repaint();
             }
             case ASK_EXPERT -> {
                 questionsPanel.removeAll();
-                questionsPanel.add(new JLabel("Activate expert mode?"));
-                JComboBox<Boolean> comboBox = new JComboBox<>(new Boolean[]{true, false});
+                JLabel titleLbl = new JLabel("Activate expert mode?");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                questionsPanel.add(titleLbl);
+                JComboBox<String> comboBox = new JComboBox<>(new String[]{"Yes", "No"});
                 comboBox.setMaximumSize(new Dimension(320, 40));
-                comboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+                comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
                 questionsPanel.add(comboBox);
                 JButton confirmExpert = new JButton("Confirm");
                 confirmExpert.setMaximumSize(new Dimension(320, 40));
-                confirmExpert.setAlignmentX(Component.LEFT_ALIGNMENT);
+                confirmExpert.setAlignmentX(Component.CENTER_ALIGNMENT);
                 confirmExpert.addActionListener(actionEvent -> {
                     try {
                         questionsPanel.removeAll();
-                        questionsPanel.add(new JLabel("Waiting for other players..."));
+                        JLabel waitLbl = new JLabel("Waiting for other players...");
+                        waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                        questionsPanel.add(waitLbl);
+                        errorLabel.setText("");
                         frame.revalidate();
                         frame.repaint();
-                        sendMessage(new SetExpertMessage((Boolean) comboBox.getSelectedItem()));
+                        sendMessage(new SetExpertMessage(comboBox.getSelectedItem().equals("Yes")));
                     } catch (IOException e) {
                         closeProgram();
                     }
                 });
-                questionsPanel.add(confirmExpert, BorderLayout.PAGE_END);
+                questionsPanel.add(errorLabel);
+                questionsPanel.add(confirmExpert);
                 frame.revalidate();
                 frame.repaint();
             }
@@ -168,21 +208,31 @@ public class ClientGUI extends Client {
             }
             case ASK_ASSISTANT -> {
                 view.getBottomPanel().removeAll();
-                view.getBottomPanel().add(new JLabel("Choose an assistant"));
+                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
+
+                JLabel titleLbl = new JLabel("Choose an assistant");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                view.getBottomPanel().add(titleLbl);
+
+                JPanel assistPanel = new JPanel();
+                assistPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
                 JComboBox<Integer> comboBox = new JComboBox<>(view.getAssistants().stream().map(Assistant::getValue).toArray(Integer[]::new));
-                view.getBottomPanel().add(comboBox);
+                assistPanel.add(comboBox);
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
                     try {
                         sendMessage(new SetAssistantMessage((Integer) comboBox.getSelectedItem()));
                         view.getBottomPanel().removeAll();
+                        errorLabel.setText("");
                         frame.revalidate();
                         frame.repaint();
                     } catch (IOException e) {
                         closeProgram();
                     }
                 });
-                view.getBottomPanel().add(confirm);
+                assistPanel.add(confirm);
+                view.getBottomPanel().add(assistPanel);
+                view.getBottomPanel().add(errorLabel);
                 frame.revalidate();
                 frame.repaint();
             }
@@ -191,18 +241,21 @@ public class ClientGUI extends Client {
 
                 view.getBottomPanel().removeAll();
                 view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
-                view.getBottomPanel().add(new JLabel("Move 3 entrance students"));
+                JLabel titleLbl = new JLabel("Move 3 entrance students");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                view.getBottomPanel().add(titleLbl);
 
                 int i = 0;
                 JPanel selectorsPanel = new JPanel();
+                selectorsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
                 EntranceStudentSelectorPanel[] studentSelectors = new EntranceStudentSelectorPanel[player.getSchool().getEntrance().size()];
                 for (Student student : player.getSchool().getEntrance()) {
                     selectorsPanel.add(studentSelectors[i++] = new EntranceStudentSelectorPanel(student, view.getIslands()));
                 }
                 view.getBottomPanel().add(selectorsPanel);
 
-                JLabel errorLbl = new JLabel("You must select exactly three students");
                 JButton confirm = new JButton("Confirm");
+                confirm.setAlignmentX(Component.CENTER_ALIGNMENT);
                 confirm.addActionListener(actionEvent -> {
                     Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
                     Map<PawnColor, Integer> tableStudents = new HashMap<>();
@@ -223,21 +276,20 @@ public class ClientGUI extends Client {
                         try {
                             sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
                             view.getBottomPanel().removeAll();
+                            errorLabel.setText("");
                             frame.revalidate();
                             frame.repaint();
                         } catch (IOException e) {
                             closeProgram();
                         }
                     } else {
-                        view.getBottomPanel().remove(confirm);
-                        view.getBottomPanel().remove(errorLbl);
-                        view.getBottomPanel().add(errorLbl);
-                        view.getBottomPanel().add(confirm);
+                        errorLabel.setText("You must select exactly three students");
                         frame.revalidate();
                         frame.repaint();
                     }
                 });
 
+                view.getBottomPanel().add(errorLabel);
                 view.getBottomPanel().add(confirm);
                 frame.revalidate();
                 frame.repaint();

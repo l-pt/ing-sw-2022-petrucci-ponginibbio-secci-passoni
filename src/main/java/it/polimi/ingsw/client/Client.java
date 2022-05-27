@@ -15,13 +15,6 @@ public abstract class Client {
     protected Socket socket;
     protected InputStreamReader in;
     protected OutputStreamWriter out;
-    protected boolean usedCharacter;
-
-    public Client(String ip, int port){
-        this.ip = ip;
-        this.port = port;
-        usedCharacter = false;
-    }
 
     public String getName() {
         return name;

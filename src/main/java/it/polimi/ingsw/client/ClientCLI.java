@@ -23,7 +23,8 @@ public class ClientCLI extends Client{
     private ViewCLI view;
 
     public ClientCLI(String ip, int port) throws IOException {
-        super(ip, port);
+        this.ip = ip;
+        this.port = port;
         stdin = new Scanner(System.in);
         socket = new Socket(ip, port);
         in = new InputStreamReader(socket.getInputStream());
