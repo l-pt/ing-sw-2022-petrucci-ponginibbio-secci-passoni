@@ -20,6 +20,7 @@ public class Controller {
     private Server server;
     private boolean usedCharacter = false;
     private boolean lastMessage = false;
+    private Map<String, Message> nextMessage = new HashMap<>();
 
     public Controller(Server server, List<Team> teams, List<Player> players, boolean expert){
         this.match = new Match(teams, players, expert);
@@ -94,13 +95,12 @@ public class Controller {
                     if (pos != match.getPlayersOrder().size() - 1) {
                         return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskAssistantMessage()));
                     } else {
-                        Map<String, List<Message>> map = new HashMap<>();
-                        map.put(match.getPlayersOrder().get(0).getName(), new ArrayList<>());
                         if (!usedCharacter) {
-                            map.get(match.getPlayersOrder().get(0).getName()).add(new AskCharacterMessage());
+                            nextMessage.put(match.getPlayersOrder().get(0).getName(), new AskEntranceStudentMessage());
+                            return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskCharacterMessage()));
+                        } else {
+                            return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskEntranceStudentMessage()));
                         }
-                        map.get(match.getPlayersOrder().get(0).getName()).add(new AskEntranceStudentMessage());
-                        return map;
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskAssistantMessage()));
@@ -110,13 +110,12 @@ public class Controller {
                 SetEntranceStudentMessage entranceStudentMessage = (SetEntranceStudentMessage) message;
                 try {
                     moveStudentsToIslandsAndTable(name, entranceStudentMessage.getIslandStudents(), entranceStudentMessage.getTableStudents());
-                    Map<String, List<Message>> map = new HashMap<>();
-                    map.put(name, new ArrayList<>());
                     if (!usedCharacter) {
-                        map.get(name).add(new AskCharacterMessage());
+                        nextMessage.put(name, new AskMotherNatureMessage());
+                        return Map.of(name, List.of(new AskCharacterMessage()));
+                    } else {
+                        return Map.of(name, List.of(new AskMotherNatureMessage()));
                     }
-                    map.get(name).add(new AskMotherNatureMessage());
-                    return map;
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskEntranceStudentMessage()));
 
@@ -128,26 +127,19 @@ public class Controller {
                     if (match.isGameFinished()) {
                         return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                     } else if (match.isLastTurn()) {
-                        int pos = match.getPosFromName(name);
-                        Map<String, List<Message>> map = new HashMap<>();
-                        map.put(name, new ArrayList<>());
                         if (!usedCharacter) {
-                            map.get(name).add(new AskCharacterMessage());
+                            lastMessage = true;
+                            return Map.of(name, List.of(new AskCharacterMessage()));
+                        } else {
+                            return endTurn(name);
                         }
-                        match.resetAbility();
-                        if (pos != match.getPlayersOrder().size() - 1) {
-                            map.get(name).add(new AskEntranceStudentMessage());
-                            return map;
-                        } else
-                            return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                     } else {
-                        Map<String, List<Message>> map = new HashMap<>();
-                        map.put(name, new ArrayList<>());
                         if (!usedCharacter) {
-                            map.get(name).add(new AskCharacterMessage());
+                            nextMessage.put(name, new AskCloudMessage());
+                            return Map.of(name, List.of(new AskCharacterMessage()));
+                        } else {
+                            return Map.of(name, List.of(new AskCloudMessage()));
                         }
-                        map.get(name).add(new AskCloudMessage());
-                        return map;
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskMotherNatureMessage()));
@@ -175,6 +167,8 @@ public class Controller {
                     if (lastMessage) {
                         lastMessage = false;
                         return endTurn(name);
+                    } else {
+                        return Map.of(name, List.of(consumeNextMessage(name)));
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskCharacterMessage(0)));
@@ -188,6 +182,8 @@ public class Controller {
                     if (lastMessage) {
                         lastMessage = false;
                         return endTurn(name);
+                    } else {
+                        return Map.of(name, List.of(consumeNextMessage(name)));
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskCharacterMessage(colorMessage.getCharacterId())));
@@ -201,6 +197,8 @@ public class Controller {
                     if (lastMessage) {
                         lastMessage = false;
                         return endTurn(name);
+                    } else {
+                        return Map.of(name, List.of(consumeNextMessage(name)));
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskCharacterMessage(useCharacterMessage.getCharacterId())));
@@ -217,6 +215,8 @@ public class Controller {
                     if (lastMessage) {
                         lastMessage = false;
                         return endTurn(name);
+                    } else {
+                        return Map.of(name, List.of(consumeNextMessage(name)));
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskCharacterMessage(islandMessage.getCharacterId())));
@@ -230,27 +230,38 @@ public class Controller {
                     if (lastMessage) {
                         lastMessage = false;
                         return endTurn(name);
+                    } else {
+                        return Map.of(name, List.of(consumeNextMessage(name)));
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskCharacterMessage(mapMessage.getCharacterId())));
                 }
             }
             case USE_NO_CHARACTER -> {
-                if (lastMessage) {
-                    lastMessage = false;
-                    try {
+                try {
+                    if (lastMessage) {
+                        lastMessage = false;
                         return endTurn(name);
-                    } catch (IllegalMoveException e) {
-                        return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
+                    } else {
+                        return Map.of(name, List.of(consumeNextMessage(name)));
                     }
+                } catch (IllegalMoveException e) {
+                    return Map.of(name, List.of(new ErrorMessage(e.getMessage())));
                 }
             }
         }
         return Collections.emptyMap();
     }
 
+    private Message consumeNextMessage(String name) {
+        Message message = nextMessage.get(name);
+        nextMessage.remove(name);
+        return message;
+    }
+
     public Map<String, List<Message>> endTurn(String name) throws IllegalMoveException {
         int pos = match.getPosFromName(name);
+        usedCharacter = false;
         match.resetAbility();
         if (pos != match.getPlayersOrder().size() - 1) {
             match.setCurrentPlayer(match.getPlayersOrder().get(pos + 1).getName());
@@ -294,6 +305,11 @@ public class Controller {
      * Move a student from entrance to table or to an island
      */
     public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
+        //Check that the player has moved exactly three students
+        if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(e -> e.getValue()).sum() +
+                tableStudents.values().stream().mapToInt(Integer::intValue).sum() != 3) {
+            throw new IllegalMoveException("You have to move exactly three students from the entrance");
+        }
         //Check that all island indexes are valid
         for (int island : islandsStudents.keySet()) {
             if (island < 0 || island >= match.getIslands().size()) {

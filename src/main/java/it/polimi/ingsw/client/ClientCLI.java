@@ -1,10 +1,7 @@
 package it.polimi.ingsw.client;
 
 import com.google.gson.JsonSyntaxException;
-import it.polimi.ingsw.model.Island;
-import it.polimi.ingsw.model.PawnColor;
-import it.polimi.ingsw.model.Student;
-import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.impl.Character1;
 import it.polimi.ingsw.model.character.impl.Character11;
@@ -180,7 +177,8 @@ public class ClientCLI extends Client{
                 sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
             }
             case ASK_MOTHER_NATURE -> {
-                int motherNatureMoves = readInt("Insert mother nature moves: (1 - " + view.getPlayerFromName(name).getCurrentAssistant().getMoves() + ")");
+                Player p = view.getPlayerFromName(name);
+                int motherNatureMoves = readInt("Insert mother nature moves: (1 - " + (p.getCurrentAssistant().getMoves() + p.getAdditionalMoves()) + ")");
                 sendMessage(new SetMotherNatureMessage(motherNatureMoves));
             }
             case ASK_CLOUD -> {
@@ -237,6 +235,8 @@ public class ClientCLI extends Client{
             } else {
                 sendMessage(new UseNoCharacterMessage());
             }
+        } else {
+            sendMessage(new UseNoCharacterMessage());
         }
     }
 
