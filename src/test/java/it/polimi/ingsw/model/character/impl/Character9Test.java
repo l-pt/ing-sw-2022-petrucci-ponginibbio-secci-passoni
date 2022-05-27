@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -19,6 +20,6 @@ public class Character9Test extends TestCase {
         player1.addCoin();
 
         character.use(match, player1.getName(), PawnColor.RED);
-        assertEquals(match.getInfluencePolicy().getExcludedColor(), PawnColor.RED);
+        Assertions.assertEquals(match.getInfluencePolicy().getExcludedColor(), PawnColor.RED);
     }
 }

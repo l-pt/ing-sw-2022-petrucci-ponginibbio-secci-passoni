@@ -184,9 +184,7 @@ public class Match implements Observable<UpdateViewMessage> {
     }
 
     public void orderPlayers() {
-        playerOrder.sort((Player p1, Player p2) -> {
-            return p1.getCurrentAssistant().getValue() - p2.getCurrentAssistant().getValue();
-        });
+        playerOrder.sort(Comparator.comparingInt((Player p) -> p.getCurrentAssistant().getValue()));
     }
 
     public List<Character> getCharacters() {
@@ -232,9 +230,9 @@ public class Match implements Observable<UpdateViewMessage> {
     }
 
     public Player whoHaveProfessor(PawnColor color){
-        for(int i = 0; i < playerOrder.size(); ++i)
-            if(playerOrder.get(i).getSchool().isColoredProfessor(color))
-                return playerOrder.get(i);
+        for (Player player : playerOrder)
+            if (player.getSchool().isColoredProfessor(color))
+                return player;
         return null;
     }
 

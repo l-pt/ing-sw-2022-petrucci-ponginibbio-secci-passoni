@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -27,6 +28,6 @@ public class StudentCharacterTest extends TestCase {
         }
         PawnColor finalColor = color;
         Exception e = assertThrows(IllegalArgumentException.class, () -> character.removeStudentsByColor(finalColor, 10));
-        assertEquals("There are not enough students with color " + color.name() + " on this character", e.getMessage());
+        Assertions.assertEquals("There are not enough students with color " + color.name() + " on this character", e.getMessage());
     }
 }

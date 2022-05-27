@@ -9,10 +9,6 @@ import it.polimi.ingsw.protocol.MessageId;
 public class SetUsernameMessage extends Message {
     private String username;
 
-    private SetUsernameMessage() {
-        super(MessageId.SET_USERNAME);
-    }
-
     public SetUsernameMessage(String username) {
         super(MessageId.SET_USERNAME);
         this.username = username;

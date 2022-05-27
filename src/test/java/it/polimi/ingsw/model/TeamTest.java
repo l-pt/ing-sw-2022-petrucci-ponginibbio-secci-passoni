@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,21 +24,21 @@ public class TeamTest extends TestCase {
         players.add(player2);
 
         Team team = new Team(players, TowerColor.WHITE);
-        assertTrue(team.isTeamMember(player1));
-        assertFalse(team.isTeamMember(player3));
-        assertEquals(team.getTowers().size(), 0);
+        Assertions.assertTrue(team.isTeamMember(player1));
+        Assertions.assertFalse(team.isTeamMember(player3));
+        Assertions.assertEquals(team.getTowers().size(), 0);
         Tower tower = new Tower(TowerColor.WHITE);
         team.addTower(tower);
-        assertEquals(team.getTowers().size(), 1);
-        assertEquals(team.getTowers().get(0), tower);
+        Assertions.assertEquals(team.getTowers().size(), 1);
+        Assertions.assertEquals(team.getTowers().get(0), tower);
         team.addTowers(towers);
-        assertEquals(team.getTowers().size(), 3);
+        Assertions.assertEquals(team.getTowers().size(), 3);
 
         List<Tower> removedTowers = team.removeTowers(1);
         towers.removeAll(removedTowers);
-        assertEquals(team.getTowers(), towers);
+        Assertions.assertEquals(team.getTowers(), towers);
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> team.removeTowers(3));
-        assertEquals(e.getMessage(), "Team does not have enough towers");
+        Assertions.assertEquals(e.getMessage(), "Team does not have enough towers");
     }
 }

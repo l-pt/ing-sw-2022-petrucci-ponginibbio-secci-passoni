@@ -31,19 +31,11 @@ public class Server {
     private List<Controller> controllers = new ArrayList<>();
     private Map<Connection, Controller> connectionControllerMap = new HashMap<>();
 
-    private int nextMatchId;
-    private int nextPlayerId;
-    private int nextTeamId;
-
-    //constr
     public Server() throws IOException{
         serverSocketThread = new ServerSocketThread();
         executor.submit(serverSocketThread);
         firstConnection = null;
         matchParameters = null;
-        nextMatchId = 0;
-        nextPlayerId = 0;
-        nextTeamId = 0;
     }
 
     //methods
@@ -78,7 +70,7 @@ public class Server {
     }
 
     public List<Connection> getConnectionsFromController(Controller controller) {
-        return connectionControllerMap.entrySet().stream().filter(e -> e.getValue() == controller).map(e -> e.getKey()).toList();
+        return connectionControllerMap.entrySet().stream().filter(e -> e.getValue() == controller).map(Map.Entry::getKey).toList();
     }
 
     /**
@@ -140,7 +132,7 @@ public class Server {
 
     /**
      * This function starts a new match, if there are enough players in the lobby.
-     * It is called from Connection.run (another thread) when a client has provided all
+     * It is called from Connection.run() (another thread) when a client has provided all
      * the required information (name, (max players, expert mode))
      */
     public synchronized void checkWaitingConnections() throws IOException {
@@ -148,12 +140,30 @@ public class Server {
             List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
             if(readyConnections.size() >= matchParameters.getPlayerNumber()){
                 System.out.println("Starting match now...");
-                Controller controller = new Controller(this, readyConnections);
+                List<String> connectionsNames = new ArrayList<>();
+                for (Connection c : readyConnections)
+                    connectionsNames.add(c.getName());
+                Controller controller = new Controller(this, connectionsNames);
+                for (Connection readyConnection : readyConnections) {
+                    readyConnection.sendMessage(new UpdateViewMessage(
+                            controller.getMatch().getTeams(),
+                            controller.getMatch().getIslands(),
+                            controller.getMatch().getPlayersOrder(),
+                            controller.getMatch().getPosMotherNature(),
+                            controller.getMatch().getClouds(),
+                            controller.getMatch().getProfessors(),
+                            controller.getMatch().getCoins(),
+                            controller.getMatch().getCharacters(),
+                            controller.getMatch().isExpert(),
+                            controller.getMatch().getPlayersOrder().get(0).getName()
+                    ));
+                    controller.getMatch().addObserver(readyConnection);
+                }
+                readyConnections.get(0).sendMessage(new AskAssistantMessage());
                 controllers.add(controller);
                 for (Connection c : readyConnections) {
                     connectionControllerMap.put(c, controller);
                 }
-
                 matchParameters = null;
                 firstConnection = null;
                 waitingConnections.removeAll(readyConnections);

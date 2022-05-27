@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,13 +17,13 @@ public class ThreePlayersMatchTest extends TestCase {
         Team team3 = new Team(List.of(player3), TowerColor.GRAY);
         ThreePlayersMatch match = new ThreePlayersMatch(List.of(team1, team2, team3), List.of(player1, player2, player3), true);
 
-        assertEquals(6, team1.getTowers().size());
-        assertEquals(6, team2.getTowers().size());
-        assertEquals(6, team3.getTowers().size());
+        Assertions.assertEquals(6, team1.getTowers().size());
+        Assertions.assertEquals(6, team2.getTowers().size());
+        Assertions.assertEquals(6, team3.getTowers().size());
 
-        assertEquals(3, match.getClouds().size());
+        Assertions.assertEquals(3, match.getClouds().size());
         for (Cloud cloud : match.getClouds()) {
-            assertEquals(4, cloud.getStudents().size());
+            Assertions.assertEquals(4, cloud.getStudents().size());
         }
     }
 }

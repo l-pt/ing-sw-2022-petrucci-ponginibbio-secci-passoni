@@ -16,10 +16,6 @@ public class SetEntranceStudentMessage extends Message {
         this.tableStudents = tableStudents;
     }
 
-    private SetEntranceStudentMessage() {
-        super(MessageId.SET_ENTRANCE_STUDENT);
-    }
-
     public Map<Integer, Map<PawnColor, Integer>> getIslandStudents() {
         return islandStudents;
     }

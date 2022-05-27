@@ -18,10 +18,6 @@ public class UseCharacterStudentMapMessage extends Message {
         this.outMap = outMap;
     }
 
-    private UseCharacterStudentMapMessage() {
-        super(MessageId.USE_CHARACTER_STUDENT_MAP);
-    }
-
     public int getCharacterId() {
         return characterId;
     }

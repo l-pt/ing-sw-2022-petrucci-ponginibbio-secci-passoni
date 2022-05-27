@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ public class CloudTest extends TestCase {
         cloud.addStudents(students);
 
         List<Student> removedStudents = cloud.removeStudents();
-        assertEquals(students, removedStudents);
+        Assertions.assertEquals(students, removedStudents);
 
         removedStudents = cloud.removeStudents();
-        assertEquals(removedStudents.size(), 0);
+        Assertions.assertEquals(removedStudents.size(), 0);
     }
 }

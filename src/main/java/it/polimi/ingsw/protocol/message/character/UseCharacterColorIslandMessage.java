@@ -17,10 +17,6 @@ public class UseCharacterColorIslandMessage extends Message {
         this.island = island;
     }
 
-    private UseCharacterColorIslandMessage() {
-        super(MessageId.USE_CHARACTER_COLOR_ISLAND);
-    }
-
     public PawnColor getColor() {
         return color;
     }

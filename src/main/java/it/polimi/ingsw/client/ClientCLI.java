@@ -68,9 +68,7 @@ public class ClientCLI extends Client{
     public boolean handleLobbyMessage(Message msg) throws IOException {
         //We have received a server message, check its Type to answer appropriately
         switch (msg.getMessageId()) {
-            case ERROR -> {
-                System.out.println("Server error: " + ((ErrorMessage) msg).getError());
-            }
+            case ERROR -> System.out.println("Server error: " + ((ErrorMessage) msg).getError());
             case ASK_USERNAME -> {
                 System.out.println("Insert username: ");
                 String username = stdin.nextLine();
@@ -78,7 +76,7 @@ public class ClientCLI extends Client{
                 name = username;
             }
             case ASK_PLAYER_NUMBER -> {
-                int playerNumber = readInt("Insert player number: ", n -> n >= 2 && n <= 4, "Player number must be between 2 and 4");
+                int playerNumber = readInt("Insert player number: ");
                 sendMessage(new SetPlayerNumberMessage(playerNumber));
             }
             case ASK_EXPERT -> {
@@ -123,9 +121,7 @@ public class ClientCLI extends Client{
 
     public void handleGameMessage(Message msg) throws IOException {
         switch (msg.getMessageId()) {
-            case UPDATE_VIEW -> {
-                view.handleUpdateView((UpdateViewMessage) msg);
-            }
+            case UPDATE_VIEW -> view.handleUpdateView((UpdateViewMessage) msg);
             case ASK_ASSISTANT -> {
                 int assistant = readInt("What assistant do you want to play?");
                 sendMessage(new SetAssistantMessage(assistant));
@@ -143,7 +139,6 @@ public class ClientCLI extends Client{
                         boolean ok = false;
                         while (!ok) {
                             System.out.println("Where do you want to move the " + student.getColor().name() + " student? (1 - " + view.getIslands().size() + " for islands, write \"t\" for table, press enter to leave the student in the entrance) - " + remaining + " remaining");
-
                             String in = stdin.nextLine();
                             if (in.equals("t")) {
                                 tableStudents.put(student.getColor(), tableStudents.getOrDefault(student.getColor(), 0) + 1);
@@ -188,14 +183,12 @@ public class ClientCLI extends Client{
             case END_GAME -> {
                 Team winner = ((EndGameMessage) msg).getWinner();
                 if (view.getPlayersOrder().size() == 4) {
-                    System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(p -> p.getName()).toList()));
+                    System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(Player::getName).toList()));
                 } else {
                     System.out.println("Game over. Winner: " + winner.getPlayers().get(0));
                 }
             }
-            case ERROR -> {
-                System.out.println(((ErrorMessage)msg).getError());
-            }
+            case ERROR -> System.out.println(((ErrorMessage)msg).getError());
             case ASK_CHARACTER -> {
                 AskCharacterMessage askCharacterMessage = (AskCharacterMessage) msg;
                 if (askCharacterMessage.getCharacterId() == -1) {
@@ -268,9 +261,7 @@ public class ClientCLI extends Client{
                         "Island number must be between 1 and " + view.getIslands().size());
                 sendMessage(new UseCharacterColorIslandMessage(color, island - 1));
             }
-            case 1,3,7 -> {
-                sendMessage(new UseCharacterMessage(characterId));
-            }
+            case 1,3,7 -> sendMessage(new UseCharacterMessage(characterId));
             case 2,4,5 -> {
                 int island = readInt("Choose an island (1 - " + (view.getIslands().size()) + ")", n -> n > 0 && n <= view.getIslands().size(),
                         "Island number must be between 1 and " + view.getIslands().size());

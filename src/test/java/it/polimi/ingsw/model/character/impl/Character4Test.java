@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,10 +22,10 @@ public class Character4Test extends TestCase {
 
         character.use(match, player1.getName());
         Exception e = assertThrows(IllegalMoveException.class, () -> match.moveMotherNature(4, player1.getName()));
-        assertEquals(e.getMessage(), "Mother nature moves must be between 1 and " + (player1.getCurrentAssistant().getMoves() + player1.getAdditionalMoves()));
+        Assertions.assertEquals(e.getMessage(), "Mother nature moves must be between 1 and " + (player1.getCurrentAssistant().getMoves() + player1.getAdditionalMoves()));
 
         int posMotherNature = match.getPosMotherNature();
         match.moveMotherNature(3, player1.getName());
-        assertEquals(match.getPosMotherNature(), (posMotherNature + 3) % match.getIslands().size());
+        Assertions.assertEquals(match.getPosMotherNature(), (posMotherNature + 3) % match.getIslands().size());
     }
 }

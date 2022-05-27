@@ -62,7 +62,7 @@ public abstract class Client {
     public abstract void run() throws IOException;
 
     /**
-     * Free all resources and call System.exit to close the program
+     * Free all resources and call System.exit() to close the program
      */
     public void closeProgram() {
         try {

@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,12 +24,10 @@ public class Character7Test extends TestCase {
         character.setup(match);
 
         Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), new HashMap<>(), new HashMap<>()));
-        assertEquals(e.getMessage(), "Invalid student number");
+        Assertions.assertEquals(e.getMessage(), "Invalid student number");
 
-        e = assertThrows(IllegalMoveException.class, () -> {
-            character.use(match, player1.getName(), Map.of(PawnColor.RED, 1), Map.of(PawnColor.RED, 1, PawnColor.GREEN, 2));
-        });
-        assertEquals(e.getMessage(), "Different map sizes");
+        e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), Map.of(PawnColor.RED, 1), Map.of(PawnColor.RED, 1, PawnColor.GREEN, 2)));
+        Assertions.assertEquals(e.getMessage(), "Different map sizes");
 
         //Get a color which is not present on the card
         List<PawnColor> absentColors = new ArrayList<>(List.of(PawnColor.values()));
@@ -44,7 +43,7 @@ public class Character7Test extends TestCase {
         PawnColor absentColor = absentColors.get(0);
         PawnColor finalAbsentColor = absentColor;
         e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), Map.of(PawnColor.RED, 1), Map.of(finalAbsentColor, 1)));
-        assertEquals("There are not enough students with color " + absentColor.name() + " on this character", e.getMessage());
+        Assertions.assertEquals("There are not enough students with color " + absentColor.name() + " on this character", e.getMessage());
 
         //Get a color which is not present in the entrance
         absentColors.clear();
@@ -63,7 +62,7 @@ public class Character7Test extends TestCase {
         PawnColor finalAbsentColor1 = absentColor;
         PawnColor finalCharacterColor = characterColor;
         e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), Map.of(finalAbsentColor1, 1), Map.of(finalCharacterColor, 1)));
-        assertEquals("There are not enough students with color " + absentColor.name() + " in the entrance", e.getMessage());
+        Assertions.assertEquals("There are not enough students with color " + absentColor.name() + " in the entrance", e.getMessage());
     }
 
     @Test
@@ -140,7 +139,7 @@ public class Character7Test extends TestCase {
             bNewExpected.put(entry.getKey(), bNewExpected.get(entry.getKey()) - entry.getValue());
             aNewExpected.put(entry.getKey(), aNewExpected.get(entry.getKey()) + entry.getValue());
         }
-        assertEquals(aNewExpected, aNew);
-        assertEquals(bNewExpected, bNew);
+        Assertions.assertEquals(aNewExpected, aNew);
+        Assertions.assertEquals(bNewExpected, bNew);
     }
 }

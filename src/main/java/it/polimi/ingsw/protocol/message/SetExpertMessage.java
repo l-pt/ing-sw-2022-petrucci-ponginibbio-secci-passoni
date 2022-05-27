@@ -10,10 +10,6 @@ import it.polimi.ingsw.protocol.MessageId;
 public class SetExpertMessage extends Message {
     private boolean expert;
 
-    private SetExpertMessage() {
-        super(MessageId.SET_PLAYER_NUMBER);
-    }
-
     public SetExpertMessage(boolean expert) {
         super(MessageId.SET_EXPERT);
         this.expert = expert;

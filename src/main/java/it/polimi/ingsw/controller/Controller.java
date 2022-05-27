@@ -22,23 +22,18 @@ public class Controller {
     private boolean lastMessage = false;
     private Map<String, Message> nextMessage = new HashMap<>();
 
-    public Controller(Server server, List<Team> teams, List<Player> players, boolean expert){
-        this.match = new Match(teams, players, expert);
-        this.server = server;
-    }
-
-    public Controller(Server server, List<Connection> readyConnections) throws IOException {
+    public Controller(Server server, List<String> connectionsNames) {
         List<Player> players = new ArrayList<>(server.getMatchParameters().getPlayerNumber());
         List<Team> teams = new ArrayList<>(server.getMatchParameters().getPlayerNumber() == 4 ? 2 : server.getMatchParameters().getPlayerNumber());
         switch (server.getMatchParameters().getPlayerNumber()) {
             case 4 -> {
                 List<Player> white = List.of(
-                        new Player(readyConnections.get(0).getName(), TowerColor.WHITE, Wizard.values()[0]),
-                        new Player(readyConnections.get(1).getName(), TowerColor.WHITE, Wizard.values()[1])
+                        new Player(connectionsNames.get(0), TowerColor.WHITE, Wizard.values()[0]),
+                        new Player(connectionsNames.get(1), TowerColor.WHITE, Wizard.values()[1])
                 );
                 List<Player> black = List.of(
-                        new Player(readyConnections.get(2).getName(), TowerColor.BLACK, Wizard.values()[2]),
-                        new Player(readyConnections.get(3).getName(), TowerColor.BLACK, Wizard.values()[3])
+                        new Player(connectionsNames.get(2), TowerColor.BLACK, Wizard.values()[2]),
+                        new Player(connectionsNames.get(3), TowerColor.BLACK, Wizard.values()[3])
                 );
                 players.addAll(white);
                 players.addAll(black);
@@ -47,7 +42,7 @@ public class Controller {
             }
             case 3, 2 -> {
                 for (int i = 0; i < server.getMatchParameters().getPlayerNumber(); ++i) {
-                    players.add(new Player(readyConnections.get(i).getName(), TowerColor.values()[i], Wizard.values()[i]));
+                    players.add(new Player(connectionsNames.get(i), TowerColor.values()[i], Wizard.values()[i]));
                 }
                 //2/3 player matches have teams made of just one player
                 for (Player player : players) {
@@ -58,23 +53,6 @@ public class Controller {
         }
         this.match = new Match(teams, players, server.getMatchParameters().isExpert());
         this.server = server;
-
-        for (int i = 0; i < readyConnections.size(); ++i){
-            readyConnections.get(i).sendMessage(new UpdateViewMessage(
-                    getMatch().getTeams(),
-                    getMatch().getIslands(),
-                    getMatch().getPlayersOrder(),
-                    getMatch().getPosMotherNature(),
-                    getMatch().getClouds(),
-                    getMatch().getProfessors(),
-                    getMatch().getCoins(),
-                    getMatch().getCharacters(),
-                    getMatch().isExpert(),
-                    getMatch().getPlayersOrder().get(0).getName()
-            ));
-            match.addObserver(readyConnections.get(i));
-        }
-        readyConnections.get(0).sendMessage(new AskAssistantMessage());
     }
 
     public Match getMatch() {
@@ -91,7 +69,7 @@ public class Controller {
                     } else {
                         match.setCurrentPlayer(match.getPlayersOrder().get(0).getName());
                     }
-                    useAssistant(name, ((SetAssistantMessage) message).getAssisant());
+                    useAssistant(name, ((SetAssistantMessage) message).getAssistant());
                     if (pos != match.getPlayersOrder().size() - 1) {
                         return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskAssistantMessage()));
                     } else {
@@ -125,7 +103,7 @@ public class Controller {
                 try {
                     moveMotherNature(((SetMotherNatureMessage) message).getMotherNatureMoves(), name);
                     if (match.isGameFinished()) {
-                        return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
+                        return match.getPlayersOrder().stream().collect(Collectors.toMap(Player::getName, p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                     } else if (match.isLastTurn()) {
                         if (!usedCharacter) {
                             lastMessage = true;
@@ -210,7 +188,7 @@ public class Controller {
                     ((IslandCharacter) match.getCharacterFromType(Character.getClassFromId(islandMessage.getCharacterId()))).use(match, name, islandMessage.getIsland());
                     usedCharacter = true;
                     if (match.isGameFinished()) {
-                        return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
+                        return match.getPlayersOrder().stream().collect(Collectors.toMap(Player::getName, p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                     }
                     if (lastMessage) {
                         lastMessage = false;
@@ -269,7 +247,7 @@ public class Controller {
             return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskEntranceStudentMessage()));
         } else {
             if (match.isLastTurn()) {
-                return match.getPlayersOrder().stream().collect(Collectors.toMap(p -> p.getName(), p -> List.of(new EndGameMessage(match.getWinningTeam()))));
+                return match.getPlayersOrder().stream().collect(Collectors.toMap(Player::getName, p -> List.of(new EndGameMessage(match.getWinningTeam()))));
             } else {
                 match.setCurrentPlayer(match.getPlayersOrder().get(0).getName());
                 match.populateClouds();
@@ -306,7 +284,7 @@ public class Controller {
      */
     public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
         //Check that the player has moved exactly three students
-        if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(e -> e.getValue()).sum() +
+        if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(Map.Entry::getValue).sum() +
                 tableStudents.values().stream().mapToInt(Integer::intValue).sum() != 3) {
             throw new IllegalMoveException("You have to move exactly three students from the entrance");
         }
@@ -319,7 +297,7 @@ public class Controller {
         Player player = match.getPlayerFromName(playerName);
         //Check if the number of students in the entrance is sufficient
         for (PawnColor color : PawnColor.values()) {
-            int usedStudents = islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).filter(e -> e.getKey() == color).mapToInt(e -> e.getValue()).sum() +
+            int usedStudents = islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).filter(e -> e.getKey() == color).mapToInt(Map.Entry::getValue).sum() +
                     tableStudents.getOrDefault(color, 0);
             if (player.getSchool().getEntranceCount(color) < usedStudents) {
                 throw new IllegalMoveException("There aren't enough students with color " + color.name() + " in the entrance");

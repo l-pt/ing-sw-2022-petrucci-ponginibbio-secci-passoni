@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,6 +19,6 @@ public class Character6Test extends TestCase {
         player1.addCoin();
         player1.addCoin();
         character.use(match, player1.getName());
-        assertFalse(match.getInfluencePolicy().getCountTowers());
+        Assertions.assertFalse(match.getInfluencePolicy().getCountTowers());
     }
 }

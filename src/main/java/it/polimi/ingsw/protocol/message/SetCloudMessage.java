@@ -11,10 +11,6 @@ public class SetCloudMessage extends Message {
         this.cloud = cloud;
     }
 
-    private SetCloudMessage() {
-        super(MessageId.SET_CLOUD);
-    }
-
     public int getCloud() {
         return cloud;
     }

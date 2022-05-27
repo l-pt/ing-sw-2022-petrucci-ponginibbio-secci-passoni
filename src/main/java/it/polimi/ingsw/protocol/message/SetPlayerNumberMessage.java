@@ -10,10 +10,6 @@ import it.polimi.ingsw.protocol.MessageId;
 public class SetPlayerNumberMessage extends Message {
     private int playersNumber;
 
-    private SetPlayerNumberMessage() {
-        super(MessageId.SET_PLAYER_NUMBER);
-    }
-
     public SetPlayerNumberMessage(int playersNumber) {
         super(MessageId.SET_PLAYER_NUMBER);
         this.playersNumber = playersNumber;

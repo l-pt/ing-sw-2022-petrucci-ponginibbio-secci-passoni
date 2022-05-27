@@ -11,10 +11,6 @@ public class SetMotherNatureMessage extends Message {
         this.motherNatureMoves = motherNatureMoves;
     }
 
-    private SetMotherNatureMessage() {
-        super(MessageId.SET_MOTHER_NATURE);
-    }
-
     public int getMotherNatureMoves() {
         return motherNatureMoves;
     }

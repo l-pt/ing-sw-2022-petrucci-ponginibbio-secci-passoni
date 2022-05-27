@@ -12,7 +12,7 @@ public class School {
         professors = new ArrayList<>();
         tables = new HashMap<>();
         for (PawnColor color : PawnColor.values())
-            tables.put(color, new ArrayList<Student>());
+            tables.put(color, new ArrayList<>());
     }
 
     public void addStudentsToEntrance(List<Student> students) {
@@ -110,8 +110,8 @@ public class School {
     }
 
     public boolean isColoredProfessor(PawnColor color){
-        for(int i=  0; i < professors.size(); ++i)
-            if(professors.get(i).getColor().equals(color))
+        for (Professor professor : professors)
+            if (professor.getColor().equals(color))
                 return true;
         return false;
     }

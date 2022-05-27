@@ -14,10 +14,6 @@ public class UseCharacterColorMessage extends Message {
         this.color = color;
     }
 
-    private UseCharacterColorMessage() {
-        super(MessageId.USE_CHARACTER_COLOR);
-    }
-
     public int getCharacterId() {
         return characterId;
     }

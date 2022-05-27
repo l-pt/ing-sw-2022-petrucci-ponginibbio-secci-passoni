@@ -2,7 +2,6 @@ package it.polimi.ingsw.protocol.message;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
-import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.MessageId;
 
@@ -43,10 +42,6 @@ public class UpdateViewMessage extends Message {
         this.characters = characters;
         this.expert = expert;
         this.currentPlayer = currentPlayer;
-    }
-
-    private UpdateViewMessage() {
-        super(MessageId.UPDATE_VIEW);
     }
 
     public List<Team> getTeams() {return teams;}

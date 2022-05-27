@@ -171,7 +171,7 @@ public abstract class ViewGUI {
                 lbl = new JLabel(" ", new DynamicIcon(imageProvider.getCharacter(character)), SwingConstants.TRAILING);
                 lbl.setToolTipText("<html>Character " + (character.getId() + 1) + "<br>" + character.getDescription() + "</html>");
                 charactersPanel.add(lbl);
-                //TODO draw students and noentry cards on them
+                //TODO draw students and no entry cards on them
             }
             expertPanel.add(charactersPanel, BorderLayout.CENTER);
         }

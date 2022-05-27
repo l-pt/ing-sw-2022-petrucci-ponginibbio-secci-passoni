@@ -4,18 +4,14 @@ import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.MessageId;
 
 public class SetAssistantMessage extends Message {
-    private int assisant;
-
-    private SetAssistantMessage() {
-        super(MessageId.SET_ASSISTANT);
-    }
+    private int assistant;
 
     public SetAssistantMessage(int assistant) {
         super(MessageId.SET_ASSISTANT);
-        this.assisant = assistant;
+        this.assistant = assistant;
     }
 
-    public int getAssisant() {
-        return assisant;
+    public int getAssistant() {
+        return assistant;
     }
 }

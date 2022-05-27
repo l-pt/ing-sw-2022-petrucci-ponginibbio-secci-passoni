@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.gui.component.EntranceStudentSelectorPanel;
+import it.polimi.ingsw.model.Assistant;
 import it.polimi.ingsw.model.PawnColor;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Student;
@@ -168,7 +169,7 @@ public class ClientGUI extends Client {
             case ASK_ASSISTANT -> {
                 view.getBottomPanel().removeAll();
                 view.getBottomPanel().add(new JLabel("Choose an assistant"));
-                JComboBox<Integer> comboBox = new JComboBox<>(view.getAssistants().stream().map(a -> a.getValue()).toArray(Integer[]::new));
+                JComboBox<Integer> comboBox = new JComboBox<>(view.getAssistants().stream().map(Assistant::getValue).toArray(Integer[]::new));
                 view.getBottomPanel().add(comboBox);
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {

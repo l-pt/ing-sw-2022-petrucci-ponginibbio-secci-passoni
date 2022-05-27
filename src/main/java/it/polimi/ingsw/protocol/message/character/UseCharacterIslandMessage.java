@@ -13,10 +13,6 @@ public class UseCharacterIslandMessage extends Message {
         this.island = island;
     }
 
-    private UseCharacterIslandMessage() {
-        super(MessageId.USE_CHARACTER_ISLAND);
-    }
-
     public int getCharacterId() {
         return characterId;
     }

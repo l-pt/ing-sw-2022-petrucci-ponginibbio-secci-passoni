@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,6 +23,6 @@ public class Character2Test extends TestCase {
         character.use(match, player2.getName());
         player2.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED)));
         match.playerMoveStudent(PawnColor.RED, player2.getName());
-        assertEquals(match.whoHaveProfessor(PawnColor.RED), player2);
+        Assertions.assertEquals(match.whoHaveProfessor(PawnColor.RED), player2);
     }
 }

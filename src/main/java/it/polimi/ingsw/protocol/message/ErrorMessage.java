@@ -9,10 +9,6 @@ import it.polimi.ingsw.protocol.MessageId;
 public class ErrorMessage extends Message {
     private String error;
 
-    private ErrorMessage() {
-        super(MessageId.ERROR);
-    }
-
     public ErrorMessage(String error) {
         super(MessageId.ERROR);
         this.error = error;

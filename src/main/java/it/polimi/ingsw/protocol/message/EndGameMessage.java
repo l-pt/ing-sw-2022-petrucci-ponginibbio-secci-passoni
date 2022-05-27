@@ -12,10 +12,6 @@ public class EndGameMessage extends Message {
         this.winner = winner;
     }
 
-    private EndGameMessage() {
-        super(MessageId.END_GAME);
-    }
-
     public Team getWinner() {
         return winner;
     }

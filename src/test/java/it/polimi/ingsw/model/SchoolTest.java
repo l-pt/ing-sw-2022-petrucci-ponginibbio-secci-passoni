@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,22 +17,22 @@ public class SchoolTest extends TestCase {
         students.add(new Student(PawnColor.RED));
 
         school.addStudentsToEntrance(students);
-        assertEquals(school.getEntranceCount(PawnColor.PINK), 1);
-        assertEquals(school.getEntranceCount(PawnColor.RED), 1);
-        assertEquals(school.getEntranceCount(PawnColor.YELLOW), 0);
-        assertEquals(school.getEntranceCount(PawnColor.BLUE), 0);
-        assertEquals(school.getEntranceCount(PawnColor.GREEN), 0);
-        assertEquals(students, school.getEntrance());
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.PINK), 1);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.RED), 1);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.YELLOW), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.BLUE), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.GREEN), 0);
+        Assertions.assertEquals(students, school.getEntrance());
 
         school.removeEntranceStudentsByColor(PawnColor.PINK, 1);
-        assertEquals(school.getEntranceCount(PawnColor.PINK), 0);
-        assertEquals(school.getEntranceCount(PawnColor.RED), 1);
-        assertEquals(school.getEntranceCount(PawnColor.YELLOW), 0);
-        assertEquals(school.getEntranceCount(PawnColor.BLUE), 0);
-        assertEquals(school.getEntranceCount(PawnColor.GREEN), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.PINK), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.RED), 1);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.YELLOW), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.BLUE), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.GREEN), 0);
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> school.removeEntranceStudentsByColor(PawnColor.PINK, 1));
-        assertEquals(e.getMessage(), "There are not enough students with color " + PawnColor.PINK.name() + " in the entrance");
+        Assertions.assertEquals(e.getMessage(), "There are not enough students with color " + PawnColor.PINK.name() + " in the entrance");
     }
 
     @Test
@@ -47,11 +48,11 @@ public class SchoolTest extends TestCase {
 
         school.addStudentsToEntrance(students);
         school.addStudentToTable(PawnColor.PINK);
-        assertEquals(school.getEntranceCount(PawnColor.PINK), 0);
-        assertEquals(school.getEntranceCount(PawnColor.RED), 2);
-        assertEquals(school.getEntranceCount(PawnColor.YELLOW), 1);
-        assertEquals(school.getEntranceCount(PawnColor.BLUE), 1);
-        assertEquals(school.getEntranceCount(PawnColor.GREEN), 1);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.PINK), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.RED), 2);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.YELLOW), 1);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.BLUE), 1);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.GREEN), 1);
 
         Map<PawnColor, List<Student>> map = new HashMap<>();
         map.put(PawnColor.PINK, List.of(students.get(0)));
@@ -60,16 +61,16 @@ public class SchoolTest extends TestCase {
         map.put(PawnColor.GREEN, Collections.emptyList());
         map.put(PawnColor.BLUE, Collections.emptyList());
 
-        assertEquals(map, school.getTables());
+        Assertions.assertEquals(map, school.getTables());
 
-        assertEquals(school.getTableCount(PawnColor.PINK), 1);
-        assertEquals(school.getTableCount(PawnColor.RED), 0);
-        assertEquals(school.getTableCount(PawnColor.YELLOW), 0);
-        assertEquals(school.getTableCount(PawnColor.BLUE), 0);
-        assertEquals(school.getTableCount(PawnColor.GREEN), 0);
+        Assertions.assertEquals(school.getTableCount(PawnColor.PINK), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.RED), 0);
+        Assertions.assertEquals(school.getTableCount(PawnColor.YELLOW), 0);
+        Assertions.assertEquals(school.getTableCount(PawnColor.BLUE), 0);
+        Assertions.assertEquals(school.getTableCount(PawnColor.GREEN), 0);
 
         Exception e = assertThrows(IllegalMoveException.class, () -> school.addStudentToTable(PawnColor.PINK));
-        assertEquals("There are no students with color PINK in the entrance", e.getMessage());
+        Assertions.assertEquals("There are no students with color PINK in the entrance", e.getMessage());
     }
 
     @Test
@@ -85,17 +86,17 @@ public class SchoolTest extends TestCase {
 
         school.addStudentsToEntrance(students);
         school.addStudents(students);
-        assertEquals(school.getEntranceCount(PawnColor.PINK), 0);
-        assertEquals(school.getEntranceCount(PawnColor.RED), 0);
-        assertEquals(school.getEntranceCount(PawnColor.YELLOW), 0);
-        assertEquals(school.getEntranceCount(PawnColor.BLUE), 0);
-        assertEquals(school.getEntranceCount(PawnColor.GREEN), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.PINK), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.RED), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.YELLOW), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.BLUE), 0);
+        Assertions.assertEquals(school.getEntranceCount(PawnColor.GREEN), 0);
 
-        assertEquals(school.getTableCount(PawnColor.PINK), 1);
-        assertEquals(school.getTableCount(PawnColor.RED), 2);
-        assertEquals(school.getTableCount(PawnColor.YELLOW), 1);
-        assertEquals(school.getTableCount(PawnColor.BLUE), 1);
-        assertEquals(school.getTableCount(PawnColor.GREEN), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.PINK), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.RED), 2);
+        Assertions.assertEquals(school.getTableCount(PawnColor.YELLOW), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.BLUE), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.GREEN), 1);
     }
 
     @Test
@@ -110,11 +111,11 @@ public class SchoolTest extends TestCase {
         students.add(new Student(PawnColor.GREEN));
 
         school.addStudentsToTable(students);
-        assertEquals(school.getTableCount(PawnColor.PINK), 1);
-        assertEquals(school.getTableCount(PawnColor.RED), 2);
-        assertEquals(school.getTableCount(PawnColor.YELLOW), 1);
-        assertEquals(school.getTableCount(PawnColor.BLUE), 1);
-        assertEquals(school.getTableCount(PawnColor.GREEN), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.PINK), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.RED), 2);
+        Assertions.assertEquals(school.getTableCount(PawnColor.YELLOW), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.BLUE), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.GREEN), 1);
     }
 
     @Test
@@ -130,34 +131,34 @@ public class SchoolTest extends TestCase {
 
         school.addStudentsToTable(students);
         school.removeStudentsByColor(PawnColor.RED, 1);
-        assertEquals(school.getTableCount(PawnColor.PINK), 1);
-        assertEquals(school.getTableCount(PawnColor.RED), 1);
-        assertEquals(school.getTableCount(PawnColor.YELLOW), 1);
-        assertEquals(school.getTableCount(PawnColor.BLUE), 1);
-        assertEquals(school.getTableCount(PawnColor.GREEN), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.PINK), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.RED), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.YELLOW), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.BLUE), 1);
+        Assertions.assertEquals(school.getTableCount(PawnColor.GREEN), 1);
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> school.removeStudentsByColor(PawnColor.PINK, 2));
-        assertEquals(e.getMessage(), "There are not enough students with color " + PawnColor.PINK.name() + " on the table");
+        Assertions.assertEquals(e.getMessage(), "There are not enough students with color " + PawnColor.PINK.name() + " on the table");
     }
 
     @Test
     public void professorsTest() {
         School school = new School();
         for (PawnColor color : PawnColor.values()) {
-            assertEquals(school.isColoredProfessor(color), false);
+            Assertions.assertFalse(school.isColoredProfessor(color));
         }
-        assertEquals(school.getProfessors().size(), 0);
+        Assertions.assertEquals(school.getProfessors().size(), 0);
 
         school.addProfessor(new Professor(PawnColor.PINK));
-        assertEquals(school.getProfessors().size(), 1);
-        assertEquals(school.isColoredProfessor(PawnColor.PINK), true);
+        Assertions.assertEquals(school.getProfessors().size(), 1);
+        Assertions.assertTrue(school.isColoredProfessor(PawnColor.PINK));
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> school.removeProfessor(PawnColor.RED));
-        assertEquals(e.getMessage(), "No professor with color " + PawnColor.RED.name());
+        Assertions.assertEquals(e.getMessage(), "No professor with color " + PawnColor.RED.name());
 
         Professor professor = school.removeProfessor(PawnColor.PINK);
-        assertEquals(professor.getColor(), PawnColor.PINK);
-        assertEquals(school.isColoredProfessor(PawnColor.PINK), false);
-        assertEquals(school.getProfessors().size(), 0);
+        Assertions.assertEquals(professor.getColor(), PawnColor.PINK);
+        Assertions.assertFalse(school.isColoredProfessor(PawnColor.PINK));
+        Assertions.assertEquals(school.getProfessors().size(), 0);
     }
 }

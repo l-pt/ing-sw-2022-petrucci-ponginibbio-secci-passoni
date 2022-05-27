@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class Character12Test extends TestCase {
         character.use(match, player1.getName(), PawnColor.RED);
         //Check that every player has returned 3 red students
         for (Player player : match.getPlayersOrder()) {
-            assertEquals(player.getSchool().getTableCount(PawnColor.RED), Math.max(redStudents.get(player.getName()) - 3, 0));
+            Assertions.assertEquals(player.getSchool().getTableCount(PawnColor.RED), Math.max(redStudents.get(player.getName()) - 3, 0));
         }
     }
 }

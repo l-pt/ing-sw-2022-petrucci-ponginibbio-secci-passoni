@@ -104,7 +104,7 @@ public class ViewCLI {
             if (posMotherNature == counter - 1) {
                 formatter.format("\u001b[97m ♦\u001b[0m"); //♦?
             }
-            if ((expert == true) && (island.getNoEntry() > 0)) {
+            if ((expert) && (island.getNoEntry() > 0)) {
                 formatter.format("\u001b[1;31m Ꭓ\u001b[0m\n");
             } else {
                 formatter.format("\n");
@@ -135,7 +135,7 @@ public class ViewCLI {
         }
 
         //Print characters
-        if (expert == true) {
+        if (expert) {
             formatter.format("\u001b[97mCHARACTERS ↓\u001b[0m\n");
             for (Character character : characters) {
                 formatter.format("\u001b[97m%1$d°CHARACTER →  COST: %2$d\u001b[0m", character.getId() + 1, character.getCost());
@@ -246,7 +246,7 @@ public class ViewCLI {
 
         //Print players' coin reserve
         formatter.format("\u001b[97mCOIN RESERVES ↓\u001b[0m\n");
-        if (expert == true) {
+        if (expert) {
             for (Player player : playersOrder) {
                 formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S COIN RESERVE →\u001b[0m");
                 for (counter = 1; counter <= player.getCoins(); ++counter) {
@@ -284,7 +284,7 @@ public class ViewCLI {
             formatter.format("\n");
         }
 
-        System.out.println(formatter.toString());
+        System.out.println(formatter);
         formatter.close();
     }
 
@@ -420,8 +420,6 @@ public class ViewCLI {
             formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
             formatter.format("*       %1$d       *\n", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            //System.out.println(formatter.toString());
-            //formatter.close();
         }
 
         //Print mother nature position
@@ -439,7 +437,7 @@ public class ViewCLI {
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
         formatter.format("*                      COIN RESERVE                     *          %1$d         *\n", coinReserve);
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        System.out.println(formatter.toString());
+        System.out.println(formatter);
         formatter.close();
     }
 

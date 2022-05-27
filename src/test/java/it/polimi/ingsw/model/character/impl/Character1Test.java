@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,14 +25,14 @@ public class Character1Test extends TestCase {
         PawnColor finalColor1 = color;
 
         Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), finalColor1, 50));
-        assertEquals(e.getMessage(), "Island must be between 1 and " + match.getIslands().size());
+        Assertions.assertEquals(e.getMessage(), "Island must be between 1 and " + match.getIslands().size());
 
         int initialStudentCount = (int) match.getIslands().get(0).getStudents().stream().filter(s -> s.getColor() == finalColor1).count();
         int bagCount = match.getStudentBag().size();
         character.use(match, player1.getName(), color, 0);
 
-        assertEquals(initialStudentCount + 1, (int) match.getIslands().get(0).getStudents().stream().filter(s -> s.getColor() == finalColor1).count());
-        assertEquals(match.getStudentBag().size(), bagCount - 1);
+        Assertions.assertEquals(initialStudentCount + 1, (int) match.getIslands().get(0).getStudents().stream().filter(s -> s.getColor() == finalColor1).count());
+        Assertions.assertEquals(match.getStudentBag().size(), bagCount - 1);
 
         for (PawnColor c : PawnColor.values()) {
             if (character.getStudentsColorCount(c) == 0) {
@@ -41,7 +42,7 @@ public class Character1Test extends TestCase {
         }
         PawnColor finalColor = color;
         e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), finalColor, 0));
-        assertEquals(e.getMessage(), "There are no students with color " + color.name() + " on this character");
+        Assertions.assertEquals(e.getMessage(), "There are no students with color " + color.name() + " on this character");
     }
 
     @Test
@@ -56,7 +57,7 @@ public class Character1Test extends TestCase {
         character.setup(match);
         PawnColor color = character.getStudents().get(0).getColor();
         Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), color, 0));
-        assertEquals(e.getMessage(), "Insufficient coins");
+        Assertions.assertEquals(e.getMessage(), "Insufficient coins");
     }
 
     @Test
@@ -71,6 +72,6 @@ public class Character1Test extends TestCase {
         PawnColor color = character.getStudents().get(0).getColor();
         int cost = character.getCost();
         character.use(match, player1.getName(), color, 0);
-        assertEquals(character.getCost(), cost + 1);
+        Assertions.assertEquals(character.getCost(), cost + 1);
     }
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.character.impl;
 
 import it.polimi.ingsw.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,6 +24,6 @@ public class Character8Test extends TestCase {
         InfluenceCalculationPolicy calculationPolicy = new InfluenceCalculationPolicy();
         int influence = match.getIslands().get(0).getInfluence(player1, calculationPolicy);
         character.use(match, player1.getName());
-        assertEquals(influence + 2, match.getIslands().get(0).getInfluence(player1, calculationPolicy));
+        Assertions.assertEquals(influence + 2, match.getIslands().get(0).getInfluence(player1, calculationPolicy));
     }
 }
