@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class Client {
     protected String name;
@@ -15,6 +17,7 @@ public abstract class Client {
     protected Socket socket;
     protected InputStreamReader in;
     protected OutputStreamWriter out;
+    protected ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public String getName() {
         return name;
@@ -25,9 +28,21 @@ public abstract class Client {
      */
     public void sendMessage(Message msg) throws IOException {
         String json = GsonSingleton.get().toJson(msg);
-        out.write(json.length());
-        out.write(json, 0, json.length());
-        out.flush();
+        synchronized (out) {
+            out.write(json.length());
+            out.write(json, 0, json.length());
+            out.flush();
+        }
+    }
+
+    public void sendMessageAsync(Message msg) {
+        executorService.submit(() -> {
+            try {
+                sendMessage(msg);
+            } catch (IOException e) {
+                closeProgram();
+            }
+        });
     }
 
     /**
@@ -59,6 +74,7 @@ public abstract class Client {
      */
     public void closeProgram() {
         try {
+            executorService.shutdown();
             in.close();
             out.close();
             socket.close();

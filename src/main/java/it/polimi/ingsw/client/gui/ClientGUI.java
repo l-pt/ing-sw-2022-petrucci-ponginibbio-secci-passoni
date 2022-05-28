@@ -116,19 +116,15 @@ public class ClientGUI extends Client {
                     if (usernameTextField.getText().isEmpty()) {
                         return;
                     }
-                    try {
-                        questionsPanel.removeAll();
-                        JLabel waitLbl = new JLabel("Waiting for other players...");
-                        waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-                        questionsPanel.add(waitLbl);
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                        name = usernameTextField.getText();
-                        sendMessage(new SetUsernameMessage(usernameTextField.getText()));
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    questionsPanel.removeAll();
+                    JLabel waitLbl = new JLabel("Waiting for other players...");
+                    waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    questionsPanel.add(waitLbl);
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    name = usernameTextField.getText();
+                    sendMessageAsync(new SetUsernameMessage(usernameTextField.getText()));
                 });
                 questionsPanel.add(usernameTextField);
                 questionsPanel.add(errorLabel);
@@ -147,15 +143,11 @@ public class ClientGUI extends Client {
                 confirmPlayers.setMaximumSize(new Dimension(320, 40));
                 confirmPlayers.setAlignmentX(Component.CENTER_ALIGNMENT);
                 confirmPlayers.addActionListener(actionEvent -> {
-                    try {
-                        questionsPanel.removeAll();
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                        sendMessage(new SetPlayerNumberMessage((Integer) comboBox.getSelectedItem()));
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    questionsPanel.removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetPlayerNumberMessage((Integer) comboBox.getSelectedItem()));
                 });
                 questionsPanel.add(errorLabel);
                 questionsPanel.add(confirmPlayers);
@@ -174,18 +166,14 @@ public class ClientGUI extends Client {
                 confirmExpert.setMaximumSize(new Dimension(320, 40));
                 confirmExpert.setAlignmentX(Component.CENTER_ALIGNMENT);
                 confirmExpert.addActionListener(actionEvent -> {
-                    try {
-                        questionsPanel.removeAll();
-                        JLabel waitLbl = new JLabel("Waiting for other players...");
-                        waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-                        questionsPanel.add(waitLbl);
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                        sendMessage(new SetExpertMessage(comboBox.getSelectedItem().equals("Yes")));
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    questionsPanel.removeAll();
+                    JLabel waitLbl = new JLabel("Waiting for other players...");
+                    waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    questionsPanel.add(waitLbl);
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetExpertMessage(comboBox.getSelectedItem().equals("Yes")));
                 });
                 questionsPanel.add(errorLabel);
                 questionsPanel.add(confirmExpert);
@@ -210,15 +198,11 @@ public class ClientGUI extends Client {
                 assistPanel.add(comboBox);
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
-                    try {
-                        sendMessage(new SetAssistantMessage((Integer) comboBox.getSelectedItem()));
-                        view.getBottomPanel().removeAll();
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetAssistantMessage((Integer) comboBox.getSelectedItem()));
                 });
                 assistPanel.add(confirm);
                 view.getBottomPanel().add(assistPanel);
@@ -261,15 +245,11 @@ public class ClientGUI extends Client {
                         }
                     }
                     if (totalStudents == 3) {
-                        try {
-                            sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
-                            view.getBottomPanel().removeAll();
-                            errorLabel.setText("");
-                            frame.revalidate();
-                            frame.repaint();
-                        } catch (IOException e) {
-                            closeProgram();
-                        }
+                        view.getBottomPanel().removeAll();
+                        errorLabel.setText("");
+                        frame.revalidate();
+                        frame.repaint();
+                        sendMessageAsync(new SetEntranceStudentMessage(islandsStudents, tableStudents));
                     } else {
                         errorLabel.setText("You must select exactly three students");
                         frame.revalidate();
@@ -297,15 +277,11 @@ public class ClientGUI extends Client {
                 movesPanel.add(comboBox);
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
-                    try {
-                        sendMessage(new SetMotherNatureMessage((Integer) comboBox.getSelectedItem()));
-                        view.getBottomPanel().removeAll();
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetMotherNatureMessage((Integer) comboBox.getSelectedItem()));
                 });
                 movesPanel.add(confirm);
                 view.getBottomPanel().add(movesPanel);
@@ -327,15 +303,11 @@ public class ClientGUI extends Client {
                 cloudPanel.add(comboBox);
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
-                    try {
-                        sendMessage(new SetCloudMessage((Integer) comboBox.getSelectedItem() - 1));
-                        view.getBottomPanel().removeAll();
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetCloudMessage((Integer) comboBox.getSelectedItem() - 1));
                 });
                 cloudPanel.add(confirm);
                 view.getBottomPanel().add(cloudPanel);
