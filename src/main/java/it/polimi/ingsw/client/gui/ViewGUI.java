@@ -46,26 +46,24 @@ public abstract class ViewGUI extends View<ClientGUI> {
         client.getFrame().getContentPane().setLayout(new GridBagLayout());
         mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(1, 85));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.PAGE_START;
-        gbc.weightx = 1D;
-        gbc.weighty = 0.85D;
-        client.getFrame().getContentPane().add(mainPanel, gbc);
+        client.getFrame().getContentPane().add(mainPanel, new GridBagConstraints(
+                0, 0,
+                1, 1,
+                1D, 0.85D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
         bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         bottomPanel.setPreferredSize(new Dimension(1, 15));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.PAGE_END;
-        gbc.weightx = 1D;
-        gbc.weighty = 0.15D;
-        client.getFrame().getContentPane().add(bottomPanel, gbc);
+        client.getFrame().getContentPane().add(bottomPanel, new GridBagConstraints(
+                0, 1,
+                1, 1,
+                1D, 0.15D,
+                GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
         client.getFrame().revalidate();
         client.getFrame().repaint();
     }
@@ -90,8 +88,6 @@ public abstract class ViewGUI extends View<ClientGUI> {
 
     private void drawIslands() {
         islandsPanel.removeAll();
-        islandsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Islands", TitledBorder.CENTER, TitledBorder.CENTER));
-        islandsPanel.setLayout(new GridLayout(5, 3));
 
         JPanel[] islandsGrid = new JPanel[5 * 3];
         int[] islandIndexes = new int[]{0, 1, 2, 5, 8, 11, 14, 13, 12, 9, 6, 3};
@@ -117,29 +113,43 @@ public abstract class ViewGUI extends View<ClientGUI> {
 
     private void drawCloudsAndProfessors() {
         cpPanel.removeAll();
-        cpPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Clouds & Professors", TitledBorder.CENTER, TitledBorder.CENTER));
-        cpPanel.setLayout(new BoxLayout(cpPanel, BoxLayout.Y_AXIS));
 
         JPanel cloudsPanel = new JPanel(new GridLayout(1, clouds.size()));
-        cloudsPanel.setPreferredSize(new Dimension(1, 85 * 1000));
+        cloudsPanel.setPreferredSize(new Dimension(1, 85));
         for (Cloud cloud : clouds) {
             cloudsPanel.add(new CloudPanel(cloud.getStudents(), imageProvider));
         }
-        cpPanel.add(cloudsPanel);
+        cpPanel.add(cloudsPanel, new GridBagConstraints(
+                0, 0,
+                1, 1,
+                1D, 0.85D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
-        JPanel professorsPanel = new JPanel(new GridLayout(1, professors.size() + 2, 10, 5));
-        professorsPanel.setPreferredSize(new Dimension(1, 15 * 1000));
+        JPanel professorsPanel = new JPanel(new GridLayout(1, PawnColor.values().length + 4, 10, 5));
+        professorsPanel.setPreferredSize(new Dimension(1, 15));
+        professorsPanel.add(new JLabel());
         professorsPanel.add(new JLabel());
         for (Professor professor : professors) {
             professorsPanel.add(new JLabel(" ", new DynamicIcon(imageProvider.getProfessor(professor.getColor())), SwingConstants.TRAILING));
         }
+        for (int i = 0; i < PawnColor.values().length - professors.size(); ++i) {
+            professorsPanel.add(new JLabel());
+        }
         professorsPanel.add(new JLabel());
-        cpPanel.add(professorsPanel);
+        professorsPanel.add(new JLabel());
+        cpPanel.add(professorsPanel, new GridBagConstraints(
+                0, 1,
+                1, 1,
+                1D, 0.15D,
+                GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
     }
 
     private void drawExpertMode() {
         expertPanel.removeAll();
-        expertPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Expert mode", TitledBorder.CENTER, TitledBorder.CENTER));
         if (!expert) {
             expertPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
             expertPanel.add(new JLabel("Expert mode is not enabled for this match"));
@@ -165,8 +175,9 @@ public abstract class ViewGUI extends View<ClientGUI> {
 
     protected void drawPlayer(JPanel playerPanel, Player player, List<Tower> towers) {
         playerPanel.removeAll();
-        playerPanel.setLayout(new BorderLayout());
-        playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), player.getName(), TitledBorder.CENTER, TitledBorder.CENTER));
+        if (playerPanel.getBorder() == null) {
+            playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), player.getName(), TitledBorder.CENTER, TitledBorder.CENTER));
+        }
 
         JPanel playerInfoPanel = new JPanel(new FlowLayout());
         //Coins
@@ -196,8 +207,6 @@ public abstract class ViewGUI extends View<ClientGUI> {
 
     private void drawAssistants() {
         assistantsPanel.removeAll();
-        assistantsPanel.setLayout(new GridLayout(2, 5, 5, 5));
-        assistantsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Your assistants", TitledBorder.CENTER, TitledBorder.CENTER));
         for (Assistant assistant : assistants) {
             JLabel lbl = new JLabel(" ", new DynamicIcon(imageProvider.getAssistant(assistant)), SwingConstants.TRAILING);
             lbl.setToolTipText("<html>Value: " + assistant.getValue() + "<br>Moves: " + assistant.getMoves() + "</html>");

@@ -2,12 +2,10 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
-import it.polimi.ingsw.model.Tower;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TwoPlayersViewGUI extends ViewGUI {
     private JPanel playerPanel;
@@ -17,79 +15,74 @@ public class TwoPlayersViewGUI extends ViewGUI {
         super(client);
         mainPanel.setLayout(new GridBagLayout());
 
-        islandsPanel = new JPanel();
+        islandsPanel = new JPanel(new GridLayout(5, 3));
+        islandsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Islands", TitledBorder.CENTER, TitledBorder.CENTER));
         islandsPanel.setPreferredSize(new Dimension(35, 1));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.LINE_START;
-        gbc.weightx = 0.35D;
-        gbc.weighty = 1D;
-        mainPanel.add(islandsPanel, gbc);
+        mainPanel.add(islandsPanel, new GridBagConstraints(
+                0, 0,
+                1, 1,
+                0.35D, 1D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
         JPanel boardsPanel = new JPanel();
         boardsPanel.setLayout(new BoxLayout(boardsPanel, BoxLayout.Y_AXIS));
         boardsPanel.setPreferredSize(new Dimension(40, 1));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0.40D;
-        gbc.weighty = 1D;
-        playerPanel = new JPanel();
-        opponentPanel = new JPanel();
+        playerPanel = new JPanel(new BorderLayout());
+        opponentPanel = new JPanel(new BorderLayout());
         boardsPanel.add(opponentPanel);
         boardsPanel.add(playerPanel);
-        mainPanel.add(boardsPanel, gbc);
+        mainPanel.add(boardsPanel, new GridBagConstraints(
+                1, 0,
+                1, 1,
+                0.40D, 1D,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
-        JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new GridBagLayout());
+        JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setPreferredSize(new Dimension(25, 1));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.weightx = 0.25D;
-        gbc.weighty = 1D;
-        mainPanel.add(rightPanel, gbc);
+        mainPanel.add(rightPanel, new GridBagConstraints(
+                2, 0,
+                1, 1,
+                0.25D, 1D,
+                GridBagConstraints.LINE_END, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
-        expertPanel = new JPanel();
+        expertPanel = new JPanel(null);
+        expertPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Expert mode", TitledBorder.CENTER, TitledBorder.CENTER));
         expertPanel.setPreferredSize(new Dimension(1, 33));
-        gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.PAGE_START;
-        gbc.weightx = 1D;
-        gbc.weighty = 0.33D;
-        rightPanel.add(expertPanel, gbc);
+        rightPanel.add(expertPanel, new GridBagConstraints(
+                0, 0,
+                1, 1,
+                1D, 0.33D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
-        cpPanel = new JPanel();
+        cpPanel = new JPanel(new GridBagLayout());
+        cpPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Clouds & Professors", TitledBorder.CENTER, TitledBorder.CENTER));
         cpPanel.setPreferredSize(new Dimension(1, 33));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1D;
-        gbc.weighty = 0.33D;
-        rightPanel.add(cpPanel, gbc);
+        rightPanel.add(cpPanel, new GridBagConstraints(
+                0, 1,
+                1, 1,
+                1D, 0.33D,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0)
+        );
 
-        assistantsPanel = new JPanel();
+        assistantsPanel = new JPanel(new GridLayout(2, 5, 5, 5));
         assistantsPanel.setPreferredSize(new Dimension(1, 33));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.PAGE_END;
-        gbc.weightx = 1D;
-        gbc.weighty = 0.33D;
-        rightPanel.add(assistantsPanel, gbc);
+        assistantsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Your assistants", TitledBorder.CENTER, TitledBorder.CENTER));
+        rightPanel.add(assistantsPanel, new GridBagConstraints(
+                0, 2,
+                1, 1,
+                1D, 0.33D,
+                GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
     }
 
     @Override

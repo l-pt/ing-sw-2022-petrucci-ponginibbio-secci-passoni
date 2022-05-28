@@ -30,10 +30,6 @@ public class ClientGUI extends Client {
         return frame;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public void run() throws IOException {
         SwingUtilities.invokeLater(() -> {
@@ -140,7 +136,6 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_PLAYER_NUMBER -> {
-                questionsPanel.removeAll();
                 JLabel titleLbl = new JLabel("Choose player number");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 questionsPanel.add(titleLbl);
@@ -168,7 +163,6 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_EXPERT -> {
-                questionsPanel.removeAll();
                 JLabel titleLbl = new JLabel("Activate expert mode?");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 questionsPanel.add(titleLbl);
@@ -206,9 +200,6 @@ public class ClientGUI extends Client {
                 view.handleUpdateView((UpdateViewMessage) msg);
             }
             case ASK_ASSISTANT -> {
-                view.getBottomPanel().removeAll();
-                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
-
                 JLabel titleLbl = new JLabel("Choose an assistant");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -238,8 +229,6 @@ public class ClientGUI extends Client {
             case ASK_ENTRANCE_STUDENT -> {
                 Player player = view.getPlayerFromName(name);
 
-                view.getBottomPanel().removeAll();
-                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
                 JLabel titleLbl = new JLabel("Move 3 entrance students");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -294,9 +283,6 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_MOTHER_NATURE -> {
-                view.getBottomPanel().removeAll();
-                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
-
                 JLabel titleLbl = new JLabel("Move mother nature");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -328,9 +314,6 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_CLOUD -> {
-                view.getBottomPanel().removeAll();
-                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
-
                 JLabel titleLbl = new JLabel("Choose a cloud");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
