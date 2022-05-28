@@ -93,8 +93,8 @@ public class TwoPlayersViewGUI extends ViewGUI {
     }
 
     @Override
-    protected void draw() {
-        super.draw();
+    public void print() {
+        super.print();
         Player me = getPlayerFromName(client.getName());
         Team myTeam = teams.stream().filter(t -> t.isTeamMember(me)).findAny().get();
 

@@ -293,6 +293,73 @@ public class ClientGUI extends Client {
                 frame.revalidate();
                 frame.repaint();
             }
+            case ASK_MOTHER_NATURE -> {
+                view.getBottomPanel().removeAll();
+                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
+
+                JLabel titleLbl = new JLabel("Move mother nature");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                view.getBottomPanel().add(titleLbl);
+
+                JPanel movesPanel = new JPanel();
+                movesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JComboBox<Integer> comboBox = new JComboBox<>();
+                Player player = view.getPlayerFromName(name);
+                for (int i = 1; i <= player.getCurrentAssistant().getMoves() + player.getAdditionalMoves(); ++i) {
+                    comboBox.addItem(i);
+                }
+                movesPanel.add(comboBox);
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    try {
+                        sendMessage(new SetMotherNatureMessage((Integer) comboBox.getSelectedItem()));
+                        view.getBottomPanel().removeAll();
+                        errorLabel.setText("");
+                        frame.revalidate();
+                        frame.repaint();
+                    } catch (IOException e) {
+                        closeProgram();
+                    }
+                });
+                movesPanel.add(confirm);
+                view.getBottomPanel().add(movesPanel);
+                view.getBottomPanel().add(errorLabel);
+                frame.revalidate();
+                frame.repaint();
+            }
+            case ASK_CLOUD -> {
+                view.getBottomPanel().removeAll();
+                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
+
+                JLabel titleLbl = new JLabel("Choose a cloud");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                view.getBottomPanel().add(titleLbl);
+
+                JPanel cloudPanel = new JPanel();
+                cloudPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JComboBox<Integer> comboBox = new JComboBox<>();
+                for (int i = 1; i <= view.getClouds().size(); ++i) {
+                    comboBox.addItem(i);
+                }
+                cloudPanel.add(comboBox);
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    try {
+                        sendMessage(new SetCloudMessage((Integer) comboBox.getSelectedItem() - 1));
+                        view.getBottomPanel().removeAll();
+                        errorLabel.setText("");
+                        frame.revalidate();
+                        frame.repaint();
+                    } catch (IOException e) {
+                        closeProgram();
+                    }
+                });
+                cloudPanel.add(confirm);
+                view.getBottomPanel().add(cloudPanel);
+                view.getBottomPanel().add(errorLabel);
+                frame.revalidate();
+                frame.repaint();
+            }
             case ASK_CHARACTER -> {
                 try {
                     //TODO IMPLEMENT CHARACTERS

@@ -1,33 +1,19 @@
 package it.polimi.ingsw.client.gui;
 
+import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.gui.component.CloudPanel;
 import it.polimi.ingsw.client.gui.component.DynamicIcon;
 import it.polimi.ingsw.client.gui.component.IslandPanel;
 import it.polimi.ingsw.client.gui.component.SchoolPanel;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
-import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
 
-public abstract class ViewGUI {
-    protected ClientGUI client;
-    private List<Assistant> assistants;
-    private List<Island> islands;
-    protected List<Team> teams;
-    private List<Player> originalPlayersOrder;
-    protected List<Player> playersOrder;
-    private int posMotherNature;
-    private List<Cloud> clouds;
-    private List<Professor> professors;
-    private int coinReserve;
-    private List<Character> characters;
-    private boolean expert;
-
+public abstract class ViewGUI extends View<ClientGUI> {
     private ImageProvider imageProvider;
 
     protected JPanel mainPanel;
@@ -84,25 +70,8 @@ public abstract class ViewGUI {
         client.getFrame().repaint();
     }
 
-    public void handleUpdateView(UpdateViewMessage message) {
-        islands = message.getIslands();
-        teams = message.getTeams();
-        playersOrder = message.getPlayersOrder();
-        assistants = getPlayerFromName(client.getName()).getAssistants();
-        if (originalPlayersOrder == null) {
-            originalPlayersOrder = Collections.unmodifiableList(playersOrder);
-        }
-        posMotherNature = message.getPosMotherNature();
-        clouds = message.getClouds();
-        professors = message.getProfessors();
-        coinReserve = message.getCoinReserve();
-        characters = message.getCharacters();
-        expert = message.isExpert();
-
-        draw();
-    }
-
-    protected void draw() {
+    @Override
+    public void print() {
         drawIslands();
         drawCloudsAndProfessors();
         drawExpertMode();
@@ -234,50 +203,6 @@ public abstract class ViewGUI {
             lbl.setToolTipText("<html>Value: " + assistant.getValue() + "<br>Moves: " + assistant.getMoves() + "</html>");
             assistantsPanel.add(lbl);
         }
-    }
-
-    public List<Assistant> getAssistants() {
-        return assistants;
-    }
-
-    public List<Island> getIslands() {
-        return islands;
-    }
-
-    public List<Team> getTeams() {
-        return teams;
-    }
-
-    public List<Player> getOriginalPlayersOrder() {
-        return originalPlayersOrder;
-    }
-
-    public List<Player> getPlayersOrder() {
-        return playersOrder;
-    }
-
-    public int getPosMotherNature() {
-        return posMotherNature;
-    }
-
-    public List<Cloud> getClouds() {
-        return clouds;
-    }
-
-    public List<Professor> getProfessors() {
-        return professors;
-    }
-
-    public int getCoinReserve() {
-        return coinReserve;
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
-    }
-
-    public boolean isExpert() {
-        return expert;
     }
 
     public JPanel getBottomPanel() {
