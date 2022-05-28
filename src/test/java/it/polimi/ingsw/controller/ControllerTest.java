@@ -30,24 +30,6 @@ public class ControllerTest extends TestCase {
     }
 
     /*@Test
-    public synchronized void setup2PlayersController() throws IOException {
-        Server server = new Server();
-        server.setMatchParameters(2, true);
-        List<String> names = List.of("test1", "test2");
-        Controller controller = new Controller(server, names);
-        server.close();
-    }
-
-    @Test
-    public synchronized void setup3PlayersController() throws IOException {
-        Server server = new Server();
-        server.setMatchParameters(3, true);
-        List<String> names = List.of("test1", "test2", "test3");
-        Controller controller = new Controller(server, names);
-        server.close();
-    }
-
-    @Test
     public synchronized void setup4PlayersController() throws IOException {
         Server server = new Server();
         server.setMatchParameters(4, true);
@@ -57,7 +39,7 @@ public class ControllerTest extends TestCase {
     }*/
 
     @Test
-    public synchronized void assistantMessage() {
+    public synchronized void assistantMessage() throws IllegalMoveException {
         server.setMatchParameters(2, true);
         List<String> names = List.of("test1", "test2");
         Controller controller = new Controller(server, names);
@@ -68,19 +50,23 @@ public class ControllerTest extends TestCase {
         Assertions.assertEquals(2, result.get(name1).size());
         Assertions.assertEquals("The value must be between 1 and 10", ((ErrorMessage)result.get(name1).get(0)).getError());
         Assertions.assertEquals(MessageId.ASK_ASSISTANT, result.get(name1).get(1).getMessageId());
+        Assertions.assertNull(controller.getMatch().getPlayerFromName(name1).getCurrentAssistant());
 
         result = controller.handleMessage(name1, new SetAssistantMessage(2));
         Assertions.assertEquals(1, result.get(name2).size());
         Assertions.assertEquals(MessageId.ASK_ASSISTANT, result.get(name2).get(0).getMessageId());
+        Assertions.assertEquals(2, controller.getMatch().getPlayerFromName(name1).getCurrentAssistant().getValue());
 
         result = controller.handleMessage(name2, new SetAssistantMessage(2));
         Assertions.assertEquals(2, result.get(name2).size());
         Assertions.assertEquals("Cannot play this assistant", ((ErrorMessage)result.get(name2).get(0)).getError());
         Assertions.assertEquals(MessageId.ASK_ASSISTANT, result.get(name2).get(1).getMessageId());
+        Assertions.assertNull(controller.getMatch().getPlayerFromName(name2).getCurrentAssistant());
 
         result = controller.handleMessage(name2, new SetAssistantMessage(5));
         Assertions.assertEquals(1, result.get(name1).size());
         Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name1).get(0).getMessageId());
+        Assertions.assertEquals(5, controller.getMatch().getPlayerFromName(name2).getCurrentAssistant().getValue());
 
         result = controller.handleMessage(name1, new UseNoCharacterMessage());
         Assertions.assertEquals(1, result.get(name1).size());
@@ -118,6 +104,7 @@ public class ControllerTest extends TestCase {
         Assertions.assertEquals(2, result.get(name1).size());
         Assertions.assertEquals("Island 13 does not exist", ((ErrorMessage)result.get(name1).get(0)).getError());
         Assertions.assertEquals(MessageId.ASK_ENTRANCE_STUDENT, result.get(name1).get(1).getMessageId());
+
 
 
     }

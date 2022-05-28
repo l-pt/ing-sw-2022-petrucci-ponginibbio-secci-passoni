@@ -39,19 +39,30 @@ public class Controller {
                 players.addAll(black);
                 teams.add(new Team(white, TowerColor.WHITE));
                 teams.add(new Team(black, TowerColor.BLACK));
+                match = new Match(teams, players, server.getMatchParameters().isExpert());
             }
-            case 3, 2 -> {
+            case 3 -> {
                 for (int i = 0; i < server.getMatchParameters().getPlayerNumber(); ++i) {
                     players.add(new Player(connectionsNames.get(i), TowerColor.values()[i], Wizard.values()[i]));
                 }
-                //2/3 player matches have teams made of just one player
+                //3 player matches have teams made of just one player
                 for (Player player : players) {
                     teams.add(new Team(List.of(player), player.getTowerColor()));
                 }
+                match = new ThreePlayersMatch(teams, players, server.getMatchParameters().isExpert());
+            }
+            case 2 -> {
+                for (int i = 0; i < server.getMatchParameters().getPlayerNumber(); ++i) {
+                    players.add(new Player(connectionsNames.get(i), TowerColor.values()[i], Wizard.values()[i]));
+                }
+                //2 player matches have teams made of just one player
+                for (Player player : players) {
+                    teams.add(new Team(List.of(player), player.getTowerColor()));
+                }
+                match = new Match(teams, players, server.getMatchParameters().isExpert());
             }
             default -> throw new AssertionError();
         }
-        this.match = new Match(teams, players, server.getMatchParameters().isExpert());
         this.server = server;
     }
 
