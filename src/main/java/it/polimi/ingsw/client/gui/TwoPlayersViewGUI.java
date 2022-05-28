@@ -15,34 +15,81 @@ public class TwoPlayersViewGUI extends ViewGUI {
 
     protected TwoPlayersViewGUI(ClientGUI client) {
         super(client);
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+        mainPanel.setLayout(new GridBagLayout());
 
         islandsPanel = new JPanel();
-        islandsPanel.setPreferredSize(new Dimension(4 * 1000, 1));
-        mainPanel.add(islandsPanel);
+        islandsPanel.setPreferredSize(new Dimension(35, 1));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.gridwidth = gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.weightx = 0.35D;
+        gbc.weighty = 1D;
+        mainPanel.add(islandsPanel, gbc);
 
         JPanel boardsPanel = new JPanel();
         boardsPanel.setLayout(new BoxLayout(boardsPanel, BoxLayout.Y_AXIS));
-        boardsPanel.setPreferredSize(new Dimension(5 * 1000, 1));
+        boardsPanel.setPreferredSize(new Dimension(40, 1));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 0.40D;
+        gbc.weighty = 1D;
         playerPanel = new JPanel();
         opponentPanel = new JPanel();
         boardsPanel.add(opponentPanel);
         boardsPanel.add(playerPanel);
-        mainPanel.add(boardsPanel);
+        mainPanel.add(boardsPanel, gbc);
 
         JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        rightPanel.setPreferredSize(new Dimension(3 * 1000, 1));
+        rightPanel.setLayout(new GridBagLayout());
+        rightPanel.setPreferredSize(new Dimension(25, 1));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridwidth = gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.weightx = 0.25D;
+        gbc.weighty = 1D;
+        mainPanel.add(rightPanel, gbc);
+
         expertPanel = new JPanel();
-        expertPanel.setPreferredSize(new Dimension(1, 3 * 1000));
+        expertPanel.setPreferredSize(new Dimension(1, 33));
+        gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.gridwidth = gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.PAGE_START;
+        gbc.weightx = 1D;
+        gbc.weighty = 0.33D;
+        rightPanel.add(expertPanel, gbc);
+
         cpPanel = new JPanel();
-        cpPanel.setPreferredSize(new Dimension(1, 3 * 1000));
+        cpPanel.setPreferredSize(new Dimension(1, 33));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1D;
+        gbc.weighty = 0.33D;
+        rightPanel.add(cpPanel, gbc);
+
         assistantsPanel = new JPanel();
-        assistantsPanel.setPreferredSize(new Dimension(1, 3 * 1000));
-        rightPanel.add(expertPanel);
-        rightPanel.add(cpPanel);
-        rightPanel.add(assistantsPanel);
-        mainPanel.add(rightPanel);
+        assistantsPanel.setPreferredSize(new Dimension(1, 33));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.PAGE_END;
+        gbc.weightx = 1D;
+        gbc.weighty = 0.33D;
+        rightPanel.add(assistantsPanel, gbc);
     }
 
     @Override

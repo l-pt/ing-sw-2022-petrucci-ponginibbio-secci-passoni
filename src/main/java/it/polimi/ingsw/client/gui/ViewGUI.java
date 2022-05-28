@@ -61,10 +61,8 @@ public abstract class ViewGUI {
         mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(1, 85));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
+        gbc.gridx = gbc.gridy = 0;
+        gbc.gridwidth = gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.PAGE_START;
         gbc.weightx = 1D;
@@ -76,8 +74,7 @@ public abstract class ViewGUI {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
+        gbc.gridwidth = gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.PAGE_END;
         gbc.weightx = 1D;

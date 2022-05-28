@@ -94,8 +94,7 @@ public class ClientGUI extends Client {
             });
             questionsPanel.add(errorLabel);
             questionsPanel.add(confirm);
-
-            frame.pack();
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
         });
