@@ -56,13 +56,33 @@ public abstract class ViewGUI {
         this.client = client;
         imageProvider = new ImageProvider();
         client.getFrame().getContentPane().removeAll();
-        client.getFrame().getContentPane().setLayout(new BoxLayout(client.getFrame().getContentPane(), BoxLayout.Y_AXIS));
+
+        client.getFrame().getContentPane().setLayout(new GridBagLayout());
         mainPanel = new JPanel();
-        mainPanel.setPreferredSize(new Dimension(1, 80 * 1000));
-        client.getFrame().getContentPane().add(mainPanel);
+        mainPanel.setPreferredSize(new Dimension(1, 85));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.PAGE_START;
+        gbc.weightx = 1D;
+        gbc.weighty = 0.85D;
+        client.getFrame().getContentPane().add(mainPanel, gbc);
+
         bottomPanel = new JPanel();
-        bottomPanel.setPreferredSize(new Dimension(1, 20 * 1000));
-        client.getFrame().getContentPane().add(bottomPanel);
+        bottomPanel.setPreferredSize(new Dimension(1, 15));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.PAGE_END;
+        gbc.weightx = 1D;
+        gbc.weighty = 0.15D;
+        client.getFrame().getContentPane().add(bottomPanel, gbc);
         client.getFrame().revalidate();
         client.getFrame().repaint();
     }

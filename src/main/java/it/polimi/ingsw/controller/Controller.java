@@ -73,12 +73,8 @@ public class Controller {
                     if (pos != match.getPlayersOrder().size() - 1) {
                         return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskAssistantMessage()));
                     } else {
-                        if (!usedCharacter) {
-                            nextMessage.put(match.getPlayersOrder().get(0).getName(), new AskEntranceStudentMessage());
-                            return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskCharacterMessage()));
-                        } else {
-                            return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskEntranceStudentMessage()));
-                        }
+                        nextMessage.put(match.getPlayersOrder().get(0).getName(), new AskEntranceStudentMessage());
+                        return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskCharacterMessage()));
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskAssistantMessage()));
