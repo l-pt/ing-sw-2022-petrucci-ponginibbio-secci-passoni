@@ -21,11 +21,11 @@ public class Character4Test extends TestCase {
         player1.setCurrentAssistant(player1.getAssistantFromValue(1));
 
         character.use(match, player1.getName());
-        Exception e = assertThrows(IllegalMoveException.class, () -> match.moveMotherNature(4, player1.getName()));
+        Exception e = assertThrows(IllegalMoveException.class, () -> match.moveMotherNature(player1.getName(), 4));
         Assertions.assertEquals(e.getMessage(), "Mother nature moves must be between 1 and " + (player1.getCurrentAssistant().getMoves() + player1.getAdditionalMoves()));
 
         int posMotherNature = match.getPosMotherNature();
-        match.moveMotherNature(3, player1.getName());
+        match.moveMotherNature(player1.getName(), 3);
         Assertions.assertEquals(match.getPosMotherNature(), (posMotherNature + 3) % match.getIslands().size());
     }
 }

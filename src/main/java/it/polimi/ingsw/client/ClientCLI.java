@@ -131,7 +131,6 @@ public class ClientCLI extends Client{
                 int remaining = 3;
                 Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
                 Map<PawnColor, Integer> tableStudents = new HashMap<>();
-
                 List<Student> entranceStudents = view.getPlayerFromName(name).getSchool().getEntrance();
                 while(remaining > 0) {
                     Iterator<Student> it = entranceStudents.iterator();
