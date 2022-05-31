@@ -8,8 +8,6 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class ClientCLIApp {
-    private static ClientCLI client;
-
     public static void main(String[] args){
         Scanner stdin = new Scanner(System.in);
         String ip;
@@ -20,7 +18,7 @@ public class ClientCLIApp {
                 System.out.println("Wrong address format. Insert server ip:");
                 ip = stdin.nextLine();
             }
-            client = new ClientCLI(ip, 61863);
+            ClientCLI client = new ClientCLI(ip, 61863);
             client.run();
         }catch (IOException e){
             System.err.println(e.getMessage());
@@ -34,9 +32,5 @@ public class ClientCLIApp {
         } catch(UnknownHostException e){
             return true;
         }
-    }
-
-    public static ClientCLI getClient() {
-        return client;
     }
 }

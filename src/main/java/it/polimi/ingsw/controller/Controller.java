@@ -39,19 +39,30 @@ public class Controller {
                 players.addAll(black);
                 teams.add(new Team(white, TowerColor.WHITE));
                 teams.add(new Team(black, TowerColor.BLACK));
+                match = new Match(teams, players, server.getMatchParameters().isExpert());
             }
-            case 3, 2 -> {
+            case 3 -> {
                 for (int i = 0; i < server.getMatchParameters().getPlayerNumber(); ++i) {
                     players.add(new Player(connectionsNames.get(i), TowerColor.values()[i], Wizard.values()[i]));
                 }
-                //2/3 player matches have teams made of just one player
+                //3 player matches have teams made of just one player
                 for (Player player : players) {
                     teams.add(new Team(List.of(player), player.getTowerColor()));
                 }
+                match = new ThreePlayersMatch(teams, players, server.getMatchParameters().isExpert());
+            }
+            case 2 -> {
+                for (int i = 0; i < server.getMatchParameters().getPlayerNumber(); ++i) {
+                    players.add(new Player(connectionsNames.get(i), TowerColor.values()[i], Wizard.values()[i]));
+                }
+                //2 player matches have teams made of just one player
+                for (Player player : players) {
+                    teams.add(new Team(List.of(player), player.getTowerColor()));
+                }
+                match = new Match(teams, players, server.getMatchParameters().isExpert());
             }
             default -> throw new AssertionError();
         }
-        this.match = new Match(teams, players, server.getMatchParameters().isExpert());
         this.server = server;
     }
 
@@ -64,21 +75,14 @@ public class Controller {
             case SET_ASSISTANT -> {
                 try {
                     int pos = match.getPosFromName(name);
+                    match.useAssistant(name, ((SetAssistantMessage) message).getAssistant());
                     if (pos != match.getPlayersOrder().size() - 1) {
                         match.setCurrentPlayer(match.getPlayersOrder().get(pos + 1).getName());
-                    } else {
-                        match.setCurrentPlayer(match.getPlayersOrder().get(0).getName());
-                    }
-                    useAssistant(name, ((SetAssistantMessage) message).getAssistant());
-                    if (pos != match.getPlayersOrder().size() - 1) {
                         return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskAssistantMessage()));
                     } else {
-                        if (!usedCharacter) {
-                            nextMessage.put(match.getPlayersOrder().get(0).getName(), new AskEntranceStudentMessage());
-                            return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskCharacterMessage()));
-                        } else {
-                            return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskEntranceStudentMessage()));
-                        }
+                        match.setCurrentPlayer(match.getPlayersOrder().get(0).getName());
+                        nextMessage.put(match.getPlayersOrder().get(0).getName(), new AskEntranceStudentMessage());
+                        return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskCharacterMessage()));
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskAssistantMessage()));
@@ -87,7 +91,7 @@ public class Controller {
             case SET_ENTRANCE_STUDENT -> {
                 SetEntranceStudentMessage entranceStudentMessage = (SetEntranceStudentMessage) message;
                 try {
-                    moveStudentsToIslandsAndTable(name, entranceStudentMessage.getIslandStudents(), entranceStudentMessage.getTableStudents());
+                    match.moveStudentsToIslandsAndTable(name, entranceStudentMessage.getIslandStudents(), entranceStudentMessage.getTableStudents());
                     if (!usedCharacter) {
                         nextMessage.put(name, new AskMotherNatureMessage());
                         return Map.of(name, List.of(new AskCharacterMessage()));
@@ -96,12 +100,11 @@ public class Controller {
                     }
                 } catch (IllegalMoveException e) {
                     return Map.of(name, List.of(new ErrorMessage(e.getMessage()), new AskEntranceStudentMessage()));
-
                 }
             }
             case SET_MOTHER_NATURE -> {
                 try {
-                    moveMotherNature(((SetMotherNatureMessage) message).getMotherNatureMoves(), name);
+                    match.moveMotherNature(name, ((SetMotherNatureMessage) message).getMotherNatureMoves());
                     if (match.isGameFinished()) {
                         return match.getPlayersOrder().stream().collect(Collectors.toMap(Player::getName, p -> List.of(new EndGameMessage(match.getWinningTeam()))));
                     } else if (match.isLastTurn()) {
@@ -125,7 +128,7 @@ public class Controller {
             }
             case SET_CLOUD -> {
                 try {
-                    moveStudentsFromCloud(((SetCloudMessage) message).getCloud(), name);
+                    match.moveStudentsFromCloud(name, ((SetCloudMessage) message).getCloud());
                     if (!usedCharacter) {
                         lastMessage = true;
                         return Map.of(name, List.of(new AskCharacterMessage()));
@@ -243,7 +246,6 @@ public class Controller {
         match.resetAbility();
         if (pos != match.getPlayersOrder().size() - 1) {
             match.setCurrentPlayer(match.getPlayersOrder().get(pos + 1).getName());
-            match.updateView();
             return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskEntranceStudentMessage()));
         } else {
             if (match.isLastTurn()) {
@@ -277,72 +279,5 @@ public class Controller {
                 server.deregisterConnection(c);
             }
         }
-    }
-
-    /**
-     * Move a student from entrance to table or to an island
-     */
-    public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
-        //Check that the player has moved exactly three students
-        if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(Map.Entry::getValue).sum() +
-                tableStudents.values().stream().mapToInt(Integer::intValue).sum() != 3) {
-            throw new IllegalMoveException("You have to move exactly three students from the entrance");
-        }
-        //Check that all island indexes are valid
-        for (int island : islandsStudents.keySet()) {
-            if (island < 0 || island >= match.getIslands().size()) {
-                throw new IllegalMoveException("Island " + island + " does not exist");
-            }
-        }
-        Player player = match.getPlayerFromName(playerName);
-        //Check if the number of students in the entrance is sufficient
-        for (PawnColor color : PawnColor.values()) {
-            int usedStudents = islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).filter(e -> e.getKey() == color).mapToInt(Map.Entry::getValue).sum() +
-                    tableStudents.getOrDefault(color, 0);
-            if (player.getSchool().getEntranceCount(color) < usedStudents) {
-                throw new IllegalMoveException("There aren't enough students with color " + color.name() + " in the entrance");
-            }
-        }
-        //Move students from entrance to islands
-        for (Map.Entry<Integer, Map<PawnColor, Integer>> entry : islandsStudents.entrySet()) {
-            int island = entry.getKey();
-            for (Map.Entry<PawnColor, Integer> islandEntry : entry.getValue().entrySet()) {
-                List<Student> extractedStudents = player.getSchool().removeEntranceStudentsByColor(islandEntry.getKey(), islandEntry.getValue());
-                match.getIslands().get(island).addStudents(extractedStudents);
-            }
-        }
-        //Move students from entrance to table
-        for (Map.Entry<PawnColor, Integer> entry : tableStudents.entrySet()) {
-            match.playerMoveStudents(entry.getKey(), entry.getValue(), playerName);
-        }
-        match.updateView();
-    }
-
-    /**
-     * Move all the students on a cloud to the player's entrance
-     */
-    public void moveStudentsFromCloud(int cloudIndex, String playerName) throws IllegalMoveException {
-        match.moveStudentsFromCloud(cloudIndex, playerName);
-    }
-
-    /**
-     * Move mother nature
-     */
-    public void moveMotherNature(int moves, String playerName) throws IllegalMoveException {
-        match.moveMotherNature(moves, playerName);
-    }
-
-    /**
-     * Use the assistant with the given value
-     */
-    public void useAssistant(String playerName, int value) throws IllegalMoveException {
-        match.useAssistant(playerName, value);
-    }
-
-    /**
-     * Get the character object with given index
-     */
-    public Character getCharacter(int characterIndex) throws IllegalMoveException {
-        return match.getCharacter(characterIndex);
     }
 }

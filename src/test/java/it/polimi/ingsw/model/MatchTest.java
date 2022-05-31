@@ -25,6 +25,7 @@ public class MatchTest extends TestCase {
         Team team1 = new Team(List.of(player1), TowerColor.WHITE);
         Team team2 = new Team(List.of(player2), TowerColor.BLACK);
         Match match = new Match(List.of(team1, team2), List.of(player1, player2), true);
+        Assertions.assertEquals(2, match.getTeams().size());
 
         Assertions.assertTrue(match.isExpert());
 
@@ -46,35 +47,11 @@ public class MatchTest extends TestCase {
             }
         }
 
-        //130 -
-        //10 (students on islands) -
-        //6 (clouds) -
-        //7*2 (players) = 100
-        int expectedBagCount = 100;
-        for (int i = 0; i < 3; ++i) {
-            Character character = match.getCharacter(i);
-            if (character instanceof StudentCharacter) {
-                expectedBagCount -= ((StudentCharacter) character).getInitialStudentsNumber();
-            }
-        }
-        Assertions.assertEquals(expectedBagCount, match.getStudentBag().size());
-
         Assertions.assertEquals(5, match.getProfessors().size());
 
         Assertions.assertEquals(18, match.getCoins());
 
-        for (int i = 0; i < 3; ++i) {
-            for (int j = i + 1; j < 3; ++j) {
-                Character c1 = match.getCharacter(i);
-                Character c2 = match.getCharacter(j);
-                Assertions.assertNotSame(c1, c2);
-            }
-        }
-
         Assertions.assertEquals(3, match.getCharacters().size());
-
-        Exception e = assertThrows(IllegalMoveException.class, () -> match.getCharacter(3));
-        Assertions.assertEquals("Invalid character index 3", e.getMessage());
 
         List<Character> characters = match.getCharacters();
         Character1 c1 = new Character1();
@@ -82,7 +59,7 @@ public class MatchTest extends TestCase {
         characters.set(1, new Character2());
         characters.set(2, new Character3());
 
-        e = assertThrows(IllegalMoveException.class, () -> match.getCharacterFromType(Character4.class));
+        Exception e = assertThrows(IllegalMoveException.class, () -> match.getCharacterFromType(Character4.class));
         Assertions.assertEquals("There are no characters with class " + Character4.class, e.getMessage());
 
         Assertions.assertEquals(c1, match.getCharacterFromType(Character1.class));
@@ -218,8 +195,8 @@ public class MatchTest extends TestCase {
             }
         }
 
-        match.playerMoveStudents(color, 1, player1.getName());
-        Exception e = assertThrows(IllegalArgumentException.class, () -> match.playerMoveStudents(PawnColor.RED, -1, player1.getName()));
+        match.playerMoveStudents(player1.getName(), color, 1);
+        Exception e = assertThrows(IllegalArgumentException.class, () -> match.playerMoveStudents(player1.getName(), PawnColor.RED, -1));
         Assertions.assertEquals("n must be non negative", e.getMessage());
 
 
@@ -229,7 +206,7 @@ public class MatchTest extends TestCase {
         Assertions.assertEquals(player1, match.whoHaveProfessor(color));
 
         player1.getSchool().addStudentsToTable(List.of(new Student(color), new Student(color)));
-        match.checkNumberStudents(color, player1);
+        match.checkNumberStudents(player1.getName(), color);
         Assertions.assertEquals(2, player1.getCoins());
     }
 
@@ -244,12 +221,12 @@ public class MatchTest extends TestCase {
         Match match = new Match(List.of(team1, team2), List.of(player1, player2, player3, player4), true);
 
         player1.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED), new Student(PawnColor.RED)));
-        match.playerMoveStudents(PawnColor.RED, 2, player1.getName());
+        match.playerMoveStudents(player1.getName(), PawnColor.RED, 2);
         Assertions.assertEquals(player1, match.whoHaveProfessor(PawnColor.RED));
 
 
         player3.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED), new Student(PawnColor.RED), new Student(PawnColor.RED)));
-        match.playerMoveStudents(PawnColor.RED, 3, player3.getName());
+        match.playerMoveStudents(player3.getName(), PawnColor.RED, 3);
         Assertions.assertEquals(player3, match.whoHaveProfessor(PawnColor.RED));
     }
 
@@ -267,7 +244,7 @@ public class MatchTest extends TestCase {
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         player3.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED), new Student(PawnColor.RED)));
-        match.playerMoveStudents(PawnColor.RED, 2, player3.getName());
+        match.playerMoveStudents(player3.getName(), PawnColor.RED, 2);
         match.islandInfluence(0, true);
 
         Assertions.assertEquals(1, match.getIslands().get(0).getTowers().size());
@@ -358,17 +335,14 @@ public class MatchTest extends TestCase {
         for (Student s : match.getClouds().get(0).getStudents()) {
             cloudMap.put(s.getColor(), cloudMap.getOrDefault(s.getColor(), 0) + 1);
         }
-        match.moveStudentsFromCloud(0, player1.getName());
+        match.moveStudentsFromCloud(player1.getName(), 0);
         for (PawnColor c : PawnColor.values()) {
             Assertions.assertEquals(oldEntranceState.get(c) + cloudMap.getOrDefault(c, 0), player1.getSchool().getEntranceCount(c));
         }
         Assertions.assertEquals(0, match.getClouds().get(0).getStudents().size());
 
-        Exception e = assertThrows(IllegalMoveException.class, () -> match.moveStudentsFromCloud(0, player2.getName()));
+        Exception e = assertThrows(IllegalMoveException.class, () -> match.moveStudentsFromCloud(player2.getName(), 0));
         Assertions.assertEquals("Cloud already chosen by another player this turn", e.getMessage());
-
-
-
     }
 
     @Test
@@ -383,7 +357,7 @@ public class MatchTest extends TestCase {
 
         match.useAssistant(player1.getName(), 10);
         int motherNaturePos = match.getPosMotherNature();
-        match.moveMotherNature(5, player1.getName());
+        match.moveMotherNature(player1.getName(), 5);
         Assertions.assertEquals(match.islandIndex(motherNaturePos + 5), match.getPosMotherNature());
     }
 
@@ -460,7 +434,7 @@ public class MatchTest extends TestCase {
         Assertions.assertEquals("You don't have an assistant with value 1", e.getMessage());
 
         e = assertThrows(IllegalMoveException.class, () -> match.useAssistant(player2.getName(), 1));
-        Assertions.assertEquals("Cannot play this assistant", e.getMessage());
+        Assertions.assertEquals("You can't use this assistant because another player already used it this turn", e.getMessage());
 
         for (int i = 2; i <= 10; ++i) {
             match.useAssistant(player1.getName(), i);
@@ -488,8 +462,8 @@ public class MatchTest extends TestCase {
         e = assertThrows(IllegalMoveException.class, () -> match.getPosFromName("abc"));
         Assertions.assertEquals("Invalid Name", e.getMessage());
 
-        e = assertThrows(IllegalMoveException.class, () -> match.moveStudentsFromCloud(4, "test1"));
-        Assertions.assertEquals("Invalid cloud index", e.getMessage());
+        e = assertThrows(IllegalMoveException.class, () -> match.moveStudentsFromCloud("test1", 4));
+        Assertions.assertEquals("Island number must be between 1 and " + match.getClouds().size(), e.getMessage());
     }
 
     @Test
@@ -517,7 +491,7 @@ public class MatchTest extends TestCase {
         team1.removeTowers(5);
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         player1.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED)));
-        match.playerMoveStudent(PawnColor.RED, player1.getName());
+        match.playerMoveStudent(player1.getName(), PawnColor.RED);
         match.islandInfluence(0, false);
 
         Assertions.assertTrue(match.isGameFinished());
@@ -537,7 +511,7 @@ public class MatchTest extends TestCase {
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         player1.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED)));
-        match.playerMoveStudent(PawnColor.RED, player1.getName());
+        match.playerMoveStudent(player1.getName(), PawnColor.RED);
         match.getIslands().get(0).addTowers(List.of(new Tower(TowerColor.BLACK)));
         match.islandInfluence(0, false);
 

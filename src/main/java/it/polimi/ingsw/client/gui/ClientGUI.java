@@ -30,10 +30,6 @@ public class ClientGUI extends Client {
         return frame;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public void run() throws IOException {
         SwingUtilities.invokeLater(() -> {
@@ -94,8 +90,7 @@ public class ClientGUI extends Client {
             });
             questionsPanel.add(errorLabel);
             questionsPanel.add(confirm);
-
-            frame.pack();
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
         });
@@ -121,19 +116,15 @@ public class ClientGUI extends Client {
                     if (usernameTextField.getText().isEmpty()) {
                         return;
                     }
-                    try {
-                        questionsPanel.removeAll();
-                        JLabel waitLbl = new JLabel("Waiting for other players...");
-                        waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-                        questionsPanel.add(waitLbl);
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                        name = usernameTextField.getText();
-                        sendMessage(new SetUsernameMessage(usernameTextField.getText()));
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    questionsPanel.removeAll();
+                    JLabel waitLbl = new JLabel("Waiting for other players...");
+                    waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    questionsPanel.add(waitLbl);
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    name = usernameTextField.getText();
+                    sendMessageAsync(new SetUsernameMessage(usernameTextField.getText()));
                 });
                 questionsPanel.add(usernameTextField);
                 questionsPanel.add(errorLabel);
@@ -141,7 +132,6 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_PLAYER_NUMBER -> {
-                questionsPanel.removeAll();
                 JLabel titleLbl = new JLabel("Choose player number");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 questionsPanel.add(titleLbl);
@@ -153,15 +143,11 @@ public class ClientGUI extends Client {
                 confirmPlayers.setMaximumSize(new Dimension(320, 40));
                 confirmPlayers.setAlignmentX(Component.CENTER_ALIGNMENT);
                 confirmPlayers.addActionListener(actionEvent -> {
-                    try {
-                        questionsPanel.removeAll();
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                        sendMessage(new SetPlayerNumberMessage((Integer) comboBox.getSelectedItem()));
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    questionsPanel.removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetPlayerNumberMessage((Integer) comboBox.getSelectedItem()));
                 });
                 questionsPanel.add(errorLabel);
                 questionsPanel.add(confirmPlayers);
@@ -169,7 +155,6 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_EXPERT -> {
-                questionsPanel.removeAll();
                 JLabel titleLbl = new JLabel("Activate expert mode?");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 questionsPanel.add(titleLbl);
@@ -181,18 +166,14 @@ public class ClientGUI extends Client {
                 confirmExpert.setMaximumSize(new Dimension(320, 40));
                 confirmExpert.setAlignmentX(Component.CENTER_ALIGNMENT);
                 confirmExpert.addActionListener(actionEvent -> {
-                    try {
-                        questionsPanel.removeAll();
-                        JLabel waitLbl = new JLabel("Waiting for other players...");
-                        waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-                        questionsPanel.add(waitLbl);
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                        sendMessage(new SetExpertMessage(comboBox.getSelectedItem().equals("Yes")));
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    questionsPanel.removeAll();
+                    JLabel waitLbl = new JLabel("Waiting for other players...");
+                    waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    questionsPanel.add(waitLbl);
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetExpertMessage(comboBox.getSelectedItem().equals("Yes")));
                 });
                 questionsPanel.add(errorLabel);
                 questionsPanel.add(confirmExpert);
@@ -207,9 +188,6 @@ public class ClientGUI extends Client {
                 view.handleUpdateView((UpdateViewMessage) msg);
             }
             case ASK_ASSISTANT -> {
-                view.getBottomPanel().removeAll();
-                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
-
                 JLabel titleLbl = new JLabel("Choose an assistant");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -220,15 +198,11 @@ public class ClientGUI extends Client {
                 assistPanel.add(comboBox);
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
-                    try {
-                        sendMessage(new SetAssistantMessage((Integer) comboBox.getSelectedItem()));
-                        view.getBottomPanel().removeAll();
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                    } catch (IOException e) {
-                        closeProgram();
-                    }
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetAssistantMessage((Integer) comboBox.getSelectedItem()));
                 });
                 assistPanel.add(confirm);
                 view.getBottomPanel().add(assistPanel);
@@ -239,8 +213,6 @@ public class ClientGUI extends Client {
             case ASK_ENTRANCE_STUDENT -> {
                 Player player = view.getPlayerFromName(name);
 
-                view.getBottomPanel().removeAll();
-                view.getBottomPanel().setLayout(new BoxLayout(view.getBottomPanel(), BoxLayout.Y_AXIS));
                 JLabel titleLbl = new JLabel("Move 3 entrance students");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -273,15 +245,11 @@ public class ClientGUI extends Client {
                         }
                     }
                     if (totalStudents == 3) {
-                        try {
-                            sendMessage(new SetEntranceStudentMessage(islandsStudents, tableStudents));
-                            view.getBottomPanel().removeAll();
-                            errorLabel.setText("");
-                            frame.revalidate();
-                            frame.repaint();
-                        } catch (IOException e) {
-                            closeProgram();
-                        }
+                        view.getBottomPanel().removeAll();
+                        errorLabel.setText("");
+                        frame.revalidate();
+                        frame.repaint();
+                        sendMessageAsync(new SetEntranceStudentMessage(islandsStudents, tableStudents));
                     } else {
                         errorLabel.setText("You must select exactly three students");
                         frame.revalidate();
@@ -291,6 +259,59 @@ public class ClientGUI extends Client {
 
                 view.getBottomPanel().add(errorLabel);
                 view.getBottomPanel().add(confirm);
+                frame.revalidate();
+                frame.repaint();
+            }
+            case ASK_MOTHER_NATURE -> {
+                JLabel titleLbl = new JLabel("Move mother nature");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                view.getBottomPanel().add(titleLbl);
+
+                JPanel movesPanel = new JPanel();
+                movesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JComboBox<Integer> comboBox = new JComboBox<>();
+                Player player = view.getPlayerFromName(name);
+                for (int i = 1; i <= player.getCurrentAssistant().getMoves() + player.getAdditionalMoves(); ++i) {
+                    comboBox.addItem(i);
+                }
+                movesPanel.add(comboBox);
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetMotherNatureMessage((Integer) comboBox.getSelectedItem()));
+                });
+                movesPanel.add(confirm);
+                view.getBottomPanel().add(movesPanel);
+                view.getBottomPanel().add(errorLabel);
+                frame.revalidate();
+                frame.repaint();
+            }
+            case ASK_CLOUD -> {
+                JLabel titleLbl = new JLabel("Choose a cloud");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                view.getBottomPanel().add(titleLbl);
+
+                JPanel cloudPanel = new JPanel();
+                cloudPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JComboBox<Integer> comboBox = new JComboBox<>();
+                for (int i = 1; i <= view.getClouds().size(); ++i) {
+                    comboBox.addItem(i);
+                }
+                cloudPanel.add(comboBox);
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new SetCloudMessage((Integer) comboBox.getSelectedItem() - 1));
+                });
+                cloudPanel.add(confirm);
+                view.getBottomPanel().add(cloudPanel);
+                view.getBottomPanel().add(errorLabel);
                 frame.revalidate();
                 frame.repaint();
             }

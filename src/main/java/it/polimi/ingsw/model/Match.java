@@ -29,7 +29,6 @@ public class Match implements Observable<UpdateViewMessage> {
     private String currentPlayer;
 
     public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
-
         //set match id, match difficulty, teams and player order
         this.expert = expert;
         this.teams = teams;
@@ -139,39 +138,50 @@ public class Match implements Observable<UpdateViewMessage> {
     }
 
     public void setupTowers(){
-        for (Team team : teams)
-            for (int i = 0; i < 8; ++i)
+        for (Team team : teams) {
+            for (int i = 0; i < 8; ++i) {
                 team.addTower(new Tower(team.getTowerColor()));
+            }
+        }
     }
 
     public List<Team> getTeams() {return teams;}
 
     public Team getTeamFromColor(TowerColor color) throws IllegalMoveException {
-        for(Team team : teams)
-            if(team.getTowers().get(0).getColor().equals(color))
+        for(Team team : teams) {
+            if (team.getTowers().get(0).getColor().equals(color)) {
                 return team;
+            }
+        }
         throw new IllegalMoveException("A team with tower color " + color.name() + " does not exist");
     }
 
     public Team getTeamFromPlayer(Player player) throws IllegalMoveException {
-        for (Team team : teams)
-            for(Player p : team.getPlayers())
-                if(p.equals(player))
+        for (Team team : teams) {
+            for (Player p : team.getPlayers()) {
+                if (p.equals(player)) {
                     return team;
+                }
+            }
+        }
         throw new IllegalMoveException("Player is not in a team");
     }
 
-    public Player getPlayerFromName(String name) throws IllegalMoveException {
-        for(Player player : playerOrder)
-            if (player.getName().equals(name))
+    public Player getPlayerFromName(String playerName) throws IllegalMoveException {
+        for(Player player : playerOrder) {
+            if (player.getName().equals(playerName)) {
                 return player;
+            }
+        }
         throw new IllegalMoveException("Invalid Name");
     }
 
-    public int getPosFromName(String name) throws IllegalMoveException {
-        for (int i = 0; i < playerOrder.size(); ++i)
-            if (playerOrder.get(i).getName().equals(name))
+    public int getPosFromName(String playerName) throws IllegalMoveException {
+        for (int i = 0; i < playerOrder.size(); ++i) {
+            if (playerOrder.get(i).getName().equals(playerName)) {
                 return i;
+            }
+        }
         throw new IllegalMoveException("Invalid Name");
     }
 
@@ -181,10 +191,6 @@ public class Match implements Observable<UpdateViewMessage> {
 
     public int getPosMotherNature() {
         return posMotherNature;
-    }
-
-    public void orderPlayers() {
-        playerOrder.sort(Comparator.comparingInt((Player p) -> p.getCurrentAssistant().getValue()));
     }
 
     public List<Character> getCharacters() {
@@ -212,8 +218,9 @@ public class Match implements Observable<UpdateViewMessage> {
     public List<Student> extractStudent(int n) {
         int randomIndex;
         List<Student> result = new ArrayList<>(Math.min(n, studentBag.size()));
-        if (n > studentBag.size())
+        if (n >= studentBag.size()) {
             lastTurn = true;
+        }
         for (int i = 0; i < Math.min(n, studentBag.size()); ++i) {
             randomIndex = new Random().nextInt(studentBag.size());
             result.add(studentBag.get(randomIndex));
@@ -223,52 +230,58 @@ public class Match implements Observable<UpdateViewMessage> {
     }
 
     public Professor removeProfessor(PawnColor color) throws IllegalMoveException {
-        for(int i = 0; i < professors.size(); ++i)
-            if(professors.get(i).getColor().equals(color))
+        for(int i = 0; i < professors.size(); ++i) {
+            if (professors.get(i).getColor().equals(color)) {
                 return professors.remove(i);
+            }
+        }
         throw new IllegalMoveException("No professor of color " + color.name() + " on the table");
     }
 
     public Player whoHaveProfessor(PawnColor color){
-        for (Player player : playerOrder)
-            if (player.getSchool().isColoredProfessor(color))
+        for (Player player : playerOrder) {
+            if (player.getSchool().isColoredProfessor(color)) {
                 return player;
+            }
+        }
         return null;
     }
 
-    public void playerMoveStudent(PawnColor color, String playerName) throws IllegalMoveException {
-        Player player = getPlayerFromName(playerName);
-        player.getSchool().addStudentToTable(color);
-        if(expert)
-            checkNumberStudents(color, player);
-        checkProfessors(color, playerName);
+    public void playerMoveStudent(String playerName, PawnColor color) throws IllegalMoveException {
+        getPlayerFromName(playerName).getSchool().addStudentToTable(color);
+        if(expert) {
+            checkNumberStudents(playerName, color);
+        }
+        checkProfessors(playerName, color);
     }
 
-    public void playerMoveStudents(PawnColor color, int n, String playerName) throws IllegalMoveException {
+    public void playerMoveStudents(String playerName, PawnColor color, int n) throws IllegalMoveException {
         if (n < 0) {
             throw new IllegalArgumentException("n must be non negative");
         }
         for(int i = 0; i < n; ++i) {
-            playerMoveStudent(color, playerName);
+            playerMoveStudent(playerName, color);
         }
     }
 
-    public void checkNumberStudents(PawnColor color, Player player){
+    public void checkNumberStudents(String playerName, PawnColor color) throws IllegalMoveException {
+        Player player = getPlayerFromName(playerName);
         if(player.getSchool().getTableCount(color) == 3 || player.getSchool().getTableCount(color) == 6 || player.getSchool().getTableCount(color) == 9) {
             player.addCoin();
             --coinsReserve;
         }
     }
 
-    public void checkProfessors(PawnColor color, String playerName) throws IllegalMoveException {
+    public void checkProfessors(String playerName, PawnColor color) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         if(!player.getSchool().isColoredProfessor(color)){
-            if(whoHaveProfessor(color) == null)
+            if(whoHaveProfessor(color) == null) {
                 player.getSchool().addProfessor(removeProfessor(color));
-            else if(player.getSchool().getTableCount(color) == whoHaveProfessor(color).getSchool().getTableCount(color) && drawAllowed)
+            } else if(player.getSchool().getTableCount(color) == whoHaveProfessor(color).getSchool().getTableCount(color) && drawAllowed) {
                 player.getSchool().addProfessor(whoHaveProfessor(color).getSchool().removeProfessor(color));
-            else if(player.getSchool().getTableCount(color) > whoHaveProfessor(color).getSchool().getTableCount(color))
+            }else if(player.getSchool().getTableCount(color) > whoHaveProfessor(color).getSchool().getTableCount(color)) {
                 player.getSchool().addProfessor(whoHaveProfessor(color).getSchool().removeProfessor(color));
+            }
         }
     }
 
@@ -281,8 +294,9 @@ public class Match implements Observable<UpdateViewMessage> {
                     max = islands.get(index).getInfluence(playerOrder.get(i), influencePolicy);
                     pos = i;
                     draw = false;
-                } else if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) == max)
+                } else if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) == max) {
                     draw = true;
+                }
             }
             if (!draw && max > 0 && (islands.get(index).getTowers().size() == 0 || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
                 if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
@@ -304,16 +318,20 @@ public class Match implements Observable<UpdateViewMessage> {
             }
         }else {
             islands.get(index).removeNoEntry();
-            for (Character character : characters)
-                if(character instanceof Character5)
+            for (Character character : characters) {
+                if (character instanceof Character5) {
                     ((Character5) character).addNoEntry();
+                }
+            }
         }
     }
     public void checkIslands(int index, boolean noMotherNatureMoves) {
-        if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() && islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
+        if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() && islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
             uniteIslands(Math.min(index, islandIndex(index + 1)), Math.max(index, islandIndex(index + 1)), noMotherNatureMoves);
-        if (!islands.get(islandIndex(index - 1)).getTowers().isEmpty() && islands.get(islandIndex(index - 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor()))
+        }
+        if (!islands.get(islandIndex(index - 1)).getTowers().isEmpty() && islands.get(islandIndex(index - 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
             uniteIslands(Math.min(index, islandIndex(index - 1)), Math.max(index, islandIndex(index - 1)), noMotherNatureMoves);
+        }
     }
 
     public int islandIndex(int idx) {
@@ -329,20 +347,22 @@ public class Match implements Observable<UpdateViewMessage> {
         islands.get(min).addTowers(islands.get(max).getTowers());
         islands.get(min).addNoEntry(islands.get(max).getNoEntry());
         islands.remove(max);
-        if(!noMotherNatureMoves)
+        if(!noMotherNatureMoves) {
             posMotherNature = min;
-        if (islands.size() <= 3)
+        }
+        if (islands.size() <= 3) {
             gameFinished = true;
+        }
     }
 
     public void populateClouds() {
-        for (Cloud c : clouds)
-            if (!studentBag.isEmpty())
-                c.addStudents(extractStudent(3));
+        for (Cloud c : clouds) {
+            c.addStudents(extractStudent(3));
+        }
         updateView();
     }
 
-    public void moveStudentsFromCloud(int cloudIndex, String playerName) throws IllegalMoveException {
+    public void moveStudentsFromCloud(String playerName, int cloudIndex) throws IllegalMoveException {
         if (cloudIndex >= 0 && cloudIndex < clouds.size()) {
             if (clouds.get(cloudIndex).getStudents().size() == 0) {
                 throw new IllegalMoveException("Cloud already chosen by another player this turn");
@@ -350,12 +370,12 @@ public class Match implements Observable<UpdateViewMessage> {
                 getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
                 updateView();
             }
-        } else throw new IllegalMoveException("Invalid cloud index");
+        } else throw new IllegalMoveException("Island number must be between 1 and " + getClouds().size());
     }
 
-    public void moveMotherNature(int moves, String playerName) throws IllegalMoveException {
+    public void moveMotherNature(String playerName, int moves) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
-        if (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves() >= moves && moves >= 1) {
+        if ((player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()) >= moves && moves >= 1) {
             posMotherNature = (posMotherNature + moves) % islands.size();
             islandInfluence(posMotherNature, false);
             updateView();
@@ -380,16 +400,6 @@ public class Match implements Observable<UpdateViewMessage> {
 
     public InfluenceCalculationPolicy getInfluencePolicy() {
         return influencePolicy;
-    }
-
-    /**
-     * Get the character object with given index
-     */
-    public Character getCharacter(int characterIndex) throws IllegalMoveException {
-        if (characterIndex < 0 || characterIndex >= 3) {
-            throw new IllegalMoveException("Invalid character index " + characterIndex);
-        }
-        return characters.get(characterIndex);
     }
 
     public Character getCharacterFromType(Class<? extends Character> cl) throws IllegalMoveException {
@@ -421,8 +431,9 @@ public class Match implements Observable<UpdateViewMessage> {
             int towers2 = getTowersByColor(t2.getTowerColor());
             if (towers1 == towers2) {
                 return t2.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum() - t1.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum();
-            } else
+            } else {
                 return towers2 - towers1;
+            }
         }).get();
     }
 
@@ -434,37 +445,55 @@ public class Match implements Observable<UpdateViewMessage> {
         return lastTurn;
     }
 
-    public void useAssistant(String playerName, int value) throws IllegalMoveException {
-        Player player = getPlayerFromName(playerName);
-        int playerPos = getPosFromName(playerName);
-        if (value < 1 || value > 10)
-            throw new IllegalMoveException("The value must be between 1 and 10");
-        if (player.getAssistantFromValue(value) == null) {
-            throw new IllegalMoveException("You don't have an assistant with value " + value);
-        }
-        boolean var = false;
-        for(int i = 0; i < playerPos; ++i)
-            if (playerOrder.get(i).getCurrentAssistant().getValue() == value)
-                var = true;
-        if(var) {
-            List<Assistant> assistants = new ArrayList<>();
-            for (int i = 0; i < playerPos; ++i) {
-                assistants.add(playerOrder.get(i).getCurrentAssistant());
-            }
-            if (!assistants.containsAll(player.getAssistants())) {
-                throw new IllegalMoveException("Cannot play this assistant");
-            }
-        }
-        getPlayerFromName(playerName).setCurrentAssistant(getPlayerFromName(playerName).getAssistantFromValue(value));
-        if(getPlayerFromName(playerName).getAssistants().isEmpty())
-            lastTurn = true;
-        if(getPosFromName(playerName) == playerOrder.size()-1)
-            orderPlayers();
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
         updateView();
     }
 
-    public void setCurrentPlayer(String currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    public void useAssistant(String playerName, int value) throws IllegalMoveException {
+        Player player = getPlayerFromName(playerName);
+        int playerPos = getPosFromName(playerName);
+        if (value < 1 || value > 10) {
+            throw new IllegalMoveException("The value must be between 1 and 10");
+        }
+        if (player.getAssistantFromValue(value) == null) {
+            throw new IllegalMoveException("You don't have an assistant with value " + value);
+        }
+        for(int i = 0; i < playerPos; ++i) {
+            if (playerOrder.get(i).getCurrentAssistant().getValue() == value) {
+                List<Assistant> assistants = new ArrayList<>();
+                for (int j = 0; j < playerPos; ++j) {
+                    assistants.add(playerOrder.get(j).getCurrentAssistant());
+                }
+                if (!assistants.containsAll(player.getAssistants())) {
+                    throw new IllegalMoveException("You can't use this assistant because another player already used it this turn");
+                }
+                break;
+            }
+        }
+        getPlayerFromName(playerName).setCurrentAssistant(getPlayerFromName(playerName).getAssistantFromValue(value));
+        if(getPlayerFromName(playerName).getAssistants().isEmpty()) {
+            lastTurn = true;
+        }
+        if(getPosFromName(playerName) == playerOrder.size() - 1) {
+            playerOrder.sort(Comparator.comparingInt((Player p) -> p.getCurrentAssistant().getValue()));
+        }
+    }
+
+    public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
+        //Move students from entrance to islands
+        for (Map.Entry<Integer, Map<PawnColor, Integer>> entry : islandsStudents.entrySet()) {
+            int island = entry.getKey();
+            for (Map.Entry<PawnColor, Integer> islandEntry : entry.getValue().entrySet()) {
+                List<Student> extractedStudents = getPlayerFromName(playerName).getSchool().removeEntranceStudentsByColor(islandEntry.getKey(), islandEntry.getValue());
+                getIslands().get(island).addStudents(extractedStudents);
+            }
+        }
+        //Move students from entrance to table
+        for (Map.Entry<PawnColor, Integer> entry : tableStudents.entrySet()) {
+            playerMoveStudents(playerName, entry.getKey(), entry.getValue());
+        }
+        updateView();
     }
 
     public void updateView() {

@@ -1,33 +1,19 @@
 package it.polimi.ingsw.client.gui;
 
+import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.gui.component.CloudPanel;
 import it.polimi.ingsw.client.gui.component.DynamicIcon;
 import it.polimi.ingsw.client.gui.component.IslandPanel;
 import it.polimi.ingsw.client.gui.component.SchoolPanel;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
-import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
 
-public abstract class ViewGUI {
-    protected ClientGUI client;
-    private List<Assistant> assistants;
-    private List<Island> islands;
-    protected List<Team> teams;
-    private List<Player> originalPlayersOrder;
-    protected List<Player> playersOrder;
-    private int posMotherNature;
-    private List<Cloud> clouds;
-    private List<Professor> professors;
-    private int coinReserve;
-    private List<Character> characters;
-    private boolean expert;
-
+public abstract class ViewGUI extends View<ClientGUI> {
     private ImageProvider imageProvider;
 
     protected JPanel mainPanel;
@@ -56,36 +42,34 @@ public abstract class ViewGUI {
         this.client = client;
         imageProvider = new ImageProvider();
         client.getFrame().getContentPane().removeAll();
-        client.getFrame().getContentPane().setLayout(new BoxLayout(client.getFrame().getContentPane(), BoxLayout.Y_AXIS));
+
+        client.getFrame().getContentPane().setLayout(new GridBagLayout());
         mainPanel = new JPanel();
-        mainPanel.setPreferredSize(new Dimension(1, 80 * 1000));
-        client.getFrame().getContentPane().add(mainPanel);
+        mainPanel.setPreferredSize(new Dimension(1, 85));
+        client.getFrame().getContentPane().add(mainPanel, new GridBagConstraints(
+                0, 0,
+                1, 1,
+                1D, 0.85D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
+
         bottomPanel = new JPanel();
-        bottomPanel.setPreferredSize(new Dimension(1, 20 * 1000));
-        client.getFrame().getContentPane().add(bottomPanel);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        bottomPanel.setPreferredSize(new Dimension(1, 15));
+        client.getFrame().getContentPane().add(bottomPanel, new GridBagConstraints(
+                0, 1,
+                1, 1,
+                1D, 0.15D,
+                GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
         client.getFrame().revalidate();
         client.getFrame().repaint();
     }
 
-    public void handleUpdateView(UpdateViewMessage message) {
-        islands = message.getIslands();
-        teams = message.getTeams();
-        playersOrder = message.getPlayersOrder();
-        assistants = getPlayerFromName(client.getName()).getAssistants();
-        if (originalPlayersOrder == null) {
-            originalPlayersOrder = Collections.unmodifiableList(playersOrder);
-        }
-        posMotherNature = message.getPosMotherNature();
-        clouds = message.getClouds();
-        professors = message.getProfessors();
-        coinReserve = message.getCoinReserve();
-        characters = message.getCharacters();
-        expert = message.isExpert();
-
-        draw();
-    }
-
-    protected void draw() {
+    @Override
+    public void print() {
         drawIslands();
         drawCloudsAndProfessors();
         drawExpertMode();
@@ -104,8 +88,6 @@ public abstract class ViewGUI {
 
     private void drawIslands() {
         islandsPanel.removeAll();
-        islandsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Islands", TitledBorder.CENTER, TitledBorder.CENTER));
-        islandsPanel.setLayout(new GridLayout(5, 3));
 
         JPanel[] islandsGrid = new JPanel[5 * 3];
         int[] islandIndexes = new int[]{0, 1, 2, 5, 8, 11, 14, 13, 12, 9, 6, 3};
@@ -131,29 +113,43 @@ public abstract class ViewGUI {
 
     private void drawCloudsAndProfessors() {
         cpPanel.removeAll();
-        cpPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Clouds & Professors", TitledBorder.CENTER, TitledBorder.CENTER));
-        cpPanel.setLayout(new BoxLayout(cpPanel, BoxLayout.Y_AXIS));
 
         JPanel cloudsPanel = new JPanel(new GridLayout(1, clouds.size()));
-        cloudsPanel.setPreferredSize(new Dimension(1, 85 * 1000));
+        cloudsPanel.setPreferredSize(new Dimension(1, 85));
         for (Cloud cloud : clouds) {
             cloudsPanel.add(new CloudPanel(cloud.getStudents(), imageProvider));
         }
-        cpPanel.add(cloudsPanel);
+        cpPanel.add(cloudsPanel, new GridBagConstraints(
+                0, 0,
+                1, 1,
+                1D, 0.85D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
-        JPanel professorsPanel = new JPanel(new GridLayout(1, professors.size() + 2, 10, 5));
-        professorsPanel.setPreferredSize(new Dimension(1, 15 * 1000));
+        JPanel professorsPanel = new JPanel(new GridLayout(1, PawnColor.values().length + 4, 10, 5));
+        professorsPanel.setPreferredSize(new Dimension(1, 15));
+        professorsPanel.add(new JLabel());
         professorsPanel.add(new JLabel());
         for (Professor professor : professors) {
             professorsPanel.add(new JLabel(" ", new DynamicIcon(imageProvider.getProfessor(professor.getColor())), SwingConstants.TRAILING));
         }
+        for (int i = 0; i < PawnColor.values().length - professors.size(); ++i) {
+            professorsPanel.add(new JLabel());
+        }
         professorsPanel.add(new JLabel());
-        cpPanel.add(professorsPanel);
+        professorsPanel.add(new JLabel());
+        cpPanel.add(professorsPanel, new GridBagConstraints(
+                0, 1,
+                1, 1,
+                1D, 0.15D,
+                GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
     }
 
     private void drawExpertMode() {
         expertPanel.removeAll();
-        expertPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Expert mode", TitledBorder.CENTER, TitledBorder.CENTER));
         if (!expert) {
             expertPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
             expertPanel.add(new JLabel("Expert mode is not enabled for this match"));
@@ -179,8 +175,9 @@ public abstract class ViewGUI {
 
     protected void drawPlayer(JPanel playerPanel, Player player, List<Tower> towers) {
         playerPanel.removeAll();
-        playerPanel.setLayout(new BorderLayout());
-        playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), player.getName(), TitledBorder.CENTER, TitledBorder.CENTER));
+        if (playerPanel.getBorder() == null) {
+            playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), player.getName(), TitledBorder.CENTER, TitledBorder.CENTER));
+        }
 
         JPanel playerInfoPanel = new JPanel(new FlowLayout());
         //Coins
@@ -210,57 +207,11 @@ public abstract class ViewGUI {
 
     private void drawAssistants() {
         assistantsPanel.removeAll();
-        assistantsPanel.setLayout(new GridLayout(2, 5, 5, 5));
-        assistantsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Your assistants", TitledBorder.CENTER, TitledBorder.CENTER));
         for (Assistant assistant : assistants) {
             JLabel lbl = new JLabel(" ", new DynamicIcon(imageProvider.getAssistant(assistant)), SwingConstants.TRAILING);
             lbl.setToolTipText("<html>Value: " + assistant.getValue() + "<br>Moves: " + assistant.getMoves() + "</html>");
             assistantsPanel.add(lbl);
         }
-    }
-
-    public List<Assistant> getAssistants() {
-        return assistants;
-    }
-
-    public List<Island> getIslands() {
-        return islands;
-    }
-
-    public List<Team> getTeams() {
-        return teams;
-    }
-
-    public List<Player> getOriginalPlayersOrder() {
-        return originalPlayersOrder;
-    }
-
-    public List<Player> getPlayersOrder() {
-        return playersOrder;
-    }
-
-    public int getPosMotherNature() {
-        return posMotherNature;
-    }
-
-    public List<Cloud> getClouds() {
-        return clouds;
-    }
-
-    public List<Professor> getProfessors() {
-        return professors;
-    }
-
-    public int getCoinReserve() {
-        return coinReserve;
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
-    }
-
-    public boolean isExpert() {
-        return expert;
     }
 
     public JPanel getBottomPanel() {

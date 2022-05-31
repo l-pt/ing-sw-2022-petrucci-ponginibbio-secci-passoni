@@ -22,7 +22,7 @@ public class Character2Test extends TestCase {
         player1.getSchool().addProfessor(new Professor(PawnColor.RED));
         character.use(match, player2.getName());
         player2.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED)));
-        match.playerMoveStudent(PawnColor.RED, player2.getName());
+        match.playerMoveStudent(player2.getName(), PawnColor.RED);
         Assertions.assertEquals(match.whoHaveProfessor(PawnColor.RED), player2);
     }
 }

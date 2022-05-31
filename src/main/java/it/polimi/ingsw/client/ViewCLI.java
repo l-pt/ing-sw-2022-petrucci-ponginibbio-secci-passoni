@@ -1,48 +1,15 @@
 package it.polimi.ingsw.client;
 
-
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.Character5;
-import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
 import java.util.Formatter;
-import java.util.List;
 
-
-public class ViewCLI {
-    private ClientCLI client;
-    private List<Team> teams;
-    private List<Assistant> assistants;
-    private List<Island> islands;
-    private List<Player> playersOrder;
-    private int posMotherNature;
-    private List<Cloud> clouds;
-    private List<Professor> professors;
-    private int coinReserve;
-    private List<Character> characters;
-    private boolean expert;
-    private String currentPlayer;
-
+public class ViewCLI extends View<ClientCLI> {
     public ViewCLI(ClientCLI client) {
         this.client = client;
-    }
-
-    public void handleUpdateView(UpdateViewMessage message) {
-        teams = message.getTeams();
-        islands = message.getIslands();
-        playersOrder = message.getPlayersOrder();
-        assistants = getPlayerFromName(client.name).getAssistants();
-        posMotherNature = message.getPosMotherNature();
-        clouds = message.getClouds();
-        professors = message.getProfessors();
-        coinReserve = message.getCoinReserve();
-        characters = message.getCharacters();
-        expert = message.isExpert();
-        currentPlayer = message.getCurrentPlayer();
-
-        print();
     }
 
     //To call when the game starts
@@ -68,6 +35,7 @@ public class ViewCLI {
     }
 
     //Arrangement to see
+    @Override
     public void print() {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);
@@ -507,49 +475,5 @@ public class ViewCLI {
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
         System.out.println(formatter);
         formatter.close();
-    }
-
-    public Player getPlayerFromName(String name){
-        for (Player player : playersOrder) {
-            if (player.getName().equals(name))
-                return player;
-        }
-        throw new IllegalArgumentException();
-    }
-
-    public List<Assistant> getAssistants() {
-        return assistants;
-    }
-
-    public List<Island> getIslands() {
-        return islands;
-    }
-
-    public List<Player> getPlayersOrder() {
-        return playersOrder;
-    }
-
-    public int getPosMotherNature() {
-        return posMotherNature;
-    }
-
-    public List<Cloud> getClouds() {
-        return clouds;
-    }
-
-    public List<Professor> getProfessors() {
-        return professors;
-    }
-
-    public int getCoinReserve() {
-        return coinReserve;
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
-    }
-
-    public boolean isExpert() {
-        return expert;
     }
 }
