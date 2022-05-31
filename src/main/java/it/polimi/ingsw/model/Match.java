@@ -481,6 +481,17 @@ public class Match implements Observable<UpdateViewMessage> {
     }
 
     public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
+        //Check that the player has moved exactly three students
+        if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(Map.Entry::getValue).sum() +
+                tableStudents.values().stream().mapToInt(Integer::intValue).sum() != 3) {
+            throw new IllegalMoveException("You have to move exactly three students from the entrance");
+        }
+        //Check that all island indexes are valid
+        for (int island : islandsStudents.keySet()) {
+            if (island < 0 || island >= islands.size()) {
+                throw new IllegalMoveException("Island " + island + " does not exist");
+            }
+        }
         //Move students from entrance to islands
         for (Map.Entry<Integer, Map<PawnColor, Integer>> entry : islandsStudents.entrySet()) {
             int island = entry.getKey();
