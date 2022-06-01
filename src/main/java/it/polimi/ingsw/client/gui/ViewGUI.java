@@ -96,7 +96,7 @@ public abstract class ViewGUI extends View<ClientGUI> {
         int i = 0;
         int islandIndex = 0;
         for (Island island : islands) {
-            islandsGrid[islandIndexes[i]] = new IslandPanel(island, islandIndex++, imageProvider);
+            islandsGrid[islandIndexes[i]] = new IslandPanel(island, posMotherNature == islandIndex, islandIndex++, imageProvider);
             i += distance;
         }
 

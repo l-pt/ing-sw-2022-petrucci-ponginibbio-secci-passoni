@@ -18,7 +18,7 @@ public class IslandPanel extends JPanel {
     private Island island;
     private ImageProvider imageProvider;
 
-    public IslandPanel(Island island, int index, ImageProvider imageProvider) {
+    public IslandPanel(Island island, boolean motherNature, int index, ImageProvider imageProvider) {
         super(new GridLayout(DIM, DIM));
         this.island = island;
         this.imageProvider = imageProvider;
@@ -28,13 +28,21 @@ public class IslandPanel extends JPanel {
         pieces.addAll(island.getStudents());
         pieces.addAll(island.getTowers());
         int pieceIndex = 0;
-        for (int i = 2; i < DIM - 2 && pieceIndex < pieces.size(); ++i) {
-            for (int j = 2; j <= DIM - 2 && pieceIndex < pieces.size(); ++j) {
+        rows: for (int i = 2; i < DIM - 2; ++i) {
+            for (int j = 2; j <= DIM - 2; ++j) {
+                if (pieceIndex >= pieces.size() && !motherNature) {
+                    break rows;
+                }
                 Image image;
-                if (pieces.get(pieceIndex) instanceof Tower) {
-                    image = imageProvider.getTower(((Tower) pieces.get(pieceIndex++)).getColor());
+                if (motherNature) {
+                    image = imageProvider.getMotherNature();
+                    motherNature = false;
                 } else {
-                    image = imageProvider.getStudent(((Student) pieces.get(pieceIndex++)).getColor());
+                    if (pieces.get(pieceIndex) instanceof Tower) {
+                        image = imageProvider.getTower(((Tower) pieces.get(pieceIndex++)).getColor());
+                    } else {
+                        image = imageProvider.getStudent(((Student) pieces.get(pieceIndex++)).getColor());
+                    }
                 }
                 grid[i * DIM + j] = new JLabel(" ", new DynamicIcon(image), SwingConstants.TRAILING);
             }

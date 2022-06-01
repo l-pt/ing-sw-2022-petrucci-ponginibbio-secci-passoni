@@ -23,6 +23,7 @@ public class ImageProvider {
     private BufferedImage[] characters;
     private Map<Wizard, BufferedImage> wizards;
     private BufferedImage coin;
+    private BufferedImage motherNature;
 
     public ImageProvider() {
         island = new BufferedImage[3];
@@ -120,5 +121,12 @@ public class ImageProvider {
             coin = getImage("/Moneta_base.png");
         }
         return coin;
+    }
+
+    public BufferedImage getMotherNature() {
+        if (motherNature == null) {
+            motherNature = getImage("/mother_nature.png");
+        }
+        return motherNature;
     }
 }
