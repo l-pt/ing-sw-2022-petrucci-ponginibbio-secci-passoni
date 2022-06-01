@@ -13,7 +13,7 @@ public class Character1 extends StudentCharacter {
 
     public void use(Match match, String playerName, PawnColor color, int island) throws IllegalMoveException {
         if (island < 0 || island >= match.getIslands().size()) {
-            throw new IllegalMoveException("Island must be between 1 and " + match.getIslands().size());
+            throw new IllegalMoveException("Island number must be between 1 and " + match.getIslands().size());
         }
         Player player = match.getPlayerFromName(playerName);
         checkCost(player);
@@ -22,8 +22,7 @@ public class Character1 extends StudentCharacter {
         }
         List<Student> students = removeStudentsByColor(color, 1);
         match.getIslands().get(island).addStudents(students);
-        if (!match.getStudentBag().isEmpty())
-            addStudents(match.extractStudent(1));
+        addStudents(match.extractStudent(1));
         player.removeCoins(cost);
         incrementCost();
         match.updateView();

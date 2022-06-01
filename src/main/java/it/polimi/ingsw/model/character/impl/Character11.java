@@ -20,10 +20,9 @@ public class Character11 extends StudentCharacter implements ColorCharacter {
             throw new IllegalMoveException("There are no students with color " + color.name() + " on this character");
         }
         player.getSchool().addStudentsToTable(removeStudentsByColor(color, 1));
-        match.checkNumberStudents(color, player);
-        match.checkProfessors(color, playerName);
-        if(!match.getStudentBag().isEmpty())
-            addStudents(match.extractStudent(1));
+        match.checkNumberStudents(player.getName(), color);
+        match.checkProfessors(playerName, color);
+        addStudents(match.extractStudent(1));
         player.removeCoins(cost);
         incrementCost();
         match.updateView();

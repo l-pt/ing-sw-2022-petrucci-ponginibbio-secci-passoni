@@ -14,7 +14,7 @@ public class ViewCLI extends View<ClientCLI> {
 
     //To call when the game starts
     public void printTitle() {
-        String eryantis = "\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
+        String eryantis = "\n\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
                 "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
                 "\u001b[1;93m ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
                 " ░░  ░░ ░░  ░░    ░░    ░░  ░░      ░░ ░░    ░░░░  ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
@@ -24,7 +24,7 @@ public class ViewCLI extends View<ClientCLI> {
                 " ░░     ░░  ░░  ░░░       ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░      ░░    ░░  \n" +
                 "\u001b[1;95m ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
                 "░░░░░░░░░░ ░░░░░  ░░░   ░░░░░░   ░░░░   ░░░░░░░░░ ░░░    ░░░░░░    ░░░░░░░░   ░░░░░░░   \n" +
-                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n";
+                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n\n";
         System.out.println(eryantis);
     }
 
@@ -143,9 +143,17 @@ public class ViewCLI extends View<ClientCLI> {
         formatter.format("\u001b[97mASSISTANTS PLAYED IN THIS ROUND ↓\u001b[0m\n");
         for (Player player : playersOrder) {
             if (player.getCurrentAssistant() == null) {
-                formatter.format("\u001b[97m%1$s HASN'T PLAYED AN ASSISTANT YET\u001b[0m\n", player.getName().toUpperCase());
+                if (player.getName().equals(client.getName())) {
+                    formatter.format("\u001b[97mYOU HAVEN'T PLAYED AN ASSISTANT YET\u001b[0m\n");
+                } else {
+                    formatter.format("\u001b[97m%1$s HASN'T PLAYED AN ASSISTANT YET\u001b[0m\n", player.getName().toUpperCase());
+                }
             } else {
-                formatter.format("\u001b[97m%1$s HAS PLAYED AN ASSISTANT →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+                if (player.getName().equals(client.getName())) {
+                    formatter.format("\u001b[97mYOU HAVE PLAYED AN ASSISTANT →  VALUE: %1$d  MOVES: %2$d\u001b[0m\n", player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+                } else {
+                    formatter.format("\u001b[97m%1$s HAS PLAYED AN ASSISTANT →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+                }
             }
 
         }
@@ -154,15 +162,27 @@ public class ViewCLI extends View<ClientCLI> {
         formatter.format("\u001b[97mDISCARD PILES ↓\u001b[0m\n");
         for (Player player : playersOrder) {
             if (player.getDiscardPile() == null) {
-                formatter.format("\u001b[97m%1$s'S DISCARD PILE IS EMPTY\u001b[0m\n", player.getName().toUpperCase());
+                if (player.getName().equals(client.getName())) {
+                    formatter.format("\u001b[97mYOUR DISCARD PILE IS EMPTY\u001b[0m\n");
+                } else {
+                    formatter.format("\u001b[97m%1$s'S DISCARD PILE IS EMPTY\u001b[0m\n", player.getName().toUpperCase());
+                }
             } else {
-                formatter.format("\u001b[97mLAST ASSISTANT PLAYED BY %1$s →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+                if (player.getName().equals(client.getName())) {
+                    formatter.format("\u001b[97mYOUR LAST ASSISTANT PLAYED →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+                } else {
+                    formatter.format("\u001b[97mLAST ASSISTANT PLAYED BY %1$s →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+                }
             }
         }
 
         //Print players' schools
         for (Player player : playersOrder) {
-            formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S SCHOOL ↓\u001b[0m\n");
+            if (player.getName().equals(client.getName())) {
+                formatter.format("\u001b[97mYOUR SCHOOL ↓\u001b[0m\n");
+            } else {
+                formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S SCHOOL ↓\u001b[0m\n");
+            }
             formatter.format("\u001b[97mENTRANCE →\u001b[0m");
             for (Student student : player.getSchool().getEntrance()) {
                 if (student.getColor().equals(PawnColor.RED)) {
@@ -180,18 +200,40 @@ public class ViewCLI extends View<ClientCLI> {
             formatter.format("\n");
             for (PawnColor pawncolor : player.getSchool().getTables().keySet()) {
                 formatter.format("\u001b[97m" + pawncolor.toString().toUpperCase() + " TABLE →\u001b[0m");
+                counter = 1;
                 for (Student student : player.getSchool().getTables().get(pawncolor)) {
                     if (pawncolor.equals(PawnColor.RED)) {
-                        formatter.format("\u001b[1;91m ●\u001b[0m");
+                        if (counter == 3 || counter == 6 || counter == 9) {
+                            formatter.format("\u001b[1;91m ◙\u001b[0m");
+                        } else {
+                            formatter.format("\u001b[1;91m ●\u001b[0m");
+                        }
                     } else if (pawncolor.equals(PawnColor.YELLOW)) {
-                        formatter.format("\u001b[1;93m ●\u001b[0m");
+                        if (counter == 3 || counter == 6 || counter == 9) {
+                            formatter.format("\u001b[1;93m ◙\u001b[0m");
+                        } else {
+                            formatter.format("\u001b[1;93m ●\u001b[0m");
+                        }
                     } else if (pawncolor.equals(PawnColor.GREEN)) {
-                        formatter.format("\u001b[1;92m ●\u001b[0m");
+                        if (counter == 3 || counter == 6 || counter == 9) {
+                            formatter.format("\u001b[1;92m ◙\u001b[0m");
+                        } else {
+                            formatter.format("\u001b[1;92m ●\u001b[0m");
+                        }
                     } else if (pawncolor.equals(PawnColor.BLUE)) {
-                        formatter.format("\u001b[1;94m ●\u001b[0m");
+                        if (counter == 3 || counter == 6 || counter == 9) {
+                            formatter.format("\u001b[1;94m ◙\u001b[0m");
+                        } else {
+                            formatter.format("\u001b[1;94m ●\u001b[0m");
+                        }
                     } else {
-                        formatter.format("\u001b[1;95m ●\u001b[0m");
+                        if (counter == 3 || counter == 6 || counter == 9) {
+                            formatter.format("\u001b[1;95m ◙\u001b[0m");
+                        } else {
+                            formatter.format("\u001b[1;95m ●\u001b[0m");
+                        }
                     }
+                    ++counter;
                 }
                 formatter.format("\n");
             }
@@ -216,7 +258,11 @@ public class ViewCLI extends View<ClientCLI> {
         formatter.format("\u001b[97mCOIN RESERVES ↓\u001b[0m\n");
         if (expert) {
             for (Player player : playersOrder) {
-                formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S COIN RESERVE →\u001b[0m");
+                if (player.getName().equals(client.getName())) {
+                    formatter.format("\u001b[97mYOUR COIN RESERVE →\u001b[0m");
+                } else {
+                    formatter.format("\u001b[97m" + player.getName().toUpperCase() + "'S COIN RESERVE →\u001b[0m");
+                }
                 for (counter = 1; counter <= player.getCoins(); ++counter) {
                     formatter.format("\u001b[1;92m $\u001b[0m");
                 }
@@ -225,34 +271,56 @@ public class ViewCLI extends View<ClientCLI> {
         }
 
         //Print teams
-        counter = 1;
-        formatter.format("\u001b[97mTEAMS ↓\n\u001b[0m");
-        for (Team team : teams) {
-            formatter.format("\u001b[97m%1$d°TEAM →  MEMBERS:\u001b[0m", counter);
-            for (Player player : team.getPlayers()) {
-                formatter.format("\u001b[97m %1$s\u001b[0m", player.getName().toUpperCase());
-            }
-            formatter.format("\u001b[97m  TOWERS:\u001b[0m");
-            for (Tower tower : team.getTowers()) {
-                if (tower.getColor().equals(TowerColor.BLACK)) {
-                    formatter.format("\u001b[1;90m █\u001b[0m");
-                } else if (tower.getColor().equals(TowerColor.WHITE)) {
-                    formatter.format("\u001b[1;97m █\u001b[0m");
-                } else {
-                    formatter.format("\u001b[38;5;247m █\u001b[0m");
+        if (playersOrder.size() == 4) {
+            counter = 1;
+            formatter.format("\u001b[97mTEAMS ↓\u001b[0m\n");
+            for (Team team : teams) {
+                formatter.format("\u001b[97m%1$d°TEAM →  MEMBERS:\u001b[0m", counter);
+                for (Player player : team.getPlayers()) {
+                    formatter.format("\u001b[97m %1$s\u001b[0m", player.getName().toUpperCase());
                 }
+                formatter.format("\u001b[97m  TOWERS:\u001b[0m");
+                for (Tower tower : team.getTowers()) {
+                    if (tower.getColor().equals(TowerColor.BLACK)) {
+                        formatter.format("\u001b[1;90m █\u001b[0m");
+                    } else if (tower.getColor().equals(TowerColor.WHITE)) {
+                        formatter.format("\u001b[1;97m █\u001b[0m");
+                    } else {
+                        formatter.format("\u001b[38;5;247m █\u001b[0m");
+                    }
+                }
+                formatter.format("\n");
+                ++counter;
             }
-            formatter.format("\n");
-            ++counter;
+        } else {
+            formatter.format("\u001b[97mTOWERS AREA ↓\u001b[0m\n");
+            for (Team team : teams) {
+                if (team.getPlayers().get(0).getName().equals(client.getName())) {
+                    formatter.format("\u001b[97mYOUR TOWERS →\u001b[0m");
+                } else {
+                    formatter.format("\u001b[97m%1$s'S TOWERS →\u001b[0m", team.getPlayers().get(0).getName().toUpperCase());
+                }
+                for (Tower tower : team.getTowers()) {
+                    if (tower.getColor().equals(TowerColor.BLACK)) {
+                        formatter.format("\u001b[1;90m █\u001b[0m");
+                    } else if (tower.getColor().equals(TowerColor.WHITE)) {
+                        formatter.format("\u001b[1;97m █\u001b[0m");
+                    } else {
+                        formatter.format("\u001b[38;5;247m █\u001b[0m");
+                    }
+                }
+                formatter.format("\n");
+            }
         }
+
 
         if (!client.name.equals(currentPlayer)) {
             formatter.format("\n");
-            formatter.format("Waiting for %1$s...", currentPlayer);
+            formatter.format("\u001b[97mWaiting for %1$s...\u001b[0m", currentPlayer.toUpperCase());
             formatter.format("\n");
         }
 
-        System.out.println(formatter);
+        System.out.println("\u001b[H\u001b[2J" + formatter);
         formatter.close();
     }
 
