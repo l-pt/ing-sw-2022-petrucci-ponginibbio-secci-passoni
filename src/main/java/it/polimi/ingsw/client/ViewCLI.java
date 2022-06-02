@@ -48,6 +48,12 @@ public class ViewCLI extends View<ClientCLI> {
         String moveCursor;
         int counter, curRow, curColumn;
 
+        try {
+            new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
         //Student(●)|Tower(█)|Professor(■)|MotherNature(♦)|NoEntry(Ꭓ)|Coin($)
         //Print islands
         moveCursor = "\u001b[51;1H";
