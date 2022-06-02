@@ -136,43 +136,38 @@ public class Server {
      * the required information (name, (max players, expert mode))
      */
     public synchronized void checkWaitingConnections() throws IOException {
-        if (matchParameters != null) {
-            List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
-            if(readyConnections.size() >= matchParameters.getPlayerNumber()){
-                System.out.println("Starting match now...");
-                List<String> connectionsNames = new ArrayList<>();
-                for (Connection c : readyConnections)
-                    connectionsNames.add(c.getName());
-                Controller controller = new Controller(this, connectionsNames);
-                for (Connection readyConnection : readyConnections) {
-                    readyConnection.sendMessage(new UpdateViewMessage(
-                            controller.getMatch().getTeams(),
-                            controller.getMatch().getIslands(),
-                            controller.getMatch().getPlayersOrder(),
-                            controller.getMatch().getPosMotherNature(),
-                            controller.getMatch().getClouds(),
-                            controller.getMatch().getProfessors(),
-                            controller.getMatch().getCoins(),
-                            controller.getMatch().getCharacters(),
-                            controller.getMatch().isExpert(),
-                            controller.getMatch().getPlayersOrder().get(0).getName()
-                    ));
-                    controller.getMatch().addObserver(readyConnection);
-                }
-                readyConnections.get(0).sendMessage(new AskAssistantMessage());
-                controllers.add(controller);
-                for (Connection c : readyConnections) {
-                    connectionControllerMap.put(c, controller);
-                }
-                matchParameters = null;
-                firstConnection = null;
-                waitingConnections.removeAll(readyConnections);
-                for (Connection c : waitingConnections) {
-                    c.close();
-                }
-                waitingConnections.clear();
-            }
+        List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
+        List<String> connectionsNames = new ArrayList<>();
+        for (Connection c : readyConnections)
+            connectionsNames.add(c.getName());
+        Controller controller = new Controller(this, connectionsNames);
+        for (Connection readyConnection : readyConnections) {
+            readyConnection.sendMessage(new UpdateViewMessage(
+                    controller.getMatch().getTeams(),
+                    controller.getMatch().getIslands(),
+                    controller.getMatch().getPlayersOrder(),
+                    controller.getMatch().getPosMotherNature(),
+                    controller.getMatch().getClouds(),
+                    controller.getMatch().getProfessors(),
+                    controller.getMatch().getCoins(),
+                    controller.getMatch().getCharacters(),
+                    controller.getMatch().isExpert(),
+                    controller.getMatch().getPlayersOrder().get(0).getName()
+            ));
+            controller.getMatch().addObserver(readyConnection);
         }
+        readyConnections.get(0).sendMessage(new AskAssistantMessage());
+        controllers.add(controller);
+        for (Connection c : readyConnections) {
+            connectionControllerMap.put(c, controller);
+        }
+        matchParameters = null;
+        firstConnection = null;
+        waitingConnections.removeAll(readyConnections);
+        for (Connection c : waitingConnections) {
+            c.close();
+        }
+        waitingConnections.clear();
     }
 
     /**

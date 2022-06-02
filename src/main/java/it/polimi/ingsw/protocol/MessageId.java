@@ -8,6 +8,7 @@ import it.polimi.ingsw.protocol.message.character.*;
  */
 public enum MessageId {
     ERROR(ErrorMessage.class),
+    WAITING(WaitingMessage.class),
     ASK_USERNAME(AskUsernameMessage.class),
     SET_USERNAME(SetUsernameMessage.class),
     ASK_PLAYER_NUMBER(AskPlayerNumberMessage.class),

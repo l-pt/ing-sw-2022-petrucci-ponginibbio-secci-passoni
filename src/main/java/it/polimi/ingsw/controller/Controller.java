@@ -70,6 +70,10 @@ public class Controller {
         return match;
     }
 
+    public Map<String, Message> getNextMessage() {
+        return nextMessage;
+    }
+
     public Map<String, List<Message>> handleMessage(String name, Message message) {
         switch (message.getMessageId()) {
             case SET_ASSISTANT -> {
@@ -246,7 +250,8 @@ public class Controller {
         match.resetAbility();
         if (pos != match.getPlayersOrder().size() - 1) {
             match.setCurrentPlayer(match.getPlayersOrder().get(pos + 1).getName());
-            return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskEntranceStudentMessage()));
+            nextMessage.put(match.getPlayersOrder().get(pos + 1).getName(), new AskEntranceStudentMessage());
+            return Map.of(match.getPlayersOrder().get(pos + 1).getName(), List.of(new AskCharacterMessage()));
         } else {
             if (match.isLastTurn()) {
                 return match.getPlayersOrder().stream().collect(Collectors.toMap(Player::getName, p -> List.of(new EndGameMessage(match.getWinningTeam()))));

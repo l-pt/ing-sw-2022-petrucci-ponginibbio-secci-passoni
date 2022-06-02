@@ -127,7 +127,6 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
                             sendMessage(new ErrorMessage("Error reading player number"));
                         }
                     }
-
                     //Ask whether to activate expert mode
                     SetExpertMessage expertMessage = null;
                     while (expertMessage == null) {
@@ -138,12 +137,15 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
                             sendMessage(new ErrorMessage("Error reading expert message"));
                         }
                     }
-
                     server.setMatchParameters(playerNumberMessage.getPlayersNumber(), expertMessage.getExpert());
                     setPlayersAndExpert = true;
                 }
             }
-            server.checkWaitingConnections();
+            if(server.getWaitingConnections().size() >= server.getMatchParameters().getPlayerNumber()) {
+                server.checkWaitingConnections();
+            }else {
+                sendMessage(new WaitingMessage("\nWaiting for other players to connect...\n"));
+            }
 
             while(this.isActive()){
                 //Wait for messages from the client

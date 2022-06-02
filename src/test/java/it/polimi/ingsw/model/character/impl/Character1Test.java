@@ -57,7 +57,7 @@ public class Character1Test extends TestCase {
         character.setup(match);
         PawnColor color = character.getStudents().get(0).getColor();
         Exception e = assertThrows(IllegalMoveException.class, () -> character.use(match, player1.getName(), color, 0));
-        Assertions.assertEquals(e.getMessage(), "Insufficient coins");
+        Assertions.assertEquals(e.getMessage(), "You don't have enough coins to activate this character ability");
     }
 
     @Test

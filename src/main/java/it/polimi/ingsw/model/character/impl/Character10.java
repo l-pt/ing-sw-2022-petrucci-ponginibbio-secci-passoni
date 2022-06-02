@@ -20,10 +20,8 @@ public class Character10 extends Character implements StudentMapCharacter {
         if (entranceStudentsMap.size() != diningRoomStudentsMap.size()) {
             throw new IllegalMoveException("Different map sizes");
         }
-
         Player player = match.getPlayerFromName(playerName);
         checkCost(player);
-
         List<Student> diningRoomStudents = new ArrayList<>();
         for (Map.Entry<PawnColor, Integer> entry : diningRoomStudentsMap.entrySet()) {
             if (player.getSchool().getTableCount(entry.getKey()) < entry.getValue()) {
@@ -31,7 +29,6 @@ public class Character10 extends Character implements StudentMapCharacter {
             }
             diningRoomStudents.addAll(player.getSchool().removeStudentsByColor(entry.getKey(), entry.getValue()));
         }
-
         List<Student> entranceStudents = new ArrayList<>();
         for (Map.Entry<PawnColor, Integer> entry : entranceStudentsMap.entrySet()) {
             if (player.getSchool().getEntranceCount(entry.getKey()) < entry.getValue()) {
@@ -40,7 +37,6 @@ public class Character10 extends Character implements StudentMapCharacter {
             List<Student> extracted = player.getSchool().removeEntranceStudentsByColor(entry.getKey(), entry.getValue());
             entranceStudents.addAll(extracted);
         }
-
         player.getSchool().addStudentsToEntrance(diningRoomStudents);
         player.getSchool().addStudentsToTable(entranceStudents);
         player.removeCoins(cost);

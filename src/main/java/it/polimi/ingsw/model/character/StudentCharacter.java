@@ -41,7 +41,6 @@ public abstract class StudentCharacter extends Character {
     }
 
     public int getStudentsColorCount(PawnColor color) {
-        System.out.println(Student.listToString(students));
         int count = 0;
         for (Student student : students) {
             if (student.getColor() == color) {

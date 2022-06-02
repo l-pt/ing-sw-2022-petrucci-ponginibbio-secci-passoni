@@ -38,7 +38,7 @@ public abstract class Character {
 
     public void checkCost(Player player) throws IllegalMoveException {
         if (player.getCoins() < cost) {
-            throw new IllegalMoveException("Insufficient coins");
+            throw new IllegalMoveException("You don't have enough coins to activate this character ability");
         }
     }
 

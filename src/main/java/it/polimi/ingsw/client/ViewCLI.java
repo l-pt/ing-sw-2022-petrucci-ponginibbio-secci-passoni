@@ -12,7 +12,9 @@ public class ViewCLI extends View<ClientCLI> {
         this.client = client;
     }
 
-    /** Print title **/
+    /**
+     * Print title
+     */
     public void printTitle() {
         String eryantis = "\n\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
                 "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
@@ -28,7 +30,9 @@ public class ViewCLI extends View<ClientCLI> {
         System.out.println(eryantis);
     }
 
-    /** Print the description of the elements of the game interface **/
+    /**
+     * Print the description of the elements of the game interface
+     */
     public void printDescription() {
         String description = "\u001b[97mGame elements:\n" +
                              "\u001b[91m● \u001b[93m● \u001b[92m● \u001b[94m● \u001b[95m● → \u001b[97mstudents\n" +
@@ -40,7 +44,9 @@ public class ViewCLI extends View<ClientCLI> {
         System.out.println(description);
     }
 
-    /** Print view **/
+    /**
+     * Print view
+     */
     @Override
     public void print() {
         StringBuilder sb = new StringBuilder();
@@ -368,15 +374,12 @@ public class ViewCLI extends View<ClientCLI> {
                 ++curRow;
             }
         }
-
-
         if (!client.name.equals(currentPlayer)) {
             moveCursor = "\u001b[51;1H";
             formatter.format("\n");
             formatter.format(moveCursor + "\u001b[97mWaiting for %1$s...\u001b[0m", currentPlayer.toUpperCase());
             formatter.format("\n");
         }
-
         try {
             new ProcessBuilder("cmd", "/c", "echo " + formatter).inheritIO().start().waitFor();
         } catch (Exception e) {
@@ -411,8 +414,6 @@ public class ViewCLI extends View<ClientCLI> {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        //System.out.println(formatter.toString());
-        //formatter.close();
 
         //Print islands
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
@@ -464,8 +465,6 @@ public class ViewCLI extends View<ClientCLI> {
             formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
             ++counter;
         }
-        //System.out.println(formatter.toString());
-        //formatter.close();
 
         //Print players' schools
         for (Player player : playersOrder) {
@@ -527,8 +526,6 @@ public class ViewCLI extends View<ClientCLI> {
             formatter.format("*                  MOTHER NATURE POSITION                   *         %1$d         *\n", posMotherNature);
         }
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        //System.out.println(formatter.toString());
-        //formatter.close();
 
         //Print coin reserve
         formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
