@@ -261,8 +261,8 @@ public class ClientCLI extends Client{
                         "Island number must be between 1 and " + view.getIslands().size());
                 sendMessage(new UseCharacterColorIslandMessage(color, island - 1));
             }
-            case 1,3,7 -> sendMessage(new UseCharacterMessage(characterId));
-            case 2,4,5 -> {
+            case 1,3,5,7 -> sendMessage(new UseCharacterMessage(characterId));
+            case 2,4 -> {
                 int island = readInt("Choose an island (1 - " + (view.getIslands().size()) + ")", n -> n > 0 && n <= view.getIslands().size(),
                         "Island number must be between 1 and " + view.getIslands().size());
                 sendMessage(new UseCharacterIslandMessage(characterId, island - 1));

@@ -1,14 +1,17 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.gui.component.CharacterSelectorPanel;
 import it.polimi.ingsw.client.gui.component.EntranceStudentSelectorPanel;
-import it.polimi.ingsw.model.Assistant;
-import it.polimi.ingsw.model.PawnColor;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Student;
+import it.polimi.ingsw.client.gui.component.StudentSelectorByColor;
+import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.model.character.impl.Character1;
+import it.polimi.ingsw.model.character.impl.Character11;
+import it.polimi.ingsw.model.character.impl.Character7;
 import it.polimi.ingsw.protocol.Message;
 import it.polimi.ingsw.protocol.message.*;
-import it.polimi.ingsw.protocol.message.character.UseNoCharacterMessage;
+import it.polimi.ingsw.protocol.message.character.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ClientGUI extends Client {
     private JFrame frame;
@@ -132,6 +134,7 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_PLAYER_NUMBER -> {
+                questionsPanel.removeAll(); //Remove the "Waiting for other players..." JLabel
                 JLabel titleLbl = new JLabel("Choose player number");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 questionsPanel.add(titleLbl);
@@ -316,13 +319,218 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_CHARACTER -> {
-                try {
-                    //TODO IMPLEMENT CHARACTERS
-                    sendMessage(new UseNoCharacterMessage());
-                } catch (IOException e) {
-                    closeProgram();
+                AskCharacterMessage characterMessage = (AskCharacterMessage) msg;
+                if (characterMessage.getCharacterId() == -1) {
+                    handleCharacter();
+                } else {
+                    askCharacterParameters(characterMessage.getCharacterId());
                 }
             }
         }
+    }
+
+    private void handleCharacter() {
+        int coins = view.getPlayerFromName(name).getCoins();
+        if (view.isExpert() && (coins >= view.getCharacters().get(0).getCost() ||
+                coins >= view.getCharacters().get(1).getCost() ||
+                coins >= view.getCharacters().get(2).getCost())) {
+            JLabel titleLbl = new JLabel("Choose a character");
+            titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+            view.getBottomPanel().add(titleLbl);
+
+            JPanel charPanel = new JPanel();
+            charPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(view.getCharacters());
+            charPanel.add(characterSelectorPanel);
+
+            JButton confirm = new JButton("Confirm");
+            confirm.addActionListener(actionEvent -> {
+                view.getBottomPanel().removeAll();
+                errorLabel.setText("");
+                frame.revalidate();
+                frame.repaint();
+                int sel = characterSelectorPanel.getSelection();
+                if (sel == CharacterSelectorPanel.SELECTION_NONE) {
+                    sendMessageAsync(new UseNoCharacterMessage());
+                } else {
+                    askCharacterParameters(view.getCharacters().get(sel));
+                }
+            });
+            charPanel.add(confirm);
+            view.getBottomPanel().add(charPanel);
+            frame.revalidate();
+            frame.repaint();
+        } else {
+            sendMessageAsync(new UseNoCharacterMessage());
+        }
+    }
+
+    private void askCharacterParameters(int characterId) {
+        Character c = null;
+        for (Character character : view.getCharacters()) {
+            if (character.getId() == characterId) {
+                c = character;
+                break;
+            }
+        }
+        askCharacterParameters(c);
+    }
+
+    private void askCharacterParameters(Character c) {
+        JLabel titleLbl = new JLabel();
+        titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel paramsPanel = new JPanel();
+        paramsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        switch (c.getId()) {
+            case 0 -> {
+                Character1 c1 = (Character1) c;
+                titleLbl.setText("Choose a student to move from the character card and an island");
+
+                JComboBox<PawnColor> comboBox = new JComboBox<>(c1.getStudents().stream().map(Student::getColor).distinct().toArray(PawnColor[]::new));
+                paramsPanel.add(comboBox);
+
+                JComboBox<String> islandsComboBox = new JComboBox<>();
+                for (int i = 0; i < view.getIslands().size(); ++i) {
+                    islandsComboBox.addItem("Island " + (i + 1));
+                }
+                paramsPanel.add(islandsComboBox);
+
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    int islandIndex = Integer.parseInt(((String) islandsComboBox.getSelectedItem()).split(" ")[1]) - 1;
+                    sendMessageAsync(new UseCharacterColorIslandMessage((PawnColor) comboBox.getSelectedItem(), islandIndex));
+                });
+                paramsPanel.add(confirm);
+            }
+            case 1,3,5,7 -> {
+                sendMessageAsync(new UseCharacterMessage(c.getId()));
+                return;
+            }
+            case 2,4 -> {
+                titleLbl.setText("Choose an island");
+                JComboBox<String> islandsComboBox = new JComboBox<>();
+                for (int i = 0; i < view.getIslands().size(); ++i) {
+                    islandsComboBox.addItem("Island " + (i + 1));
+                }
+                paramsPanel.add(islandsComboBox);
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    int islandIndex = Integer.parseInt(((String) islandsComboBox.getSelectedItem()).split(" ")[1]) - 1;
+                    sendMessageAsync(new UseCharacterIslandMessage(c.getId(), islandIndex));
+                });
+                paramsPanel.add(confirm);
+            }
+            case 6 -> {
+                Character7 c7 = (Character7) c;
+                titleLbl.setText("Select up to 3 entrance students and character students to exchange");
+
+                JPanel selPanel = new JPanel(null);
+                selPanel.setLayout(new BoxLayout(selPanel, BoxLayout.Y_AXIS));
+                StudentSelectorByColor entranceSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getEntrance(), 3, "Entrance: ");
+                selPanel.add(entranceSel);
+                StudentSelectorByColor characterSel = new StudentSelectorByColor(c7.getStudents(), 3, "Character: ");
+                selPanel.add(characterSel);
+
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    Map<PawnColor, Integer> entranceToCardMap = entranceSel.getSelection();
+                    Map<PawnColor, Integer> cardToEntranceMap = characterSel.getSelection();
+                    if (entranceToCardMap.size() != cardToEntranceMap.size()) {
+                        errorLabel.setText("You must select the same number of students from entrance and card");
+                        frame.revalidate();
+                        frame.repaint();
+                    } else if (entranceToCardMap.size() < 1 || entranceToCardMap.size() > 3) {
+                        errorLabel.setText("You may only select up to 3 students");
+                        frame.revalidate();
+                        frame.repaint();
+                    } else {
+                        view.getBottomPanel().removeAll();
+                        errorLabel.setText("");
+                        frame.revalidate();
+                        frame.repaint();
+                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToCardMap, cardToEntranceMap));
+                    }
+                });
+                selPanel.add(confirm);
+                paramsPanel.add(selPanel);
+            }
+            case 8,11 -> {
+                titleLbl.setText("Choose a student color");
+                JComboBox<PawnColor> comboBox = new JComboBox<>(PawnColor.values());
+                paramsPanel.add(comboBox);
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new UseCharacterColorMessage(c.getId(), (PawnColor) comboBox.getSelectedItem()));
+                });
+                paramsPanel.add(confirm);
+            }
+            case 9 -> {
+                titleLbl.setText("Select up to 2 entrance students and table students to exchange");
+
+                JPanel selPanel = new JPanel(null);
+                selPanel.setLayout(new BoxLayout(selPanel, BoxLayout.Y_AXIS));
+                StudentSelectorByColor entranceSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getEntrance(), 2, "Entrance: ");
+                selPanel.add(entranceSel);
+                StudentSelectorByColor tableSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getTables().values().stream().flatMap(Collection::stream).toList(), 2, "Table: ");
+                selPanel.add(tableSel);
+
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    Map<PawnColor, Integer> entranceToCardMap = entranceSel.getSelection();
+                    Map<PawnColor, Integer> cardToEntranceMap = tableSel.getSelection();
+                    if (entranceToCardMap.size() != cardToEntranceMap.size()) {
+                        errorLabel.setText("You must select the same number of students from entrance and card");
+                        frame.revalidate();
+                        frame.repaint();
+                    } else if (entranceToCardMap.size() < 1 || entranceToCardMap.size() > 2) {
+                        errorLabel.setText("You may only select up to 3 students");
+                        frame.revalidate();
+                        frame.repaint();
+                    } else {
+                        view.getBottomPanel().removeAll();
+                        errorLabel.setText("");
+                        frame.revalidate();
+                        frame.repaint();
+                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToCardMap, cardToEntranceMap));
+                    }
+                });
+                selPanel.add(confirm);
+                paramsPanel.add(selPanel);
+            }
+            case 10 -> {
+                Character11 c11 = (Character11) c;
+                titleLbl.setText("Choose a student to move from the character card to your dining room");
+
+                JComboBox<PawnColor> comboBox = new JComboBox<>(c11.getStudents().stream().map(Student::getColor).distinct().toArray(PawnColor[]::new));
+                paramsPanel.add(comboBox);
+
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    sendMessageAsync(new UseCharacterColorMessage(c.getId(), (PawnColor) comboBox.getSelectedItem()));
+                });
+                paramsPanel.add(confirm);
+            }
+        }
+        view.getBottomPanel().add(titleLbl);
+        view.getBottomPanel().add(paramsPanel);
+        view.getBottomPanel().add(errorLabel);
+        frame.revalidate();
+        frame.repaint();
     }
 }
