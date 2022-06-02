@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class View<T extends Client> {
@@ -12,6 +13,7 @@ public abstract class View<T extends Client> {
     protected List<Assistant> assistants;
     protected List<Island> islands;
     protected List<Player> playersOrder;
+    protected List<String> originalPlayersOrder;
     protected int posMotherNature;
     protected List<Cloud> clouds;
     protected List<Professor> professors;
@@ -24,6 +26,9 @@ public abstract class View<T extends Client> {
         teams = message.getTeams();
         islands = message.getIslands();
         playersOrder = message.getPlayersOrder();
+        if (originalPlayersOrder == null) {
+            originalPlayersOrder = playersOrder.stream().map(Player::getName).toList();
+        }
         assistants = getPlayerFromName(client.getName()).getAssistants();
         posMotherNature = message.getPosMotherNature();
         clouds = message.getClouds();

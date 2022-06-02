@@ -6,12 +6,15 @@ import it.polimi.ingsw.model.Team;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TwoPlayersViewGUI extends ViewGUI {
+public class ThreePlayersViewGUI extends ViewGUI {
     private JPanel playerPanel;
-    private JPanel opponentPanel;
+    private JPanel opponent1Panel;
+    private JPanel opponent2Panel;
 
-    protected TwoPlayersViewGUI(ClientGUI client) {
+    protected ThreePlayersViewGUI(ClientGUI client) {
         super(client);
         mainPanel.setLayout(new GridBagLayout());
 
@@ -29,20 +32,29 @@ public class TwoPlayersViewGUI extends ViewGUI {
         JPanel boardsPanel = new JPanel(new GridBagLayout());
         boardsPanel.setPreferredSize(new Dimension(40, 1));
         playerPanel = new JPanel(new BorderLayout());
-        playerPanel.setPreferredSize(new Dimension(1, 50));
+        playerPanel.setPreferredSize(new Dimension(1, 33));
         boardsPanel.add(playerPanel, new GridBagConstraints(
-                0, 1,
+                0, 2,
                 1, 1,
-                1D, 0.5D,
+                1D, 0.33D,
                 GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0
         ));
-        opponentPanel = new JPanel(new BorderLayout());
-        opponentPanel.setPreferredSize(new Dimension(1, 50));
-        boardsPanel.add(opponentPanel, new GridBagConstraints(
+        opponent1Panel = new JPanel(new BorderLayout());
+        opponent1Panel.setPreferredSize(new Dimension(1, 33));
+        boardsPanel.add(opponent1Panel, new GridBagConstraints(
                 0, 0,
                 1, 1,
-                1D, 0.5D,
+                1D, 0.33D,
+                GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
+        opponent2Panel = new JPanel(new BorderLayout());
+        opponent2Panel.setPreferredSize(new Dimension(1, 33));
+        boardsPanel.add(opponent2Panel, new GridBagConstraints(
+                0, 1,
+                1, 1,
+                1D, 0.33D,
                 GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0
         ));
@@ -104,11 +116,18 @@ public class TwoPlayersViewGUI extends ViewGUI {
         Player me = getPlayerFromName(client.getName());
         Team myTeam = teams.stream().filter(t -> t.isTeamMember(me)).findAny().get();
 
-        Player other = playersOrder.stream().filter(p -> !p.getName().equals(me.getName())).findAny().get();
-        Team otherTeam = teams.stream().filter(t -> t.isTeamMember(other)).findAny().get();
+        List<String> opponents = new ArrayList<>(originalPlayersOrder);
+        opponents.remove(me.getName());
+
+        Player opponent1 = getPlayerFromName(opponents.get(0));
+        Team opponent1Team = teams.stream().filter(t -> t.isTeamMember(opponent1)).findAny().get();
+
+        Player opponent2 = getPlayerFromName(opponents.get(1));
+        Team opponent2Team = teams.stream().filter(t -> t.isTeamMember(opponent2)).findAny().get();
 
         drawPlayer(playerPanel, me, myTeam.getTowers());
-        drawPlayer(opponentPanel, other, otherTeam.getTowers());
+        drawPlayer(opponent1Panel, opponent1, opponent1Team.getTowers());
+        drawPlayer(opponent2Panel, opponent2, opponent2Team.getTowers());
         client.getFrame().revalidate();
         client.getFrame().repaint();
     }

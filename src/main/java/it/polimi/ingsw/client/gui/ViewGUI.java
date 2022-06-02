@@ -29,8 +29,11 @@ public abstract class ViewGUI extends View<ClientGUI> {
             case 2 -> {
                 return new TwoPlayersViewGUI(client);
             }
-            case 3,4 -> {
-                throw new UnsupportedOperationException("Not yet implemented");
+            case 3 -> {
+                return new ThreePlayersViewGUI(client);
+            }
+            case 4 -> {
+                return new FourPlayersViewGUI(client);
             }
             default -> {
                 throw new IllegalArgumentException();

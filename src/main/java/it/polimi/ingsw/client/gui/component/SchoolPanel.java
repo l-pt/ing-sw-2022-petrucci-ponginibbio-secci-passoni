@@ -5,12 +5,12 @@ import it.polimi.ingsw.model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
+import java.util.*;
 import java.util.List;
 
 public class SchoolPanel extends JPanel {
-    private static int rows = 19;
-    private static int columns = 53;
+    private static final int rows = 19;
+    private static final int columns = 53;
     private ImageProvider imageProvider;
 
     public SchoolPanel(Player player, List<Tower> towers, ImageProvider imageProvider) {
@@ -31,7 +31,7 @@ public class SchoolPanel extends JPanel {
                 PawnColor.PINK, 675,
                 PawnColor.BLUE, 834
         );
-        int[] entrancePos = new int[]{478, 584, 587, 690, 693, 796, 799};
+        int[] entrancePos = new int[]{372, 375, 478, 481, 584, 587, 690, 693, 796, 799};
         int[] towersPos = new int[]{469, 473, 575, 579, 681, 685, 787, 791};
 
         JLabel[] grid = new JLabel[rows * columns];
