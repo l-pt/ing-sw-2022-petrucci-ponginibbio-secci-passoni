@@ -11,9 +11,7 @@ import it.polimi.ingsw.protocol.MessageId;
 import it.polimi.ingsw.protocol.message.*;
 import it.polimi.ingsw.protocol.message.character.*;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.function.IntPredicate;
@@ -27,8 +25,8 @@ public class ClientCLI extends Client{
         this.port = port;
         stdin = new Scanner(System.in);
         socket = new Socket(ip, port);
-        in = new InputStreamReader(socket.getInputStream());
-        out = new OutputStreamWriter(socket.getOutputStream());
+        in = new DataInputStream(socket.getInputStream());
+        out = new DataOutputStream(socket.getOutputStream());
     }
 
     @Override
@@ -37,7 +35,7 @@ public class ClientCLI extends Client{
             lobby();
             game();
         } catch (IOException e) {
-            System.out.println("Disconnected : " + e.getMessage());
+            System.out.println("Disconnected from the server");
             closeProgram();
         }
     }

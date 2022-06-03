@@ -11,8 +11,8 @@ import java.net.Socket;
 
 public class Connection implements Runnable, Observer<UpdateViewMessage> {
     private final Socket socket;
-    private final InputStreamReader in;
-    private final OutputStreamWriter out;
+    private final DataInputStream in;
+    private final DataOutputStream out;
     private final Server server;
     private String name;
     private boolean isActive;
@@ -21,8 +21,8 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     public Connection(Socket socket, Server server) throws IOException {
         this.socket = socket;
         this.server = server;
-        in = new InputStreamReader(socket.getInputStream());
-        out = new OutputStreamWriter(socket.getOutputStream());
+        in = new DataInputStream(socket.getInputStream());
+        out = new DataOutputStream(socket.getOutputStream());
         isActive = true;
         setPlayersAndExpert = false;
     }
@@ -44,8 +44,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     public void sendMessage(Message msg) throws IOException {
         String json = GsonSingleton.get().toJson(msg);
         synchronized (out) {
-            out.write(json.length());
-            out.write(json, 0, json.length());
+            out.writeUTF(json);
             out.flush();
         }
     }
@@ -54,15 +53,8 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
      * Receive a message from the client
      */
     private Message readMessage() throws JsonSyntaxException, IOException {
-        int jsonLen = in.read();
-        if (jsonLen == -1) {
-            throw new IOException("Connection closed by the client");
-        }
-        StringBuilder jsonBuilder = new StringBuilder();
-        for (int i = 0; i < jsonLen; ++i) {
-            jsonBuilder.appendCodePoint(in.read());
-        }
-        return GsonSingleton.get().fromJson(jsonBuilder.toString(), Message.class);
+        String json = in.readUTF();
+        return GsonSingleton.get().fromJson(json, Message.class);
     }
 
     /**
@@ -154,11 +146,11 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
                 //When a new message arrives, put it in the server's messageQueue
                 server.notifyMessage(this, read);
             }
-        }
-        catch(IOException | IllegalMoveException e){
+        } catch (IllegalMoveException e) {
             System.err.println(e.getMessage());
-        }
-        finally{
+        } catch (IOException e) {
+            System.err.println("Connection lost");
+        } finally {
             //Notify the server with a null message to signal that the connection is broken
             server.notifyMessage(this, null);
         }
@@ -169,7 +161,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
         try {
             sendMessage(msg);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Connection lost");
             server.notifyMessage(this, null);
         }
     }
