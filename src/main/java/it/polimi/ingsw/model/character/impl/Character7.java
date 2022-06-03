@@ -18,7 +18,7 @@ public class Character7 extends StudentCharacter implements StudentMapCharacter 
         if (studentsInMap.size() < 1 || studentsInMap.size() > 3 || studentsOutMap.size() < 1 || studentsOutMap.size() > 3) {
             throw new IllegalMoveException("Invalid student number");
         }
-        if (studentsInMap.size() != studentsOutMap.size()) {
+        if (studentsInMap.values().stream().mapToInt(Integer::intValue).sum() != studentsOutMap.values().stream().mapToInt(Integer::intValue).sum()) {
             throw new IllegalMoveException("Different map sizes");
         }
         Player player = match.getPlayerFromName(playerName);

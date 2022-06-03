@@ -17,7 +17,7 @@ public class Character10 extends Character implements StudentMapCharacter {
         if (entranceStudentsMap.size() < 1 || entranceStudentsMap.size() > 2 || diningRoomStudentsMap.size() < 1 || diningRoomStudentsMap.size() > 2) {
             throw new IllegalMoveException("Invalid student number");
         }
-        if (entranceStudentsMap.size() != diningRoomStudentsMap.size()) {
+        if (entranceStudentsMap.values().stream().mapToInt(Integer::intValue).sum() != diningRoomStudentsMap.values().stream().mapToInt(Integer::intValue).sum()) {
             throw new IllegalMoveException("Different map sizes");
         }
         Player player = match.getPlayerFromName(playerName);

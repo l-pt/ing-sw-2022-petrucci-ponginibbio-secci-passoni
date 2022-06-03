@@ -131,7 +131,7 @@ public class ClientCLI extends Client{
                 int remaining = 3;
                 Map<Integer, Map<PawnColor, Integer>> islandsStudents = new HashMap<>();
                 Map<PawnColor, Integer> tableStudents = new HashMap<>();
-                List<Student> entranceStudents = view.getPlayerFromName(name).getSchool().getEntrance();
+                List<Student> entranceStudents = new ArrayList<>(view.getPlayerFromName(name).getSchool().getEntrance());
                 while(remaining > 0) {
                     Iterator<Student> it = entranceStudents.iterator();
                     while (it.hasNext() && remaining > 0) {
@@ -201,10 +201,7 @@ public class ClientCLI extends Client{
     }
 
     public boolean checkCharacter10(){
-        int tableStudentsCount = 0;
-        for (PawnColor color : PawnColor.values()){
-            tableStudentsCount += view.getPlayerFromName(name).getSchool().getTableCount(color);
-        }
+        int tableStudentsCount = view.getPlayerFromName(name).getSchool().getTables().values().stream().mapToInt(List::size).sum();
         return (view.getCharacters().get(0).getId() != 9 || tableStudentsCount != 0) &&
                 (view.getCharacters().get(1).getId() != 9 || tableStudentsCount != 0) &&
                 (view.getCharacters().get(2).getId() != 9 || tableStudentsCount != 0);
@@ -225,10 +222,7 @@ public class ClientCLI extends Client{
             }
             if(character.equals("yes")){
                 int characterIndex;
-                int tableStudentsCount = 0;
-                for (PawnColor color : PawnColor.values()){
-                    tableStudentsCount += view.getPlayerFromName(name).getSchool().getTableCount(color);
-                }
+                int tableStudentsCount = view.getPlayerFromName(name).getSchool().getTables().values().stream().mapToInt(List::size).sum();
                 do {
                     characterIndex = readInt("Which character do you want to play? (1 - 3)", n -> n > 0 && n <= 3,
                             "Character number must be between 1 and 3");
@@ -291,7 +285,7 @@ public class ClientCLI extends Client{
                 int remaining = students;
                 Map<PawnColor, Integer> cardToEntrance = new HashMap<>();
                 Map<PawnColor, Integer> entranceToCard = new HashMap<>();
-                List<Student> characterStudents = c7.getStudents();
+                List<Student> characterStudents = new ArrayList<>(c7.getStudents());
                 while (remaining > 0) {
                     Iterator<Student> it = characterStudents.iterator();
                     while (it.hasNext() && remaining > 0) {
@@ -312,7 +306,7 @@ public class ClientCLI extends Client{
                     }
                 }
                 remaining = students;
-                List<Student> entranceStudents = view.getPlayerFromName(name).getSchool().getEntrance();
+                List<Student> entranceStudents = new ArrayList<>(view.getPlayerFromName(name).getSchool().getEntrance());
                 while (remaining > 0) {
                     Iterator<Student> it = entranceStudents.iterator();
                     while (it.hasNext() && remaining > 0) {
@@ -332,7 +326,7 @@ public class ClientCLI extends Client{
                         }
                     }
                 }
-                sendMessage(new UseCharacterStudentMapMessage(characterId, cardToEntrance, entranceToCard));
+                sendMessage(new UseCharacterStudentMapMessage(characterId, entranceToCard ,cardToEntrance));
             }
             case 8,11 -> {
                 PawnColor color = null;
@@ -347,10 +341,7 @@ public class ClientCLI extends Client{
                 sendMessage(new UseCharacterColorMessage(characterId, color));
             }
             case 9 -> {
-                int tableStudentsCount = 0;
-                for (PawnColor color : PawnColor.values()){
-                    tableStudentsCount += view.getPlayerFromName(name).getSchool().getTableCount(color);
-                }
+                int tableStudentsCount = view.getPlayerFromName(name).getSchool().getTables().values().stream().mapToInt(List::size).sum();
                 int students;
                 if (tableStudentsCount > 1) {
                     students = readInt("How many students do you want to exchange? (1 - 2)", n -> n >= 1 && n <= 2,
@@ -359,7 +350,7 @@ public class ClientCLI extends Client{
                 int remaining = students;
                 Map<PawnColor, Integer> entranceToTable = new HashMap<>();
                 Map<PawnColor, Integer> tableToEntrance = new HashMap<>();
-                List<Student> entranceStudents = view.getPlayerFromName(name).getSchool().getEntrance();
+                List<Student> entranceStudents = new ArrayList<>(view.getPlayerFromName(name).getSchool().getEntrance());
                 while (remaining > 0) {
                     Iterator<Student> it = entranceStudents.iterator();
                     while (it.hasNext() && remaining > 0) {
@@ -380,7 +371,7 @@ public class ClientCLI extends Client{
                     }
                 }
                 remaining = students;
-                Map<PawnColor, List<Student>> tableStudents = view.getPlayerFromName(name).getSchool().getTables();
+                Map<PawnColor, List<Student>> tableStudents = new HashMap<>(view.getPlayerFromName(name).getSchool().getTables());
                 while (remaining > 0) {
                     for (PawnColor color : PawnColor.values()) {
                         if (view.getPlayerFromName(name).getSchool().getTableCount(color) > 0) {

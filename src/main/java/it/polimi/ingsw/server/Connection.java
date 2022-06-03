@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server;
 
 import com.google.gson.*;
+import it.polimi.ingsw.model.IllegalMoveException;
 import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.protocol.*;
 import it.polimi.ingsw.protocol.message.*;
@@ -120,7 +121,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
                         try {
                             playerNumberMessage = readMessage(SetPlayerNumberMessage.class);
                             if (playerNumberMessage.getPlayersNumber() < 2 || playerNumberMessage.getPlayersNumber() > 4) {
-                                sendMessage(new ErrorMessage("Game size must be between 2 and 4. Choose game size: "));
+                                sendMessage(new ErrorMessage("The players number must be 2, 3 or 4"));
                                 playerNumberMessage = null;
                             }
                         } catch (JsonSyntaxException e) {
@@ -154,7 +155,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
                 server.notifyMessage(this, read);
             }
         }
-        catch(IOException e){
+        catch(IOException | IllegalMoveException e){
             System.err.println(e.getMessage());
         }
         finally{

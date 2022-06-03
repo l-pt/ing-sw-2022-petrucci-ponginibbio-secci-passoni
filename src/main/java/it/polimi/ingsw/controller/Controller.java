@@ -22,7 +22,8 @@ public class Controller {
     private boolean lastMessage = false;
     private Map<String, Message> nextMessage = new HashMap<>();
 
-    public Controller(Server server, List<String> connectionsNames) {
+    public Controller(Server server, List<String> connectionsNames) throws IllegalMoveException {
+        this.server = server;
         List<Player> players = new ArrayList<>(server.getMatchParameters().getPlayerNumber());
         List<Team> teams = new ArrayList<>(server.getMatchParameters().getPlayerNumber() == 4 ? 2 : server.getMatchParameters().getPlayerNumber());
         switch (server.getMatchParameters().getPlayerNumber()) {
@@ -61,9 +62,8 @@ public class Controller {
                 }
                 match = new Match(teams, players, server.getMatchParameters().isExpert());
             }
-            default -> throw new AssertionError();
+            default -> throw new IllegalMoveException("The players number must be 2, 3 or 4");
         }
-        this.server = server;
     }
 
     public Match getMatch() {

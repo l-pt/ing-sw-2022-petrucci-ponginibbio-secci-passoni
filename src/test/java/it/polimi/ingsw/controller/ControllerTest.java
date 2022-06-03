@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ControllerTest extends TestCase {
     private static Server server;
     static {
@@ -31,7 +33,7 @@ public class ControllerTest extends TestCase {
     }
 
     @Test
-    public synchronized void setup3PlayersController() throws IOException, IllegalMoveException {
+    public synchronized void setup3PlayersController() throws IllegalMoveException {
         server.setMatchParameters(3, true);
         List<String> names = List.of("test1", "test2", "test3");
         Controller controller = new Controller(server, names);
@@ -45,7 +47,7 @@ public class ControllerTest extends TestCase {
     }
 
     @Test
-    public synchronized void setup4PlayersController() throws IOException, IllegalMoveException {
+    public synchronized void setup4PlayersController() throws IllegalMoveException {
         server.setMatchParameters(4, true);
         List<String> names = List.of("test1", "test2", "test3", "test4");
         Controller controller = new Controller(server, names);
@@ -56,6 +58,14 @@ public class ControllerTest extends TestCase {
         Assertions.assertEquals(4, controller.getMatch().getPlayersOrder().size());
         Assertions.assertEquals(8, team1.getTowers().size());
         Assertions.assertEquals(3, controller.getMatch().getClouds().get(0).getStudents().size());
+    }
+
+    @Test
+    public synchronized void setup5PlayersController() {
+        server.setMatchParameters(5, true);
+        List<String> names = List.of("test1", "test2");
+        Exception e = assertThrows(IllegalMoveException.class, () -> new Controller(server, names));
+        Assertions.assertEquals(e.getMessage(), "The players number must be 2, 3 or 4");
     }
 
     @Test
@@ -317,7 +327,7 @@ public class ControllerTest extends TestCase {
     }
 
     @Test
-    public synchronized void cloudMessageWithoutCharacter() {
+    public synchronized void cloudMessageWithoutCharacter() throws IllegalMoveException {
         server.setMatchParameters(2, true);
         List<String> names = List.of("test1", "test2");
         Controller controller = new Controller(server, names);

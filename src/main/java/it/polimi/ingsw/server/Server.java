@@ -135,7 +135,7 @@ public class Server {
      * It is called from Connection.run() (another thread) when a client has provided all
      * the required information (name, (max players, expert mode))
      */
-    public synchronized void checkWaitingConnections() throws IOException {
+    public synchronized void checkWaitingConnections() throws IOException, IllegalMoveException {
         List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
         List<String> connectionsNames = new ArrayList<>();
         for (Connection c : readyConnections)
