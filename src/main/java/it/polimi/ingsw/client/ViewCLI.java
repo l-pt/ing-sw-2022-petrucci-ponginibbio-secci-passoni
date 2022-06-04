@@ -8,23 +8,58 @@ import it.polimi.ingsw.model.character.impl.Character5;
 import java.util.Formatter;
 
 public class ViewCLI extends View<ClientCLI> {
+
+    //get os type
     private final String OS = System.getProperty("os.name").toLowerCase();
 
+    //link client to view
     public ViewCLI(ClientCLI client) {
         this.client = client;
     }
 
     public boolean isWindows() {
-        return (OS.indexOf("win") >= 0);
+        return (OS.contains("win"));
     }
 
     public boolean isUnix() {
-        return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0);
+        return (OS.contains("nix") || OS.contains("nux") || OS.contains("aix"));
     }
 
     public boolean isMac() {
-        return (OS.indexOf("mac") >= 0);
+        return (OS.contains("mac"));
     }
+
+    /** clear screen in all os **/
+    public void clearScreen(){
+        try{
+            if (isWindows()) {
+                new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
+            }
+            else if (isUnix() || isMac()) {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /** print String in all os **/
+    public void printToScreen(String output){
+        try{
+            if(isWindows()){
+                new ProcessBuilder("cmd", "/c", "echo " + output).inheritIO().start().waitFor();
+            }
+            else if(isMac() || isUnix()){
+                System.out.print(output);
+            }
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+
 
     /**
      * Print title
@@ -41,27 +76,14 @@ public class ViewCLI extends View<ClientCLI> {
                 "\u001b[1;95m ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
                 "░░░░░░░░░░ ░░░░░  ░░░   ░░░░░░   ░░░░   ░░░░░░░░░ ░░░    ░░░░░░    ░░░░░░░░   ░░░░░░░   \n" +
                 "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n";
+
+        printToScreen(eryantis);
         try {
-            new ProcessBuilder("cmd", "/c", "echo " + eryantis).inheritIO().start().waitFor();
-            new Object().wait(5000);
-            if (isWindows()) {
-                try {
-                    new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            } else if (isUnix()) {
-                try {
-                    new ProcessBuilder("clear").inheritIO().start().waitFor();
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            } else if (isMac()) {
-                //clean screen in Mac
-            }
+            Thread.sleep(5000);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        clearScreen();
     }
 
     /**
@@ -75,27 +97,16 @@ public class ViewCLI extends View<ClientCLI> {
                              "♦ → mother nature\n" +
                              "\u001b[31mꞳ → \u001b[97mno entry\n" +
                              "\u001b[92m$ → \u001b[97mcoin\u001b[0m";
-        try {
-            new ProcessBuilder("cmd", "/c", "echo " + description).inheritIO().start().waitFor();
-            new Object().wait(15000);
-            if (isWindows()) {
-                try {
-                    new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            } else if (isUnix()) {
-                try {
-                    new ProcessBuilder("clear").inheritIO().start().waitFor();
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            } else if (isMac()) {
-                //clean screen in Mac
-            }
-        } catch (Exception e) {
+
+        printToScreen(description);
+
+        try{
+            Thread.sleep(5000);
+        }catch(Exception e){
             System.out.println(e.getMessage());
         }
+
+        clearScreen();
     }
 
     /**
@@ -108,21 +119,7 @@ public class ViewCLI extends View<ClientCLI> {
         String moveCursor;
         int counter, curRow, curColumn;
 
-        if (isWindows()) {
-            try {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        } else if (isUnix()) {
-            try {
-                new ProcessBuilder("clear").inheritIO().start().waitFor();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        } else if (isMac()) {
-            //clean screen in Mac
-        }
+        clearScreen();
 
         //Student(●)|Tower(█)|Professor(■)|MotherNature(♦)|NoEntry(Ꭓ)|Coin($)
         //Print islands
@@ -572,17 +569,10 @@ public class ViewCLI extends View<ClientCLI> {
         if (!client.name.equals(currentPlayer)) {
             moveCursor = "\u001b[51;1H";
             formatter.format(moveCursor + "\u001b[97mWaiting for %1$s...\u001b[0m", currentPlayer.toUpperCase());
-            formatter.format("\n");
         }
 
-        /**
-        try {
-            new ProcessBuilder("cmd", "/c", "echo " + formatter).inheritIO().start().waitFor();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-         **/
-        System.out.println(formatter);
+        printToScreen(formatter.toString());
+
         formatter.close();
     }
 }
