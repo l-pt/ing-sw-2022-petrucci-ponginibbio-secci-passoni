@@ -8,15 +8,34 @@ import it.polimi.ingsw.model.character.impl.Character5;
 import java.util.Formatter;
 
 public class ViewCLI extends View<ClientCLI> {
+    private static String OS = System.getProperty("os.name").toLowerCase();
+
     public ViewCLI(ClientCLI client) {
         this.client = client;
+    }
+
+    public static void main(String[] args) {
+        String OS = System.getProperty("os.name").toLowerCase();
+        System.out.println(OS);
+    }
+
+    public static boolean isWindows() {
+        return (OS.indexOf("win") >= 0);
+    }
+
+    public static boolean isUnix() {
+        return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0);
+    }
+
+    public static boolean isMac() {
+        return (OS.indexOf("mac") >= 0);
     }
 
     /**
      * Print title
      */
     public void printTitle() {
-        String eryantis = "\n\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
+        String eryantis = "\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
                 "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
                 "\u001b[1;93m ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
                 " ░░  ░░ ░░  ░░    ░░    ░░  ░░      ░░ ░░    ░░░░  ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
@@ -26,8 +45,12 @@ public class ViewCLI extends View<ClientCLI> {
                 " ░░     ░░  ░░  ░░░       ░░       ░░░░░░░   ░░  ░░░░      ░░         ░░      ░░    ░░  \n" +
                 "\u001b[1;95m ░░     ░░  ░░   ░░░      ░░      ░░     ░░  ░░   ░░░      ░░         ░░      ░░    ░░  \n" +
                 "░░░░░░░░░░ ░░░░░  ░░░   ░░░░░░   ░░░░   ░░░░░░░░░ ░░░    ░░░░░░    ░░░░░░░░   ░░░░░░░   \n" +
-                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n\n";
-        System.out.println(eryantis);
+                "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n";
+        try {
+            new ProcessBuilder("cmd", "/c", "echo " + eryantis).inheritIO().start().waitFor();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -41,7 +64,11 @@ public class ViewCLI extends View<ClientCLI> {
                              "♦ → mother nature\n" +
                              "\u001b[31mꞳ → \u001b[97mno entry\n" +
                              "\u001b[92m$ → \u001b[97mcoin\u001b[0m";
-        System.out.println(description);
+        try {
+            new ProcessBuilder("cmd", "/c", "echo " + description).inheritIO().start().waitFor();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -54,10 +81,16 @@ public class ViewCLI extends View<ClientCLI> {
         String moveCursor;
         int counter, curRow, curColumn;
 
-        try {
-            new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        if (isWindows()) {
+            try {
+                new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } else if (isUnix()) {
+            //clean screen in Unix
+        } else if (isMac()) {
+            //clean screen in Mac
         }
 
         //Student(●)|Tower(█)|Professor(■)|MotherNature(♦)|NoEntry(Ꭓ)|Coin($)
@@ -515,153 +548,6 @@ public class ViewCLI extends View<ClientCLI> {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        formatter.close();
-    }
-
-    public void printTab() {
-        StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb);
-
-        //Print assistants
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        formatter.format("*                        ASSISTANTS                         *\n");
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        formatter.format("*      NUMBER       *       VALUE       *       MOVES       *\n");
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        int counter = 0;
-        for (Assistant assistant : assistants) {
-            if (counter >= 10) {
-                formatter.format("*        # %1$d       ", counter);
-            } else {
-                formatter.format("*        # %1$d        ", counter);
-            }
-            if (assistant.getValue() >= 10) {
-                formatter.format("*         %1$d        ", assistant.getValue());
-            } else {
-                formatter.format("*         %1$d         ", assistant.getValue());
-            }
-            formatter.format("*         %1$d         *\n", assistant.getMoves());
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            ++counter;
-        }
-
-        //Print islands
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        formatter.format("*                                                                ISLANDS                                                                *\n");
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        formatter.format("*    NUMBER     *   TOWERS NUMBER   *    TOWERS COLOR   *    RED PAWN   *  YELLOW PAWN  *  GREEN PAWN   *   BLUE PAWN   *   PINK PAWN   *\n");
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        counter = 0;
-        for (Island island : islands) {
-            if (counter >= 10) {
-                formatter.format("*     # %1$d      ", counter);
-            } else {
-                formatter.format("*      # %1$d      ", counter);
-            }
-            if (island.getTowers().isEmpty()) {
-                formatter.format("*         0         *       NONE        ");
-            } else {
-                if (island.getTowers().get(0).getColor().equals(TowerColor.GRAY)) {
-                    formatter.format("*         %1$d         *       %2$s        ", island.getTowers().size(), island.getTowers().get(0).getColor().toString());
-                } else {
-                    formatter.format("*         %1$d         *       %2$s       ", island.getTowers().size(), island.getTowers().get(0).getColor().toString());
-                }
-            }
-            if (island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.RED)).toList().size() >= 10) {
-                formatter.format("*       %1$d      ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.RED)).toList().size());
-            } else {
-                formatter.format("*       %1$d       ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.RED)).toList().size());
-            }
-            if (island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.YELLOW)).toList().size() >= 10) {
-                formatter.format("*       %1$d      ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.YELLOW)).toList().size());
-            } else {
-                formatter.format("*       %1$d       ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.YELLOW)).toList().size());
-            }
-            if (island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.GREEN)).toList().size() >= 10) {
-                formatter.format("*       %1$d      ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.GREEN)).toList().size());
-            } else {
-                formatter.format("*       %1$d       ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.GREEN)).toList().size());
-            }
-            if (island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size() >= 10) {
-                formatter.format("*       %1$d      ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
-            } else {
-                formatter.format("*       %1$d       ", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
-            }
-            if (island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size() >= 10) {
-                formatter.format("*       %1$d      *\n", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
-            } else {
-                formatter.format("*       %1$d       *\n", island.getStudents().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
-            }
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            ++counter;
-        }
-
-        //Print players' schools
-        for (Player player : playersOrder) {
-            formatter.format("PLAYER: %1$s\n", player.getName());
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            formatter.format("*                                                                    SCHOOL                                                                                     *\n");
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            formatter.format("*                                    ENTRANCE                                   *                                  DINING ROOM                                  *\n");
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            formatter.format("*   RED PAWN    *  YELLOW PAWN  *  GREEN PAWN   *   BLUE PAWN   *   PINK PAWN   *   RED TABLE   *  YELLOW TABLE *  GREEN TABLE  *  BLUE TABLE   *   PINK TABLE  *\n");
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            formatter.format("*       %1$d       ", player.getSchool().getEntrance().stream().filter(entry -> entry.getColor().equals(PawnColor.RED)).toList().size());
-            formatter.format("*       %1$d       ", player.getSchool().getEntrance().stream().filter(entry -> entry.getColor().equals(PawnColor.YELLOW)).toList().size());
-            formatter.format("*       %1$d       ", player.getSchool().getEntrance().stream().filter(entry -> entry.getColor().equals(PawnColor.GREEN)).toList().size());
-            formatter.format("*       %1$d       ", player.getSchool().getEntrance().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
-            formatter.format("*       %1$d       ", player.getSchool().getEntrance().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
-            if (player.getSchool().getTableCount(PawnColor.RED) > 9) {
-                formatter.format("*       %1$d      ", player.getSchool().getTableCount(PawnColor.RED));
-            } else {
-                formatter.format("*       %1$d       ", player.getSchool().getTableCount(PawnColor.RED));
-            }
-            if (player.getSchool().getTableCount(PawnColor.YELLOW) > 9) {
-                formatter.format("*       %1$d      ", player.getSchool().getTableCount(PawnColor.YELLOW));
-            } else {
-                formatter.format("*       %1$d       ", player.getSchool().getTableCount(PawnColor.YELLOW));
-            }
-            if (player.getSchool().getTableCount(PawnColor.GREEN) > 9) {
-                formatter.format("*       %1$d      ", player.getSchool().getTableCount(PawnColor.GREEN));
-            } else {
-                formatter.format("*       %1$d       ", player.getSchool().getTableCount(PawnColor.GREEN));
-            }
-            if (player.getSchool().getTableCount(PawnColor.BLUE) > 9) {
-                formatter.format("*       %1$d      ", player.getSchool().getTableCount(PawnColor.BLUE));
-            } else {
-                formatter.format("*       %1$d       ", player.getSchool().getTableCount(PawnColor.BLUE));
-            }
-            if (player.getSchool().getTableCount(PawnColor.PINK) > 9) {
-                formatter.format("*       %1$d      *\n", player.getSchool().getTableCount(PawnColor.PINK));
-            } else {
-                formatter.format("*       %1$d       *\n", player.getSchool().getTableCount(PawnColor.PINK));
-            }
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            formatter.format("*                                    TOWERS                                     *   RED PROF.   *  YELLOW PROF. *  GREEN PROF.  *   BLUE PROF.  *   PINK PROF.  *\n");
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-            //formatter.format("*                                       %1$d                                       ", TODO);
-            formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.RED)).toList().size());
-            formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.YELLOW)).toList().size());
-            formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.GREEN)).toList().size());
-            formatter.format("*       %1$d       ", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.BLUE)).toList().size());
-            formatter.format("*       %1$d       *\n", player.getSchool().getProfessors().stream().filter(entry -> entry.getColor().equals(PawnColor.PINK)).toList().size());
-            formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        }
-
-        //Print mother nature position
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        if (posMotherNature > 9) {
-            formatter.format("*                  MOTHER NATURE POSITION                   *         %1$d        *\n", posMotherNature);
-        } else {
-            formatter.format("*                  MOTHER NATURE POSITION                   *         %1$d         *\n", posMotherNature);
-        }
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-
-        //Print coin reserve
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        formatter.format("*                      COIN RESERVE                     *          %1$d         *\n", coinReserve);
-        formatter.format("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *\n");
-        System.out.println(formatter);
         formatter.close();
     }
 }
