@@ -51,7 +51,11 @@ public class ViewCLI extends View<ClientCLI> {
                     System.out.println(e.getMessage());
                 }
             } else if (isUnix()) {
-                //clean screen in Unix
+                try {
+                    new ProcessBuilder("clear").inheritIO().start().waitFor();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             } else if (isMac()) {
                 //clean screen in Mac
             }
@@ -81,7 +85,11 @@ public class ViewCLI extends View<ClientCLI> {
                     System.out.println(e.getMessage());
                 }
             } else if (isUnix()) {
-                //clean screen in Unix
+                try {
+                    new ProcessBuilder("clear").inheritIO().start().waitFor();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             } else if (isMac()) {
                 //clean screen in Mac
             }
@@ -102,20 +110,24 @@ public class ViewCLI extends View<ClientCLI> {
 
         if (isWindows()) {
             try {
-                new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         } else if (isUnix()) {
-            //clean screen in Unix
+            try {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         } else if (isMac()) {
             //clean screen in Mac
         }
 
         //Student(●)|Tower(█)|Professor(■)|MotherNature(♦)|NoEntry(Ꭓ)|Coin($)
         //Print islands
-        moveCursor = "\u001b[36;1H";
-        curRow = 37;
+        moveCursor = "\u001b[32;1H";
+        curRow = 33;
         counter = 1;
         formatter.format(moveCursor + "\u001b[97mISLANDS ↓\u001b[0m\n");
         for (Island island : islands) {
@@ -217,12 +229,14 @@ public class ViewCLI extends View<ClientCLI> {
         }
 
         //Print character descriptions
-        curRow = 51;
-        curColumn = 1;
-        moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
-        formatter.format(moveCursor);
-        for (Character character : characters) {
-            formatter.format("%1$d°CHARACTER DESCRIPTION → %2$s\n", character.getId(), character.getDescription());
+        if (expert) {
+            curRow = 47;
+            curColumn = 1;
+            moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
+            formatter.format(moveCursor);
+            for (Character character : characters) {
+                formatter.format("%1$d°CHARACTER → %2$s\n", character.getId(), character.getDescription());
+            }
         }
 
         //Print assistants
@@ -283,7 +297,7 @@ public class ViewCLI extends View<ClientCLI> {
         curColumn = 1;
         for (Team team : teams) {
             for (Player player : team.getPlayers()) {
-                curRow = 23;
+                curRow = 21;
                 moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
                 if (player.getName().equals(client.getName())) {
                     formatter.format(moveCursor + "\u001b[97mYOUR SCHOOL ↓\u001b[0m\n");
@@ -383,8 +397,8 @@ public class ViewCLI extends View<ClientCLI> {
             }
             if (playersOrder.size() == 4) {
                 curRow += 2;
-                moveCursor = "\u001b[" + curRow + ";" + (curColumn - 100) + "H";
-                formatter.format(moveCursor + "%1$s AND %2$s'S TOWERS →", team.getPlayers().get(0), team.getPlayers().get(1));
+                moveCursor = "\u001b[" + curRow + ";" + (curColumn - 105) + "H";
+                formatter.format(moveCursor + "%1$s AND %2$s'S TOWERS →", team.getPlayers().get(0).getName().toUpperCase(), team.getPlayers().get(1).getName().toUpperCase());
                 for (Tower tower : team.getTowers()) {
                     if (tower.getColor().equals(TowerColor.BLACK)) {
                         formatter.format("\u001b[1;90m █\u001b[0m");
@@ -556,17 +570,19 @@ public class ViewCLI extends View<ClientCLI> {
          **/
 
         if (!client.name.equals(currentPlayer)) {
-            moveCursor = "\u001b[61;1H";
-            formatter.format("\n");
+            moveCursor = "\u001b[51;1H";
             formatter.format(moveCursor + "\u001b[97mWaiting for %1$s...\u001b[0m", currentPlayer.toUpperCase());
             formatter.format("\n");
         }
 
+        /**
         try {
             new ProcessBuilder("cmd", "/c", "echo " + formatter).inheritIO().start().waitFor();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+         **/
+        System.out.println(formatter);
         formatter.close();
     }
 }
