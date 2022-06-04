@@ -8,21 +8,21 @@ import it.polimi.ingsw.model.character.impl.Character5;
 import java.util.Formatter;
 
 public class ViewCLI extends View<ClientCLI> {
-    private static String OS = System.getProperty("os.name").toLowerCase();
+    private final String OS = System.getProperty("os.name").toLowerCase();
 
     public ViewCLI(ClientCLI client) {
         this.client = client;
     }
 
-    public static boolean isWindows() {
+    public boolean isWindows() {
         return (OS.indexOf("win") >= 0);
     }
 
-    public static boolean isUnix() {
+    public boolean isUnix() {
         return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0);
     }
 
-    public static boolean isMac() {
+    public boolean isMac() {
         return (OS.indexOf("mac") >= 0);
     }
 
@@ -114,8 +114,8 @@ public class ViewCLI extends View<ClientCLI> {
 
         //Student(●)|Tower(█)|Professor(■)|MotherNature(♦)|NoEntry(Ꭓ)|Coin($)
         //Print islands
-        moveCursor = "\u001b[46;1H";
-        curRow = 47;
+        moveCursor = "\u001b[36;1H";
+        curRow = 37;
         counter = 1;
         formatter.format(moveCursor + "\u001b[97mISLANDS ↓\u001b[0m\n");
         for (Island island : islands) {
@@ -217,7 +217,7 @@ public class ViewCLI extends View<ClientCLI> {
         }
 
         //Print character descriptions
-        curRow = 61;
+        curRow = 51;
         curColumn = 1;
         moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
         formatter.format(moveCursor);
@@ -226,8 +226,8 @@ public class ViewCLI extends View<ClientCLI> {
         }
 
         //Print assistants
-        moveCursor = "\u001b[11;1H";
-        curRow = 12;
+        moveCursor = "\u001b[8;1H";
+        curRow = 9;
         formatter.format(moveCursor + "\u001b[97mYOUR ASSISTANTS ↓\u001b[0m\n");
         for (Assistant assistant : assistants) {
             moveCursor = "\u001b[" + curRow + ";1H";
@@ -236,8 +236,8 @@ public class ViewCLI extends View<ClientCLI> {
         }
 
         //Print current assistants
-        moveCursor = "\u001b[11;81H";
-        curRow = 12;
+        moveCursor = "\u001b[8;81H";
+        curRow = 9;
         formatter.format(moveCursor + "\u001b[97mASSISTANTS PLAYED IN THIS ROUND ↓\u001b[0m\n");
         for (Player player : playersOrder) {
             moveCursor = "\u001b[" + curRow + ";81H";
@@ -258,8 +258,8 @@ public class ViewCLI extends View<ClientCLI> {
         }
 
         //Print discard piles
-        moveCursor = "\u001b[11;161H";
-        curRow = 12;
+        moveCursor = "\u001b[8;161H";
+        curRow = 9;
         formatter.format(moveCursor + "\u001b[97mDISCARD PILES ↓\u001b[0m\n");
         for (Player player : playersOrder) {
             moveCursor = "\u001b[" + curRow + ";161H";
@@ -283,7 +283,7 @@ public class ViewCLI extends View<ClientCLI> {
         curColumn = 1;
         for (Team team : teams) {
             for (Player player : team.getPlayers()) {
-                curRow = 26;
+                curRow = 23;
                 moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
                 if (player.getName().equals(client.getName())) {
                     formatter.format(moveCursor + "\u001b[97mYOUR SCHOOL ↓\u001b[0m\n");
@@ -556,7 +556,7 @@ public class ViewCLI extends View<ClientCLI> {
          **/
 
         if (!client.name.equals(currentPlayer)) {
-            moveCursor = "\u001b[71;1H";
+            moveCursor = "\u001b[61;1H";
             formatter.format("\n");
             formatter.format(moveCursor + "\u001b[97mWaiting for %1$s...\u001b[0m", currentPlayer.toUpperCase());
             formatter.format("\n");
