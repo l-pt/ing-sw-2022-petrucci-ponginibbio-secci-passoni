@@ -23,7 +23,11 @@ public class Controller {
     private Map<String, Message> nextMessage = new HashMap<>();
 
     public Controller(Server server, List<String> connectionsNames) throws IllegalMoveException {
+
+        //sets this server to the passed arg
         this.server = server;
+
+        //gets list of players from arg
         List<Player> players = new ArrayList<>(server.getMatchParameters().getPlayerNumber());
         List<Team> teams = new ArrayList<>(server.getMatchParameters().getPlayerNumber() == 4 ? 2 : server.getMatchParameters().getPlayerNumber());
         switch (server.getMatchParameters().getPlayerNumber()) {
