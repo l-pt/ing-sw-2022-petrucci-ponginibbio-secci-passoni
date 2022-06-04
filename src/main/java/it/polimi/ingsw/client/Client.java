@@ -3,9 +3,7 @@ package it.polimi.ingsw.client;
 import com.google.gson.JsonSyntaxException;
 import it.polimi.ingsw.protocol.*;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,8 +13,8 @@ public abstract class Client {
     protected String ip;
     protected int port;
     protected Socket socket;
-    protected InputStreamReader in;
-    protected OutputStreamWriter out;
+    protected DataInputStream in;
+    protected DataOutputStream out;
     protected ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public String getName() {
@@ -29,8 +27,7 @@ public abstract class Client {
     public void sendMessage(Message msg) throws IOException {
         String json = GsonSingleton.get().toJson(msg);
         synchronized (out) {
-            out.write(json.length());
-            out.write(json, 0, json.length());
+            out.writeUTF(json);
             out.flush();
         }
     }
@@ -49,15 +46,8 @@ public abstract class Client {
      * Receive a message from the server
      */
     public Message readMessage() throws JsonSyntaxException, IOException {
-        int jsonLen = in.read();
-        if (jsonLen == -1) {
-            throw new IOException("Connection closed by the server");
-        }
-        StringBuilder jsonBuilder = new StringBuilder();
-        for (int i = 0; i < jsonLen; ++i) {
-            jsonBuilder.appendCodePoint(in.read());
-        }
-        return GsonSingleton.get().fromJson(jsonBuilder.toString(), Message.class);
+        String json = in.readUTF();
+        return GsonSingleton.get().fromJson(json, Message.class);
     }
 
     /**

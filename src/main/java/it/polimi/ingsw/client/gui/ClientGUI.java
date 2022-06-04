@@ -15,9 +15,7 @@ import it.polimi.ingsw.protocol.message.character.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.*;
@@ -79,8 +77,8 @@ public class ClientGUI extends Client {
                 try {
                     socket = new Socket();
                     socket.connect(new InetSocketAddress(ipField.getText(), port), 5000);
-                    in = new InputStreamReader(socket.getInputStream());
-                    out = new OutputStreamWriter(socket.getOutputStream());
+                    in = new DataInputStream(socket.getInputStream());
+                    out = new DataOutputStream(socket.getOutputStream());
                     errorLabel.setText("");
                     Thread t = new Thread(new ClientSocketWorker(this));
                     t.start();
