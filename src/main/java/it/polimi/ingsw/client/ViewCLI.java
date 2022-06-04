@@ -48,6 +48,18 @@ public class ViewCLI extends View<ClientCLI> {
                 "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n";
         try {
             new ProcessBuilder("cmd", "/c", "echo " + eryantis).inheritIO().start().waitFor();
+            new Object().wait(10000);
+            if (isWindows()) {
+                try {
+                    new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            } else if (isUnix()) {
+                //clean screen in Unix
+            } else if (isMac()) {
+                //clean screen in Mac
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -164,11 +176,11 @@ public class ViewCLI extends View<ClientCLI> {
 
         //Print characters
         if (expert) {
-            moveCursor = "\u001b[1;121H";
+            moveCursor = "\u001b[1;161H";
             formatter.format(moveCursor + "\u001b[97mCHARACTERS ↓\u001b[0m\n");
             curRow = 2;
             for (Character character : characters) {
-                moveCursor = "\u001b[" + curRow + ";121H";
+                moveCursor = "\u001b[" + curRow + ";161H";
                 formatter.format(moveCursor + "\u001b[97m%1$d°CHARACTER →  COST: %2$d\u001b[0m", character.getId() + 1, character.getCost());
                 if (character instanceof StudentCharacter) {
                     formatter.format("\u001b[97m  STUDENTS:\u001b[0m");
@@ -468,11 +480,11 @@ public class ViewCLI extends View<ClientCLI> {
 
         //Print players' coin reserve
         if (expert) {
-            moveCursor = "\u001b[1;61H";
+            moveCursor = "\u001b[1;81H";
             curRow = 2;
             formatter.format(moveCursor + "\u001b[97mCOIN RESERVES ↓\u001b[0m\n");
             for (Player player : playersOrder) {
-                moveCursor = "\u001b[" + curRow + ";61H";
+                moveCursor = "\u001b[" + curRow + ";81H";
                 if (player.getName().equals(client.getName())) {
                     formatter.format(moveCursor + "\u001b[97mYOUR COIN RESERVE →\u001b[0m");
                 } else {
