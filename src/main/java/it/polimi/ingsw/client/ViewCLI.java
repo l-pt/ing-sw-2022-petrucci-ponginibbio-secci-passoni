@@ -33,7 +33,7 @@ public class ViewCLI extends View<ClientCLI> {
     public void clearScreen(){
         try{
             if (isWindows()) {
-                new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             }
             else if (isUnix() || isMac()) {
                 new ProcessBuilder("clear").inheritIO().start().waitFor();
