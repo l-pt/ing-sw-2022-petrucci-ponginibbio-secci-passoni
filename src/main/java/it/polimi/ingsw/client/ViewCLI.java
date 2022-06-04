@@ -566,6 +566,11 @@ public class ViewCLI extends View<ClientCLI> {
         }
          **/
 
+        if(isMac() || isUnix()){
+            moveCursor = "\u001b[51;1H";
+            formatter.format(moveCursor + "\n");
+        }
+
         if (!client.name.equals(currentPlayer)) {
             moveCursor = "\u001b[51;1H";
             formatter.format(moveCursor + "\u001b[97mWaiting for %1$s...\u001b[0m", currentPlayer.toUpperCase());
