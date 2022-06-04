@@ -282,7 +282,7 @@ public class ViewCLI extends View<ClientCLI> {
                 }
             } else {
                 if (player.getName().equals(client.getName())) {
-                    formatter.format(moveCursor + "\u001b[97mYOUR LAST ASSISTANT PLAYED →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+                    formatter.format(moveCursor + "\u001b[97mYOUR LAST ASSISTANT PLAYED →  VALUE: %1$d  MOVES: %2$d\u001b[0m\n", player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
                 } else {
                     formatter.format(moveCursor + "\u001b[97mLAST ASSISTANT PLAYED BY %1$s →  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
                 }
