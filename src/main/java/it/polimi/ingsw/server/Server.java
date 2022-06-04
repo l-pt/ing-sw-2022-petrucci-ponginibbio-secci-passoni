@@ -136,13 +136,24 @@ public class Server {
      * the required information (name, (max players, expert mode))
      */
     public synchronized void checkWaitingConnections() throws IOException, IllegalMoveException {
-        List<Connection> readyConnections = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
+
+        //get list of players connections called readyConnections or connectedPlayer
+        List<Connection> connectedPlayers = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
+        //get only the names of the players
         List<String> connectionsNames = new ArrayList<>();
-        for (Connection c : readyConnections)
-            connectionsNames.add(c.getName());
+        for (Connection player : connectedPlayers)
+            connectionsNames.add(player.getName());
+
+        //create a new game, controller resolves team allocation and tower color allocation based on input
         Controller controller = new Controller(this, connectionsNames);
-        for (Connection readyConnection : readyConnections) {
-            readyConnection.sendMessage(new UpdateViewMessage(
+
+        //send each connected player an updated view of the start board
+        for (Connection player : connectedPlayers) {
+
+            //send player updated view
+            System.out.println("sending " + player.getName() + " the opening board");
+            player.sendMessage(
+                    new UpdateViewMessage(
                     controller.getMatch().getTeams(),
                     controller.getMatch().getIslands(),
                     controller.getMatch().getPlayersOrder(),
@@ -154,16 +165,19 @@ public class Server {
                     controller.getMatch().isExpert(),
                     controller.getMatch().getPlayersOrder().get(0).getName()
             ));
-            controller.getMatch().addObserver(readyConnection);
+
+            //add player connection to list of observables
+            controller.getMatch().addObserver(player);
         }
-        readyConnections.get(0).sendMessage(new AskAssistantMessage());
+
+        connectedPlayers.get(0).sendMessage(new AskAssistantMessage());
         controllers.add(controller);
-        for (Connection c : readyConnections) {
+        for (Connection c : connectedPlayers) {
             connectionControllerMap.put(c, controller);
         }
         matchParameters = null;
         firstConnection = null;
-        waitingConnections.removeAll(readyConnections);
+        waitingConnections.removeAll(connectedPlayers);
         for (Connection c : waitingConnections) {
             c.close();
         }
