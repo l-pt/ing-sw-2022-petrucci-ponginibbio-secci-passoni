@@ -14,11 +14,6 @@ public class ViewCLI extends View<ClientCLI> {
         this.client = client;
     }
 
-    public static void main(String[] args) {
-        String OS = System.getProperty("os.name").toLowerCase();
-        System.out.println(OS);
-    }
-
     public static boolean isWindows() {
         return (OS.indexOf("win") >= 0);
     }
@@ -48,7 +43,7 @@ public class ViewCLI extends View<ClientCLI> {
                 "░░░░░░░░░░ ░░░░░   ░░   ░░░░░░   ░░░░   ░░░░░░░░░  ░░    ░░░░░░    ░░░░░░░░   ░░ ░░░    \u001b[0m\n";
         try {
             new ProcessBuilder("cmd", "/c", "echo " + eryantis).inheritIO().start().waitFor();
-            new Object().wait(10000);
+            new Object().wait(5000);
             if (isWindows()) {
                 try {
                     new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
@@ -78,6 +73,18 @@ public class ViewCLI extends View<ClientCLI> {
                              "\u001b[92m$ → \u001b[97mcoin\u001b[0m";
         try {
             new ProcessBuilder("cmd", "/c", "echo " + description).inheritIO().start().waitFor();
+            new Object().wait(15000);
+            if (isWindows()) {
+                try {
+                    new ProcessBuilder("cmd", "/c", "clear").inheritIO().start().waitFor();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            } else if (isUnix()) {
+                //clean screen in Unix
+            } else if (isMac()) {
+                //clean screen in Mac
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
