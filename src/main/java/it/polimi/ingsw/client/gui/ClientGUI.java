@@ -221,7 +221,7 @@ public class ClientGUI extends Client {
                 view.getBottomPanel().add(titleLbl);
 
                 int i = 0;
-                JPanel selectorsPanel = new JPanel();
+                JPanel selectorsPanel = new JPanel(new GridLayout(1, player.getSchool().getEntrance().size()));
                 selectorsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
                 EntranceStudentSelectorPanel[] studentSelectors = new EntranceStudentSelectorPanel[player.getSchool().getEntrance().size()];
                 for (Student student : player.getSchool().getEntrance()) {
@@ -357,7 +357,7 @@ public class ClientGUI extends Client {
                 if (sel == CharacterSelectorPanel.SELECTION_NONE) {
                     sendMessageAsync(new UseNoCharacterMessage());
                 } else {
-                    askCharacterParameters(view.getCharacters().get(sel));
+                    askCharacterParameters(usableCharacters.get(sel));
                 }
             });
             charPanel.add(confirm);
@@ -411,10 +411,6 @@ public class ClientGUI extends Client {
                 paramsPanel.add(confirm);
             }
             case 1,3,5,7 -> {
-                view.getBottomPanel().removeAll();
-                errorLabel.setText("");
-                frame.revalidate();
-                frame.repaint();
                 sendMessageAsync(new UseCharacterMessage(c.getId()));
                 return;
             }
@@ -450,12 +446,14 @@ public class ClientGUI extends Client {
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
                     Map<PawnColor, Integer> entranceToCardMap = entranceSel.getSelection();
+                    int entranceToCardMapCount = entranceToCardMap.values().stream().mapToInt(Integer::intValue).sum();
                     Map<PawnColor, Integer> cardToEntranceMap = characterSel.getSelection();
-                    if (entranceToCardMap.size() != cardToEntranceMap.size()) {
+                    int cardToEntranceMapCount = cardToEntranceMap.values().stream().mapToInt(Integer::intValue).sum();
+                    if (entranceToCardMapCount != cardToEntranceMapCount) {
                         errorLabel.setText("You must select the same number of students from entrance and card");
                         frame.revalidate();
                         frame.repaint();
-                    } else if (entranceToCardMap.size() < 1 || entranceToCardMap.size() > 3) {
+                    } else if (entranceToCardMapCount < 1 || entranceToCardMapCount > 3) {
                         errorLabel.setText("You may only select up to 3 students");
                         frame.revalidate();
                         frame.repaint();
@@ -496,14 +494,16 @@ public class ClientGUI extends Client {
 
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
-                    Map<PawnColor, Integer> entranceToCardMap = entranceSel.getSelection();
-                    Map<PawnColor, Integer> cardToEntranceMap = tableSel.getSelection();
-                    if (entranceToCardMap.size() != cardToEntranceMap.size()) {
+                    Map<PawnColor, Integer> entranceToTableMap = entranceSel.getSelection();
+                    int entranceToTableMapCount = entranceToTableMap.values().stream().mapToInt(Integer::intValue).sum();
+                    Map<PawnColor, Integer> tableToEntranceMap = tableSel.getSelection();
+                    int tableToEntranceMapCount = tableToEntranceMap.values().stream().mapToInt(Integer::intValue).sum();
+                    if (entranceToTableMapCount != tableToEntranceMapCount) {
                         errorLabel.setText("You must select the same number of students from entrance and card");
                         frame.revalidate();
                         frame.repaint();
-                    } else if (entranceToCardMap.size() < 1 || entranceToCardMap.size() > 2) {
-                        errorLabel.setText("You may only select up to 3 students");
+                    } else if (entranceToTableMapCount < 1 || entranceToTableMapCount > 2) {
+                        errorLabel.setText("You may only select up to 2 students");
                         frame.revalidate();
                         frame.repaint();
                     } else {
@@ -511,7 +511,7 @@ public class ClientGUI extends Client {
                         errorLabel.setText("");
                         frame.revalidate();
                         frame.repaint();
-                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToCardMap, cardToEntranceMap));
+                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToTableMap, tableToEntranceMap));
                     }
                 });
                 selPanel.add(confirm);
