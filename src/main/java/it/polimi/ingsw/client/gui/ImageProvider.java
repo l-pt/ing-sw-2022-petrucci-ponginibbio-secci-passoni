@@ -24,6 +24,7 @@ public class ImageProvider {
     private Map<Wizard, BufferedImage> wizards;
     private BufferedImage coin;
     private BufferedImage motherNature;
+    private BufferedImage noEntry;
 
     public ImageProvider() {
         island = new BufferedImage[3];
@@ -128,5 +129,12 @@ public class ImageProvider {
             motherNature = getImage("/mother_nature.png");
         }
         return motherNature;
+    }
+
+    public BufferedImage getNoEntry() {
+        if (noEntry == null) {
+            noEntry = getImage("/noentry.png");
+        }
+        return noEntry;
     }
 }

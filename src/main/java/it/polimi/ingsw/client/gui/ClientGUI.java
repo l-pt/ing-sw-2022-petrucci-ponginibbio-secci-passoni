@@ -16,6 +16,7 @@ import it.polimi.ingsw.protocol.message.character.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -66,7 +67,7 @@ public class ClientGUI extends Client {
             questionsPanel.add(portField);
             JButton confirm = new JButton("Connect");
             confirm.setAlignmentX(Component.CENTER_ALIGNMENT);
-            confirm.addActionListener(actionEvent -> {
+            ActionListener actionListener = actionEvent -> {
                 int port;
                 try {
                     port = Integer.parseInt(portField.getText());
@@ -89,7 +90,10 @@ public class ClientGUI extends Client {
                     frame.revalidate();
                     frame.repaint();
                 }
-            });
+            };
+            ipField.addActionListener(actionListener);
+            portField.addActionListener(actionListener);
+            confirm.addActionListener(actionListener);
             questionsPanel.add(errorLabel);
             questionsPanel.add(confirm);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
