@@ -7,6 +7,7 @@ import it.polimi.ingsw.client.gui.component.StudentSelectorByColor;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.impl.Character1;
+import it.polimi.ingsw.model.character.impl.Character10;
 import it.polimi.ingsw.model.character.impl.Character11;
 import it.polimi.ingsw.model.character.impl.Character7;
 import it.polimi.ingsw.protocol.Message;
@@ -19,6 +20,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.*;
+import java.util.List;
 
 public class ClientGUI extends Client {
     private JFrame frame;
@@ -328,17 +330,21 @@ public class ClientGUI extends Client {
     }
 
     private void handleCharacter() {
-        int coins = view.getPlayerFromName(name).getCoins();
-        if (view.isExpert() && (coins >= view.getCharacters().get(0).getCost() ||
-                coins >= view.getCharacters().get(1).getCost() ||
-                coins >= view.getCharacters().get(2).getCost())) {
+        Player player = view.getPlayerFromName(name);
+        int coins = player.getCoins();
+        List<Character> usableCharacters = new ArrayList<>(view.getCharacters().stream().filter(c -> coins >= c.getCost()).toList());
+        if (player.getSchool().getTables().values().stream().mapToInt(List::size).sum() == 0) {
+            //If the table is empty, we can't play Character10, so remove it from usableCharacters
+            usableCharacters.removeIf(c -> c instanceof Character10);
+        }
+        if (view.isExpert() && !usableCharacters.isEmpty()) {
             JLabel titleLbl = new JLabel("Choose a character");
             titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
             view.getBottomPanel().add(titleLbl);
 
             JPanel charPanel = new JPanel();
             charPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(view.getCharacters());
+            CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(usableCharacters);
             charPanel.add(characterSelectorPanel);
 
             JButton confirm = new JButton("Confirm");
@@ -405,6 +411,10 @@ public class ClientGUI extends Client {
                 paramsPanel.add(confirm);
             }
             case 1,3,5,7 -> {
+                view.getBottomPanel().removeAll();
+                errorLabel.setText("");
+                frame.revalidate();
+                frame.repaint();
                 sendMessageAsync(new UseCharacterMessage(c.getId()));
                 return;
             }
