@@ -28,9 +28,21 @@ public class ClientGUI extends Client {
     private JPanel questionsPanel;
     private JLabel errorLabel;
     private ViewGUI view;
+    private ClientSocketWorker socketWorker;
+    private Thread socketWorkerThread;
 
     public JFrame getFrame() {
         return frame;
+    }
+
+    private void sendMessageAsync(Message msg) {
+        executorService.submit(() -> {
+            try {
+                sendMessage(msg);
+            } catch (IOException e) {
+                finalMessage("Connection lost");
+            }
+        });
     }
 
     @Override
@@ -80,11 +92,12 @@ public class ClientGUI extends Client {
                 try {
                     socket = new Socket();
                     socket.connect(new InetSocketAddress(ipField.getText(), port), 5000);
+                    socket.setSoTimeout(2000);
                     in = new DataInputStream(socket.getInputStream());
                     out = new DataOutputStream(socket.getOutputStream());
                     errorLabel.setText("");
-                    Thread t = new Thread(new ClientSocketWorker(this));
-                    t.start();
+                    socketWorkerThread = new Thread(socketWorker = new ClientSocketWorker(this));
+                    socketWorkerThread.start();
                 } catch (IOException e) {
                     errorLabel.setText("Connection failed: " + e.getMessage());
                     frame.revalidate();
@@ -103,6 +116,10 @@ public class ClientGUI extends Client {
     }
 
     public void processMessage(Message msg) {
+        if (msg == null) {
+            finalMessage("Connection lost");
+            return;
+        }
         //We have received a server message, check its Type to answer appropriately
         switch (msg.getMessageId()) {
             case ERROR -> {
@@ -330,6 +347,11 @@ public class ClientGUI extends Client {
                     askCharacterParameters(characterMessage.getCharacterId());
                 }
             }
+            case END_GAME -> {
+                EndGameMessage endGameMessage = (EndGameMessage) msg;
+                String message = "Game over. Winners: " + String.join(", ", endGameMessage.getWinner().getPlayers().stream().map(Player::getName).toArray(String[]::new));
+                finalMessage(message);
+            }
         }
     }
 
@@ -544,5 +566,62 @@ public class ClientGUI extends Client {
         view.getBottomPanel().add(errorLabel);
         frame.revalidate();
         frame.repaint();
+    }
+
+    /**
+     * Display a final message on the screen and a button to close the program.
+     * Free all resources (socket worker, socket, threads)
+     * @param message The message to display on the screen (e.g. "Game over")
+     */
+    private void finalMessage(String message) {
+        SwingUtilities.invokeLater(() -> {
+            JPanel pane;
+            if (view != null) {
+                pane = view.getBottomPanel();
+            } else {
+                pane = questionsPanel;
+            }
+            pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+            pane.removeAll();
+            JLabel title = new JLabel(message);
+            title.setAlignmentX(Component.CENTER_ALIGNMENT);
+            pane.add(title);
+            JButton quit = new JButton("Close Program");
+            quit.setMaximumSize(new Dimension(160, 40));
+            quit.setAlignmentX(Component.CENTER_ALIGNMENT);
+            quit.addActionListener(actionEvent -> frame.dispose());
+            pane.add(quit);
+            frame.revalidate();
+            frame.repaint();
+
+            if (socketWorker != null) {
+                socketWorker.setRunning(false);
+                try {
+                    socketWorkerThread.join();
+                } catch (InterruptedException ignored) {
+                }
+                socketWorker = null;
+                socketWorkerThread = null;
+            }
+            closeSilent(in);
+            in = null;
+            closeSilent(out);
+            out = null;
+            closeSilent(socket);
+            socket = null;
+            if (executorService != null) {
+                executorService.shutdown();
+                executorService = null;
+            }
+        });
+    }
+
+    private static void closeSilent(Closeable c) {
+        if (c != null) {
+            try {
+                c.close();
+            } catch (IOException ignored) {
+            }
+        }
     }
 }

@@ -32,16 +32,6 @@ public abstract class Client {
         }
     }
 
-    public void sendMessageAsync(Message msg) {
-        executorService.submit(() -> {
-            try {
-                sendMessage(msg);
-            } catch (IOException e) {
-                closeProgram();
-            }
-        });
-    }
-
     /**
      * Receive a message from the server
      */

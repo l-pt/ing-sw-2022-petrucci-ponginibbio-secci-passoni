@@ -5,28 +5,41 @@ import it.polimi.ingsw.protocol.Message;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 public class ClientSocketWorker extends SwingWorker<Void, Message> {
-    ClientGUI client;
+    private ClientGUI client;
+    private boolean running;
 
     public ClientSocketWorker(ClientGUI client) {
         this.client = client;
+        running = true;
+    }
+
+    public synchronized boolean isRunning() {
+        return running;
+    }
+
+    public synchronized void setRunning(boolean running) {
+        this.running = running;
     }
 
     @Override
-    protected Void doInBackground() throws IOException {
-        while (true) {
+    protected Void doInBackground() {
+        while (isRunning()) {
             Message msg;
             //Wait for a server message
             try {
                 msg = client.readMessage();
-            } catch (JsonSyntaxException e) {
-                System.out.println("Server sent invalid message");
-                return null;
+            } catch (SocketTimeoutException e) {
+                continue;
+            } catch (JsonSyntaxException | IOException e) {
+                msg = null;
             }
             publish(msg);
         }
+        return null;
     }
 
     @Override
