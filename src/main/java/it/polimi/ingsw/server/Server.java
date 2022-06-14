@@ -3,6 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.protocol.Message;
+import it.polimi.ingsw.protocol.MessageId;
 import it.polimi.ingsw.protocol.message.AskAssistantMessage;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
@@ -39,10 +40,6 @@ public class Server {
     }
 
     //methods
-    public List<Controller> getControllers() {
-        return controllers;
-    }
-
     public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
 
     public synchronized MatchParameters getMatchParameters() {
@@ -149,9 +146,6 @@ public class Server {
 
         //send each connected player an updated view of the start board
         for (Connection player : connectedPlayers) {
-
-            //send player updated view
-            System.out.println("sending " + player.getName() + " the opening board");
             player.sendMessage(
                     new UpdateViewMessage(
                     controller.getMatch().getTeams(),
@@ -202,13 +196,35 @@ public class Server {
             if (message == null) {
                 deregisterConnection(connection);
             } else {
-                Controller controller = connectionControllerMap.get(connection);
-                assert controller != null;
-                controller.handleClientMessage(connection, message);
+                handleClientMessage(connection, message);
             }
         }
         //TODO call this when the match finishes
         //serverSocketThread.close();
+    }
+
+    public void handleClientMessage(Connection connection, Message message) throws IOException {
+        Controller controller = connectionControllerMap.get(connection);
+        boolean gameFinished = false;
+        for (Map.Entry<String, List<Message>> entry : controller.handleMessage(connection.getName(), message).entrySet()) {
+            Connection c;
+            try {
+                c = getConnectionFromName(entry.getKey());
+            } catch (IllegalMoveException e) {
+                throw new AssertionError();
+            }
+            for (Message m : entry.getValue()) {
+                if (m.getMessageId() == MessageId.END_GAME) {
+                    gameFinished = true;
+                }
+                c.sendMessage(m);
+            }
+        }
+        if (gameFinished) {
+            for (Connection c : getConnectionsFromController(controller)) {
+                deregisterConnection(c);
+            }
+        }
     }
 
     public void close() {
@@ -221,17 +237,18 @@ public class Server {
      */
     private class ServerSocketThread implements Runnable {
         private ServerSocket serverSocket;
+        private int port;
         private boolean active;
 
         public ServerSocketThread() throws IOException {
-            serverSocket = new ServerSocket(61863);
+            port = 61863;
+            serverSocket = new ServerSocket(port);
             active = true;
         }
 
         @Override
         public void run() {
-            System.out.println("ServerSocket Thread started");
-            System.out.println("Server is listening on PORT " + 61863);
+            System.out.println("Server is listening on port: " + port);
             System.out.println("Number of Connections: " + connections.size());
 
             while(isActive()){

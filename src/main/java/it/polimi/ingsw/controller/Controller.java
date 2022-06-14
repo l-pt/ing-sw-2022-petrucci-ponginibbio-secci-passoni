@@ -266,27 +266,4 @@ public class Controller {
             }
         }
     }
-
-    public void handleClientMessage(Connection connection, Message message) throws IOException {
-        boolean gameFinished = false;
-        for (Map.Entry<String, List<Message>> entry : handleMessage(connection.getName(), message).entrySet()) {
-            Connection c;
-            try {
-                c = server.getConnectionFromName(entry.getKey());
-            } catch (IllegalMoveException e) {
-                throw new AssertionError();
-            }
-            for (Message m : entry.getValue()) {
-                if (m.getMessageId() == MessageId.END_GAME) {
-                    gameFinished = true;
-                }
-                c.sendMessage(m);
-            }
-        }
-        if (gameFinished) {
-            for (Connection c : server.getConnectionsFromController(this)) {
-                server.deregisterConnection(c);
-            }
-        }
-    }
 }

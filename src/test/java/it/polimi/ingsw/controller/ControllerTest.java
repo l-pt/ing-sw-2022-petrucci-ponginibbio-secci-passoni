@@ -477,6 +477,7 @@ public class ControllerTest extends TestCase {
         }
         result = controller.handleMessage(name1, new UseCharacterColorIslandMessage(color, 1));
         Assertions.assertEquals(2, result.get(name1).size());
+        assert color != null;
         Assertions.assertEquals("There are no students with color " + color.name() + " on this character", ((ErrorMessage) result.get(name1).get(0)).getError());
         Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name1).get(1).getMessageId());
 
@@ -667,6 +668,134 @@ public class ControllerTest extends TestCase {
         Assertions.assertEquals(1, controller.getMatch().getIslands().get(1).getNoEntry());
     }
 
+    @Test
+    public synchronized void characterStudentMapMessage() throws IllegalMoveException {
+        server.setMatchParameters(2, true);
+        List<String> names = List.of("test1", "test2");
+        Controller controller = new Controller(server, names);
+        String name1 = controller.getMatch().getPlayersOrder().get(0).getName();
+        Player player1 = controller.getMatch().getPlayerFromName(name1);
+        controller.getMatch().getCharacters().set(0, new Character7());
+        Character7 character7 = (Character7)controller.getMatch().getCharacters().get(0);
+        character7.setup(controller.getMatch());
+        Map<PawnColor, Integer> studentsInMap = new HashMap<>();
+        Map<PawnColor, Integer> studentsOutMap = new HashMap<>();
+
+        Map<String, List<Message>> result = controller.handleMessage(name1, new UseCharacterStudentMapMessage(6, studentsInMap, studentsOutMap));
+        Assertions.assertEquals(2, result.get(name1).size());
+        Assertions.assertEquals("Invalid student number", ((ErrorMessage)result.get(name1).get(0)).getError());
+        Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name1).get(1).getMessageId());
+
+        PawnColor color1 = player1.getSchool().getEntrance().get(0).getColor();
+        PawnColor color2 = character7.getStudents().get(0).getColor();
+        PawnColor color3 = character7.getStudents().get(1).getColor();
+        studentsInMap.put(color1, studentsInMap.getOrDefault(color1, 0) + 1);
+        studentsOutMap.put(color2, studentsOutMap.getOrDefault(color2, 0) + 1);
+        studentsOutMap.put(color3, studentsOutMap.getOrDefault(color3, 0) + 1);
+
+        result = controller.handleMessage(name1, new UseCharacterStudentMapMessage(6, studentsInMap, studentsOutMap));
+        Assertions.assertEquals(2, result.get(name1).size());
+        Assertions.assertEquals("Different map sizes", ((ErrorMessage)result.get(name1).get(0)).getError());
+        Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name1).get(1).getMessageId());
+
+        PawnColor color4 = player1.getSchool().getEntrance().get(1).getColor();
+        PawnColor color5 = player1.getSchool().getEntrance().get(2).getColor();
+        PawnColor color6 = character7.getStudents().get(2).getColor();
+        studentsInMap.put(color4, studentsInMap.getOrDefault(color4, 0) + 1);
+        studentsInMap.put(color5, studentsInMap.getOrDefault(color5, 0) + 1);
+        studentsOutMap.put(color6, studentsOutMap.getOrDefault(color6, 0) + 1);
+
+        controller.getNextMessage().put(name1, new AskCloudMessage());
+        result = controller.handleMessage(name1, new UseCharacterStudentMapMessage(6, studentsInMap, studentsOutMap));
+        Assertions.assertEquals(1, result.get(name1).size());
+        Assertions.assertEquals(MessageId.ASK_CLOUD, result.get(name1).get(0).getMessageId());
+    }
+
+    @Test
+    public synchronized void lastMessageCharacterStudentMapMessage() throws IllegalMoveException {
+        server.setMatchParameters(2, true);
+        List<String> names = List.of("test1", "test2");
+        Controller controller = new Controller(server, names);
+        String name1 = controller.getMatch().getPlayersOrder().get(0).getName();
+        String name2 = controller.getMatch().getPlayersOrder().get(1).getName();
+        Player player1 = controller.getMatch().getPlayerFromName(name1);
+        controller.getMatch().getCharacters().set(0, new Character7());
+        Character7 character7 = (Character7)controller.getMatch().getCharacters().get(0);
+        character7.setup(controller.getMatch());
+        Map<PawnColor, Integer> studentsInMap = new HashMap<>();
+        Map<PawnColor, Integer> studentsOutMap = new HashMap<>();
+
+        PawnColor color1 = player1.getSchool().getEntrance().get(0).getColor();
+        PawnColor color2 = character7.getStudents().get(0).getColor();
+        PawnColor color3 = character7.getStudents().get(1).getColor();
+        PawnColor color4 = player1.getSchool().getEntrance().get(1).getColor();
+        PawnColor color5 = player1.getSchool().getEntrance().get(2).getColor();
+        PawnColor color6 = character7.getStudents().get(2).getColor();
+        studentsInMap.put(color1, studentsInMap.getOrDefault(color1, 0) + 1);
+        studentsOutMap.put(color2, studentsOutMap.getOrDefault(color2, 0) + 1);
+        studentsOutMap.put(color3, studentsOutMap.getOrDefault(color3, 0) + 1);
+        studentsInMap.put(color4, studentsInMap.getOrDefault(color4, 0) + 1);
+        studentsInMap.put(color5, studentsInMap.getOrDefault(color5, 0) + 1);
+        studentsOutMap.put(color6, studentsOutMap.getOrDefault(color6, 0) + 1);
+
+        Map<String, List<Message>> result = controller.handleMessage(name1, new SetCloudMessage(1));
+        Assertions.assertEquals(1, result.get(name1).size());
+        Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name1).get(0).getMessageId());
+        Assertions.assertEquals(0, controller.getMatch().getClouds().get(1).getStudents().size());
+
+        result = controller.handleMessage(name1, new UseCharacterStudentMapMessage(6, studentsInMap, studentsOutMap));
+        Assertions.assertEquals(1, result.get(name2).size());
+        Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name2).get(0).getMessageId());
+    }
+
+    @Test
+    public synchronized void lastMessageNoCharacterMessage() throws IllegalMoveException {
+        server.setMatchParameters(2, true);
+        List<String> names = List.of("test1", "test2");
+        Controller controller = new Controller(server, names);
+        String name1 = controller.getMatch().getPlayersOrder().get(0).getName();
+        String name2 = controller.getMatch().getPlayersOrder().get(1).getName();
+        controller.getMatch().getCharacters().set(0, new Character5());
+
+        Map<String, List<Message>> result = controller.handleMessage(name1, new SetCloudMessage(1));
+        Assertions.assertEquals(1, result.get(name1).size());
+        Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name1).get(0).getMessageId());
+        Assertions.assertEquals(0, controller.getMatch().getClouds().get(1).getStudents().size());
+
+        result = controller.handleMessage(name1, new UseNoCharacterMessage());
+        Assertions.assertEquals(1, result.get(name2).size());
+        Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name2).get(0).getMessageId());
+    }
+
+    @Test
+    public synchronized void exceptionLastMessageNoCharacterMessage() throws IllegalMoveException {
+        server.setMatchParameters(2, true);
+        List<String> names = List.of("test1", "test2");
+        Controller controller = new Controller(server, names);
+        String name1 = controller.getMatch().getPlayersOrder().get(0).getName();
+        controller.getMatch().getCharacters().set(0, new Character5());
+
+        Map<String, List<Message>> result = controller.handleMessage(name1, new SetCloudMessage(1));
+        Assertions.assertEquals(1, result.get(name1).size());
+        Assertions.assertEquals(MessageId.ASK_CHARACTER, result.get(name1).get(0).getMessageId());
+        Assertions.assertEquals(0, controller.getMatch().getClouds().get(1).getStudents().size());
+
+        result = controller.handleMessage("test3", new UseNoCharacterMessage());
+        Assertions.assertEquals(1, result.get("test3").size());
+        Assertions.assertEquals("Invalid Name", ((ErrorMessage)result.get("test3").get(0)).getError());
+    }
+
+    @Test
+    public synchronized void invalidMessage() throws IllegalMoveException {
+        server.setMatchParameters(2, true);
+        List<String> names = List.of("test1", "test2");
+        Controller controller = new Controller(server, names);
+        String name1 = controller.getMatch().getPlayersOrder().get(0).getName();
+        controller.getMatch().getCharacters().set(0, new Character5());
+
+        Map<String, List<Message>> result = controller.handleMessage(name1, new AskCloudMessage());
+        Assertions.assertTrue(result.isEmpty());
+    }
 
     @AfterAll
     public static void closeServer(){
