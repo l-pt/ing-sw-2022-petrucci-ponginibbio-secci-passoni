@@ -5,7 +5,7 @@ Il progetto consiste nell'implementazione del gioco da tavolo [ERIANTYS](http://
 
 #### Regole del gioco:
 - [Italiano](src/main/resources/documents/eriantys_regole.pdf)
-- [English](src/main/resources/documents/eriantys_rules.pdf.pdf)
+- [English](src/main/resources/documents/eriantys_rules.pdf)
 
 #### Requisiti del progetto:
 - [Requisiti](src/main/resources/documents/requirements.pdf)
