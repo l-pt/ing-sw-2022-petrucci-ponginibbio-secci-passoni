@@ -122,7 +122,7 @@ public class ClientCLI extends Client{
     public void handleGameMessage(Message msg) throws IOException {
         switch (msg.getMessageId()) {
             case ASK_ASSISTANT -> {
-                int assistant = readInt("What assistant do you want to play?");
+                int assistant = readInt("\u001b[53;1HWhat assistant do you want to play?");
                 sendMessage(new SetAssistantMessage(assistant));
             }
             case ASK_ENTRANCE_STUDENT -> {
