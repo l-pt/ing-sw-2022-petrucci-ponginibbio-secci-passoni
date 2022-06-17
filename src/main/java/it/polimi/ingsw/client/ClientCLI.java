@@ -91,6 +91,8 @@ public class ClientCLI extends Client{
             }
             case UPDATE_VIEW -> {
                 view = new ViewCLI(this);
+                view.printTitle();
+                view.printDescription();
                 view.handleUpdateView((UpdateViewMessage) msg);
                 return true;
             }
@@ -122,7 +124,7 @@ public class ClientCLI extends Client{
     public void handleGameMessage(Message msg) throws IOException {
         switch (msg.getMessageId()) {
             case ASK_ASSISTANT -> {
-                int assistant = readInt("\u001b[53;1HWhat assistant do you want to play?");
+                int assistant = readInt("What assistant do you want to play?");
                 sendMessage(new SetAssistantMessage(assistant));
             }
             case ASK_ENTRANCE_STUDENT -> {

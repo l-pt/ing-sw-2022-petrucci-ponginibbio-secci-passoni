@@ -58,6 +58,7 @@ public class ViewCLI extends View<ClientCLI> {
      * Print title
      */
     public void printTitle() {
+        clearScreen();
         String eryantis = "\u001b[1;91m░░░░░░░░░░ ░░░░░░░    ░░░   ░░░░   ░░░░░    ░░░  ░░░░░ ░░░░░░░░░░  ░░░░░░░░     ░░░ ░░  \n" +
                 "░░░░░░░░░░ ░░░░░░░░   ░░░   ░░░░   ░░░░░    ░░░░ ░░░░░ ░░░░░░░░░░  ░░░░░░░░    ░░░░░░░  \n" +
                 "\u001b[1;93m ░░     ░░  ░░   ░░░   ░░    ░░      ░░░     ░░░   ░░  ░░  ░░  ░░     ░░      ░░    ░░  \n" +
@@ -83,9 +84,10 @@ public class ViewCLI extends View<ClientCLI> {
      * Print the description of the elements of the game interface
      */
     public void printDescription() {
+        clearScreen();
         String description = "\u001b[97mGame elements:\n" +
                              "\u001b[91m● \u001b[93m● \u001b[92m● \u001b[94m● \u001b[95m● → \u001b[97mstudents\n" +
-                             "\u001b[90m█ \u001b[97█ \u001b[38;5;247m█ → \u001b[97mtowers\n" +
+                             "\u001b[90m█ \u001b[97m█ \u001b[38;5;247m█ → \u001b[97mtowers\n" +
                              "\u001b[91m■ \u001b[93m■ \u001b[92m■ \u001b[94m■ \u001b[95m■ → \u001b[97mprofessors\n" +
                              "♦ → mother nature\n" +
                              "\u001b[31mꞳ → \u001b[97mno entry\n" +
@@ -94,7 +96,7 @@ public class ViewCLI extends View<ClientCLI> {
         printToScreen(description);
 
         try{
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
