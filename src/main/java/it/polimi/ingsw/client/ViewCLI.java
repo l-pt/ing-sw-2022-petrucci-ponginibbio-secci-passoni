@@ -47,19 +47,12 @@ public class ViewCLI extends View<ClientCLI> {
     /** print String in all os **/
     public void printToScreen(String output){
         try{
-            if(isWindows()){
-                new ProcessBuilder("cmd", "/c", "echo " + output).inheritIO().start().waitFor();
-            }
-            else if(isMac() || isUnix()){
-                System.out.print(output);
-            }
+            System.out.print(output);
         }
         catch(Exception e){
             System.out.println(e.getMessage());
         }
     }
-
-
 
     /**
      * Print title
@@ -408,94 +401,6 @@ public class ViewCLI extends View<ClientCLI> {
             }
         }
 
-        /**
-        for (Player player : playersOrder) {
-            curRow = 26;
-            moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
-            if (player.getName().equals(client.getName())) {
-                formatter.format(moveCursor + "\u001b[97mYOUR SCHOOL ↓\u001b[0m\n");
-            } else {
-                formatter.format(moveCursor + "\u001b[97m" + player.getName().toUpperCase() + "'S SCHOOL ↓\u001b[0m\n");
-            }
-            ++curRow;
-            moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
-            formatter.format(moveCursor + "\u001b[97mENTRANCE →\u001b[0m");
-            for (Student student : player.getSchool().getEntrance()) {
-                if (student.getColor().equals(PawnColor.RED)) {
-                    formatter.format("\u001b[1;91m ●\u001b[0m");
-                } else if (student.getColor().equals(PawnColor.YELLOW)) {
-                    formatter.format("\u001b[1;93m ●\u001b[0m");
-                } else if (student.getColor().equals(PawnColor.GREEN)) {
-                    formatter.format("\u001b[1;92m ●\u001b[0m");
-                } else if (student.getColor().equals(PawnColor.BLUE)) {
-                    formatter.format("\u001b[1;94m ●\u001b[0m");
-                } else {
-                    formatter.format("\u001b[1;95m ●\u001b[0m");
-                }
-            }
-            formatter.format("\n");
-            ++curRow;
-            for (PawnColor pawncolor : player.getSchool().getTables().keySet()) {
-                moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
-                formatter.format(moveCursor + "\u001b[97m" + pawncolor.toString().toUpperCase() + " TABLE →\u001b[0m");
-                counter = 1;
-                for (Student student : player.getSchool().getTables().get(pawncolor)) {
-                    if (pawncolor.equals(PawnColor.RED)) {
-                        if (counter == 3 || counter == 6 || counter == 9) {
-                            formatter.format("\u001b[1;91m ◙\u001b[0m");
-                        } else {
-                            formatter.format("\u001b[1;91m ●\u001b[0m");
-                        }
-                    } else if (pawncolor.equals(PawnColor.YELLOW)) {
-                        if (counter == 3 || counter == 6 || counter == 9) {
-                            formatter.format("\u001b[1;93m ◙\u001b[0m");
-                        } else {
-                            formatter.format("\u001b[1;93m ●\u001b[0m");
-                        }
-                    } else if (pawncolor.equals(PawnColor.GREEN)) {
-                        if (counter == 3 || counter == 6 || counter == 9) {
-                            formatter.format("\u001b[1;92m ◙\u001b[0m");
-                        } else {
-                            formatter.format("\u001b[1;92m ●\u001b[0m");
-                        }
-                    } else if (pawncolor.equals(PawnColor.BLUE)) {
-                        if (counter == 3 || counter == 6 || counter == 9) {
-                            formatter.format("\u001b[1;94m ◙\u001b[0m");
-                        } else {
-                            formatter.format("\u001b[1;94m ●\u001b[0m");
-                        }
-                    } else {
-                        if (counter == 3 || counter == 6 || counter == 9) {
-                            formatter.format("\u001b[1;95m ◙\u001b[0m");
-                        } else {
-                            formatter.format("\u001b[1;95m ●\u001b[0m");
-                        }
-                    }
-                    ++counter;
-                }
-                formatter.format("\n");
-                ++curRow;
-            }
-            moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
-            formatter.format(moveCursor + "\u001b[97mPROFESSORS →\u001b[0m");
-            for (Professor professor : player.getSchool().getProfessors()) {
-                if (professor.getColor().equals(PawnColor.RED)) {
-                    formatter.format("\u001b[1;91m ■\u001b[0m");
-                } else if (professor.getColor().equals(PawnColor.YELLOW)) {
-                    formatter.format("\u001b[1;93m ■\u001b[0m");
-                } else if (professor.getColor().equals(PawnColor.GREEN)) {
-                    formatter.format("\u001b[1;92m ■\u001b[0m");
-                } else if (professor.getColor().equals(PawnColor.BLUE)) {
-                    formatter.format("\u001b[1;94m ■\u001b[0m");
-                } else {
-                    formatter.format("\u001b[1;95m ■\u001b[0m");
-                }
-            }
-            formatter.format("\n");
-            curColumn += 60;
-        }
-         **/
-
         //Print players' coin reserve
         if (expert) {
             moveCursor = "\u001b[1;81H";
@@ -516,64 +421,12 @@ public class ViewCLI extends View<ClientCLI> {
             }
         }
 
-        /**
-        moveCursor = "\u001b[1;181H";
-        curRow = 2;
-        if (playersOrder.size() == 4) {
-            counter = 1;
-            //formatter.format(moveCursor + "\u001b[97mTEAMS ↓\u001b[0m\n");
-            for (Team team : teams) {
-                moveCursor = "\u001b[" + curRow + ";181H";
-                formatter.format(moveCursor + "\u001b[97m%1$d°TEAM →  MEMBERS:\u001b[0m", counter);
-                for (Player player : team.getPlayers()) {
-                    formatter.format("\u001b[97m %1$s\u001b[0m", player.getName().toUpperCase());
-                }
-                formatter.format("\u001b[97m  TOWERS:\u001b[0m");
-                for (Tower tower : team.getTowers()) {
-                    if (tower.getColor().equals(TowerColor.BLACK)) {
-                        formatter.format("\u001b[1;90m █\u001b[0m");
-                    } else if (tower.getColor().equals(TowerColor.WHITE)) {
-                        formatter.format("\u001b[1;97m █\u001b[0m");
-                    } else {
-                        formatter.format("\u001b[38;5;247m █\u001b[0m");
-                    }
-                }
-                formatter.format("\n");
-                ++counter;
-                ++curRow;
-            }
-        } else {
-            //formatter.format(moveCursor + "\u001b[97mTOWERS AREA ↓\u001b[0m\n");
-            for (Team team : teams) {
-                moveCursor = "\u001b[" + curRow + ";181H";
-                if (team.getPlayers().get(0).getName().equals(client.getName())) {
-                    formatter.format(moveCursor + "\u001b[97mYOUR TOWERS →\u001b[0m");
-                } else {
-                    formatter.format(moveCursor + "\u001b[97m%1$s'S TOWERS →\u001b[0m", team.getPlayers().get(0).getName().toUpperCase());
-                }
-                for (Tower tower : team.getTowers()) {
-                    if (tower.getColor().equals(TowerColor.BLACK)) {
-                        formatter.format("\u001b[1;90m █\u001b[0m");
-                    } else if (tower.getColor().equals(TowerColor.WHITE)) {
-                        formatter.format("\u001b[1;97m █\u001b[0m");
-                    } else {
-                        formatter.format("\u001b[38;5;247m █\u001b[0m");
-                    }
-                }
-                formatter.format("\n");
-                ++curRow;
-            }
-        }
-         **/
-
-        if(isMac() || isUnix()){
-            moveCursor = "\u001b[51;1H";
-            formatter.format(moveCursor + "\n");
-        }
-
         if (!client.name.equals(currentPlayer)) {
             moveCursor = "\u001b[51;1H";
-            formatter.format(moveCursor + "\u001b[97mWaiting for %1$s...\u001b[0m", currentPlayer.toUpperCase());
+            formatter.format(moveCursor + "\u001b[97mWaiting for %1$s...\u001b[0m\n", currentPlayer.toUpperCase());
+        } else {
+            moveCursor = "\u001b[51;1H";
+            formatter.format(moveCursor + "\n");
         }
 
         printToScreen(formatter.toString());
