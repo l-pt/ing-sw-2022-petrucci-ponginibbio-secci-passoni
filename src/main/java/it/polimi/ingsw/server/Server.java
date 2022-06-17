@@ -15,23 +15,27 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    //vars
-    private ServerSocketThread serverSocketThread;
 
-    /** All connections */
-    private List<Connection> connections = new ArrayList<>();
-    /** Connections that are not part of any match */
-    private List<Connection> waitingConnections = new ArrayList<>();
+    /** ExecutorService for Thread Management */
+    private ExecutorService executor = Executors.newFixedThreadPool(64); //define executor for Controller commands onto Model
+
+    /** Define SocketThread */
+    private ServerSocketThread serverSocketThread; //listens on TCP for new connections
+
+    /** Client Connections Management */
+    private List<Connection> connections = new ArrayList<>(); //all active connections to the server
+    private List<Connection> waitingConnections = new ArrayList<>(); //all connections waiting in the lobby
     private Connection firstConnection;
 
-    private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>();
+    /** Message Reception Management */
+    private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>(); //creates queue for incoming "to be handled" messages
 
-    private MatchParameters matchParameters;
+    /** Match & Controller Management */
+    private MatchParameters matchParameters; //implemented locally in this Server.java class; contains (numberOfPlayers, isExpertMode)
+    private List<Controller> controllers = new ArrayList<>(); //list of Controllers
+    private Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
 
-    private ExecutorService executor = Executors.newFixedThreadPool(64);
-    private List<Controller> controllers = new ArrayList<>();
-    private Map<Connection, Controller> connectionControllerMap = new HashMap<>();
-
+    /** Eryantis Server */
     public Server() throws IOException{
         serverSocketThread = new ServerSocketThread();
         executor.submit(serverSocketThread);
@@ -39,33 +43,40 @@ public class Server {
         matchParameters = null;
     }
 
-    //methods
+    /** getWaitingConnections returns List<Connection> waiting in the Eryantis lobby.*/
     public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
 
+    /** getMatchParameters returns matchParameters consisting of (int playerNumber, boolean expert).*/
     public synchronized MatchParameters getMatchParameters() {
         return matchParameters;
     }
 
+    /** getFirstConnection() returns firstConnection. Note: client of firstConnection decides matchParameters */
     public Connection getFirstConnection() {
         return firstConnection;
     }
 
+    /** setMatchParameters() sets number of players, and if game is expert. Note: client of firstConnection decides matchParameters */
     public synchronized void setMatchParameters(int waitingConnectionMax, boolean expert) {
         matchParameters = new MatchParameters(waitingConnectionMax, expert);
     }
 
+    /** setMatchParameters() sets only number of players if game is not expert. Note: client of firstConnection decides matchParameters */
     public synchronized void setMatchParameters(MatchParameters parameters) {
         matchParameters = parameters;
     }
 
+    /** getConnectionFromName() returns Connection of client with given name */
     public Connection getConnectionFromName(String name) throws IllegalMoveException {
+
         for(Connection c : connections){
             if (c.getName().equals(name))
                 return c;
         }
-        throw new IllegalMoveException("There is no player with that name");
+        throw new IllegalMoveException("There is no player with that name.");
     }
 
+    /** getConnectionsFromController() returns List<Connection> of clients with given controller. Note: association is by connectionControllerMap */
     public List<Connection> getConnectionsFromController(Controller controller) {
         return connectionControllerMap.entrySet().stream().filter(e -> e.getValue() == controller).map(Map.Entry::getKey).toList();
     }
@@ -81,27 +92,37 @@ public class Server {
         }
     }
 
-    //Register Connection
-    public synchronized void registerConnection(Connection c){
-        connections.add(c);
-        waitingConnections.add(c);
+    /** registerConnection() adds newConnection to the server's connections and waitingConnection lists. */
+    public synchronized void registerConnection(Connection newConnection){
+        connections.add(newConnection);
+        waitingConnections.add(newConnection);
+
+        //set as firstConnection if newConnection is the first connection
         if (firstConnection == null) {
-            firstConnection = c;
+            firstConnection = newConnection;
         }
     }
 
+    /** deregisterConnection() closes connection and removed it from the server's connections and waitingConnection lists. */
     public synchronized void deregisterConnection(Connection connection){
         connection.close();
         connections.remove(connection);
         waitingConnections.remove(connection);
+
+        //reset firstConnection to null if it was firstConnection
         if (firstConnection == connection) {
             firstConnection = null;
         }
-        //Find the controller of the player's match
+
+        //get the controller for the match associated to the connection
         Controller controller = connectionControllerMap.get(connection);
-        if (controller != null) {
+
+        if (controller != null) { // implies that Client is in a match
+
+            //disconnect the player from match
             connectionControllerMap.remove(connection);
-            //Player is in a match, disconnect all players in the same match
+
+            //disconnect all other players in the same match
             Iterator<Map.Entry<Connection, Controller>> it = connectionControllerMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<Connection, Controller> entry = it.next();
@@ -134,8 +155,9 @@ public class Server {
      */
     public synchronized void checkWaitingConnections() throws IOException, IllegalMoveException {
 
-        //get list of players connections called readyConnections or connectedPlayer
+        //get list of players in lobby with matchParameters
         List<Connection> connectedPlayers = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
+
         //get only the names of the players
         List<String> connectionsNames = new ArrayList<>();
         for (Connection player : connectedPlayers)
@@ -164,11 +186,16 @@ public class Server {
             controller.getMatch().addObserver(player);
         }
 
+        //ask first player for assistant selection
         connectedPlayers.get(0).sendMessage(new AskAssistantMessage());
+
+        //send group of connected playerConnections to a match
         controllers.add(controller);
         for (Connection c : connectedPlayers) {
             connectionControllerMap.put(c, controller);
         }
+
+        //reset lobby variables to listen for next group of players
         matchParameters = null;
         firstConnection = null;
         waitingConnections.removeAll(connectedPlayers);
@@ -182,7 +209,11 @@ public class Server {
      * Main server loop: process all messages in the messageQueue
      */
     public void run() throws InterruptedException, IOException {
+
+        //loop message handler
         while (true) {
+
+            //set enrty to be first message in queue
             MessageQueueEntry entry;
             synchronized (messageQueue) {
                 while (messageQueue.isEmpty()) {
@@ -190,21 +221,30 @@ public class Server {
                 }
                 entry = messageQueue.remove();
             }
+
+            //handle entry message
             Connection connection = entry.getConnection();
             Message message = entry.getMessage();
-
             if (message == null) {
                 deregisterConnection(connection);
             } else {
                 handleClientMessage(connection, message);
             }
         }
+
         //TODO call this when the match finishes
         //serverSocketThread.close();
     }
 
+    /** handleClientMessage(connection, message) forwards the given message to all connections in the match controller.
+     * Note: if message is END_GAME, then deregister all Connections associated to match controller.
+     * */
     public void handleClientMessage(Connection connection, Message message) throws IOException {
+
+        //get match controller associated to given client connection
         Controller controller = connectionControllerMap.get(connection);
+
+        //handle clientMessage
         boolean gameFinished = false;
         for (Map.Entry<String, List<Message>> entry : controller.handleMessage(connection.getName(), message).entrySet()) {
             Connection c;
@@ -217,9 +257,11 @@ public class Server {
                 if (m.getMessageId() == MessageId.END_GAME) {
                     gameFinished = true;
                 }
-                c.sendMessage(m);
+                c.sendMessage(m); //forward server handled Message m to all Connections c in the match controller
             }
         }
+
+        //if gameFinished, deregister all connections associated to match controller
         if (gameFinished) {
             for (Connection c : getConnectionsFromController(controller)) {
                 deregisterConnection(c);
@@ -227,6 +269,7 @@ public class Server {
         }
     }
 
+    /** close() closes the server. The serverSocketThread stops TCP listening.*/
     public void close() {
         serverSocketThread.close();
     }
@@ -236,38 +279,52 @@ public class Server {
      * It adds new connections to the following Lists: connections, waitingConnections
      */
     private class ServerSocketThread implements Runnable {
+
         private ServerSocket serverSocket;
         private int port;
         private boolean active;
 
         public ServerSocketThread() throws IOException {
-            port = 61863;
+            port = 61863; //Politecnico di Milano Est. 1863
             serverSocket = new ServerSocket(port);
             active = true;
         }
 
         @Override
         public void run() {
+
+            //server status update to console
             System.out.println("Server is listening on port: " + port);
             System.out.println("Number of Connections: " + connections.size());
 
+            //loop while server isActive()
             while(isActive()){
                 try{
+
+                    //add new client
                     Socket socket = serverSocket.accept();
                     Connection connection = new Connection(socket, Server.this);
-
                     registerConnection(connection);
                     executor.submit(connection);
+
+                    //server status update to console
                     System.out.println("Number of Connections: " + connections.size());
                 }
                 catch(IOException e){
+
+                    //unable to add new client
                     System.err.println("Connection Error.");
                 }
             }
 
             try {
+
+                //close when not isActive()
                 serverSocket.close();
+
             } catch (IOException e) {
+
+                //unable to close
                 System.out.println("Unable to close server socket");
             }
         }
@@ -281,7 +338,13 @@ public class Server {
         }
     }
 
+    /**
+     * MessageQueueEntry class is the object in the MessageQueue list.
+     * MessageQueueEntry entry has a Message m from a Connection c.
+     * Note: MessageQueueEntry has only getters, as messages should not be able to be changed.
+     */
     static class MessageQueueEntry {
+
         private Connection connection;
         private Message message;
 
