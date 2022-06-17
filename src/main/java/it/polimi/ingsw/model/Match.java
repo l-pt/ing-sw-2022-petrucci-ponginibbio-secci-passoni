@@ -4,13 +4,12 @@ import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.*;
 import it.polimi.ingsw.observer.Observable;
-import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.protocol.message.UpdateViewMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class Match implements Observable<UpdateViewMessage> {
+public class Match extends Observable<UpdateViewMessage> {
     protected List<Team> teams;
     private List<Player> playerOrder;
     private int posMotherNature;
@@ -25,7 +24,6 @@ public class Match implements Observable<UpdateViewMessage> {
     private boolean drawAllowed;
     private InfluenceCalculationPolicy influencePolicy;
     private boolean gameFinished;
-    private Set<Observer<UpdateViewMessage>> observers;
     private String currentPlayer;
 
     public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
@@ -69,7 +67,6 @@ public class Match implements Observable<UpdateViewMessage> {
         for (int i = 0; i < playerOrder.size(); ++i)
             clouds.add(new Cloud());
 
-        observers = new HashSet<>();
         populateClouds();
 
         //create a professor for each color
@@ -123,18 +120,6 @@ public class Match implements Observable<UpdateViewMessage> {
         influencePolicy = new InfluenceCalculationPolicy();
         gameFinished = false;
         currentPlayer = playerOrder.get(0).getName();
-    }
-
-    @Override
-    public void addObserver(Observer<UpdateViewMessage> observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void notifyObservers(UpdateViewMessage msg) {
-        for (Observer<UpdateViewMessage> observer : observers) {
-            observer.notifyObserver(msg);
-        }
     }
 
     public void setupTowers(){
