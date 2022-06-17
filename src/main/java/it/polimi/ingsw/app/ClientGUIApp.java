@@ -6,6 +6,10 @@ import it.polimi.ingsw.client.gui.ClientGUI;
 import java.io.IOException;
 
 public class ClientGUIApp {
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args){
         Client client = new ClientGUI();
         try{

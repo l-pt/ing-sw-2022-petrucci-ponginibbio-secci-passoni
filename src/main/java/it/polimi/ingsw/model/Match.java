@@ -122,6 +122,9 @@ public class Match extends Observable<UpdateViewMessage> {
         currentPlayer = playerOrder.get(0).getName();
     }
 
+    /**
+     *
+     */
     public void setupTowers(){
         for (Team team : teams) {
             for (int i = 0; i < 8; ++i) {
@@ -130,8 +133,18 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Team> getTeams() {return teams;}
 
+    /**
+     *
+     * @param color
+     * @return
+     * @throws IllegalMoveException
+     */
     public Team getTeamFromColor(TowerColor color) throws IllegalMoveException {
         for(Team team : teams) {
             if (team.getTowers().get(0).getColor().equals(color)) {
@@ -141,6 +154,12 @@ public class Match extends Observable<UpdateViewMessage> {
         throw new IllegalMoveException("A team with tower color " + color.name() + " does not exist");
     }
 
+    /**
+     *
+     * @param player
+     * @return
+     * @throws IllegalMoveException
+     */
     public Team getTeamFromPlayer(Player player) throws IllegalMoveException {
         for (Team team : teams) {
             for (Player p : team.getPlayers()) {
@@ -152,6 +171,12 @@ public class Match extends Observable<UpdateViewMessage> {
         throw new IllegalMoveException("Player is not in a team");
     }
 
+    /**
+     *
+     * @param playerName
+     * @return
+     * @throws IllegalMoveException
+     */
     public Player getPlayerFromName(String playerName) throws IllegalMoveException {
         for(Player player : playerOrder) {
             if (player.getName().equals(playerName)) {
@@ -161,6 +186,12 @@ public class Match extends Observable<UpdateViewMessage> {
         throw new IllegalMoveException("Invalid Name");
     }
 
+    /**
+     *
+     * @param playerName
+     * @return
+     * @throws IllegalMoveException
+     */
     public int getPosFromName(String playerName) throws IllegalMoveException {
         for (int i = 0; i < playerOrder.size(); ++i) {
             if (playerOrder.get(i).getName().equals(playerName)) {
@@ -170,36 +201,73 @@ public class Match extends Observable<UpdateViewMessage> {
         throw new IllegalMoveException("Invalid Name");
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Player> getPlayersOrder() {
         return playerOrder;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getPosMotherNature() {
         return posMotherNature;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Character> getCharacters() {
         return characters;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Island> getIslands() {
         return islands;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Cloud> getClouds() {
         return clouds;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Student> getStudentBag(){return studentBag;}
 
+    /**
+     *
+     * @return
+     */
     public List<Professor> getProfessors() {
         return professors;
     }
 
+    /**
+     *
+     * @param students
+     */
     public void addStudents(List<Student> students){
         studentBag.addAll(students);
     }
 
+    /**
+     *
+     * @param n
+     * @return
+     */
     public List<Student> extractStudent(int n) {
         int randomIndex;
         List<Student> result = new ArrayList<>(Math.min(n, studentBag.size()));
@@ -214,6 +282,12 @@ public class Match extends Observable<UpdateViewMessage> {
         return result;
     }
 
+    /**
+     *
+     * @param color
+     * @return
+     * @throws IllegalMoveException
+     */
     public Professor removeProfessor(PawnColor color) throws IllegalMoveException {
         for(int i = 0; i < professors.size(); ++i) {
             if (professors.get(i).getColor().equals(color)) {
@@ -223,6 +297,11 @@ public class Match extends Observable<UpdateViewMessage> {
         throw new IllegalMoveException("No professor of color " + color.name() + " on the table");
     }
 
+    /**
+     *
+     * @param color
+     * @return
+     */
     public Player whoHaveProfessor(PawnColor color){
         for (Player player : playerOrder) {
             if (player.getSchool().isColoredProfessor(color)) {
@@ -232,6 +311,12 @@ public class Match extends Observable<UpdateViewMessage> {
         return null;
     }
 
+    /**
+     *
+     * @param playerName
+     * @param color
+     * @throws IllegalMoveException
+     */
     public void playerMoveStudent(String playerName, PawnColor color) throws IllegalMoveException {
         getPlayerFromName(playerName).getSchool().addStudentToTable(color);
         if(expert) {
@@ -240,6 +325,13 @@ public class Match extends Observable<UpdateViewMessage> {
         checkProfessors(playerName, color);
     }
 
+    /**
+     *
+     * @param playerName
+     * @param color
+     * @param n
+     * @throws IllegalMoveException
+     */
     public void playerMoveStudents(String playerName, PawnColor color, int n) throws IllegalMoveException {
         if (n < 0) {
             throw new IllegalArgumentException("n must be non negative");
@@ -249,6 +341,12 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     * @param playerName
+     * @param color
+     * @throws IllegalMoveException
+     */
     public void checkNumberStudents(String playerName, PawnColor color) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         if(player.getSchool().getTableCount(color) == 3 || player.getSchool().getTableCount(color) == 6 || player.getSchool().getTableCount(color) == 9) {
@@ -257,6 +355,12 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     * @param playerName
+     * @param color
+     * @throws IllegalMoveException
+     */
     public void checkProfessors(String playerName, PawnColor color) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         if(!player.getSchool().isColoredProfessor(color)){
@@ -270,6 +374,12 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     * @param index
+     * @param noMotherNatureMoves
+     * @throws IllegalMoveException
+     */
     public void islandInfluence(int index, boolean noMotherNatureMoves) throws IllegalMoveException {
         boolean draw = false;
         int max = -1, pos = 0;
@@ -310,6 +420,12 @@ public class Match extends Observable<UpdateViewMessage> {
             }
         }
     }
+
+    /**
+     *
+     * @param index
+     * @param noMotherNatureMoves
+     */
     public void checkIslands(int index, boolean noMotherNatureMoves) {
         if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() && islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
             uniteIslands(Math.min(index, islandIndex(index + 1)), Math.max(index, islandIndex(index + 1)), noMotherNatureMoves);
@@ -319,6 +435,11 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     * @param idx
+     * @return
+     */
     public int islandIndex(int idx) {
         int mod = idx % islands.size();
         if (mod < 0) {
@@ -327,6 +448,12 @@ public class Match extends Observable<UpdateViewMessage> {
         return mod;
     }
 
+    /**
+     *
+     * @param min
+     * @param max
+     * @param noMotherNatureMoves
+     */
     public void uniteIslands(int min, int max, boolean noMotherNatureMoves) {
         islands.get(min).addStudents(islands.get(max).getStudents());
         islands.get(min).addTowers(islands.get(max).getTowers());
@@ -340,6 +467,9 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     */
     public void populateClouds() {
         for (Cloud c : clouds) {
             c.addStudents(extractStudent(3));
@@ -347,6 +477,12 @@ public class Match extends Observable<UpdateViewMessage> {
         updateView();
     }
 
+    /**
+     *
+     * @param playerName
+     * @param cloudIndex
+     * @throws IllegalMoveException
+     */
     public void moveStudentsFromCloud(String playerName, int cloudIndex) throws IllegalMoveException {
         if (cloudIndex >= 0 && cloudIndex < clouds.size()) {
             if (clouds.get(cloudIndex).getStudents().size() == 0) {
@@ -358,6 +494,12 @@ public class Match extends Observable<UpdateViewMessage> {
         } else throw new IllegalMoveException("Island number must be between 1 and " + getClouds().size());
     }
 
+    /**
+     *
+     * @param playerName
+     * @param moves
+     * @throws IllegalMoveException
+     */
     public void moveMotherNature(String playerName, int moves) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         if ((player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()) >= moves && moves >= 1) {
@@ -367,26 +509,52 @@ public class Match extends Observable<UpdateViewMessage> {
         } else throw new IllegalMoveException("Mother nature moves must be between 1 and " + (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()));
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isExpert() {
         return expert;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCoins() {
         return coinsReserve;
     }
 
+    /**
+     *
+     * @param drawAllowed
+     */
     public void setDrawAllowed(boolean drawAllowed) {
         this.drawAllowed = drawAllowed;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean getDrawAllowed() {
         return drawAllowed;
     }
 
+    /**
+     *
+     * @return
+     */
     public InfluenceCalculationPolicy getInfluencePolicy() {
         return influencePolicy;
     }
 
+    /**
+     *
+     * @param cl
+     * @return
+     * @throws IllegalMoveException
+     */
     public Character getCharacterFromType(Class<? extends Character> cl) throws IllegalMoveException {
         for (Character character : characters) {
             if (character.getClass().equals(cl)) {
@@ -396,6 +564,9 @@ public class Match extends Observable<UpdateViewMessage> {
         throw new IllegalMoveException("There are no characters with class " + cl);
     }
 
+    /**
+     *
+     */
     public void resetAbility(){
         drawAllowed = false;
         influencePolicy.setCountTowers(true);
@@ -406,10 +577,19 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     * @param color
+     * @return
+     */
     public int getTowersByColor(TowerColor color) {
         return (int) islands.stream().flatMap(island -> island.getTowers().stream()).filter(t -> t.getColor() == color).count();
     }
 
+    /**
+     *
+     * @return
+     */
     public Team getWinningTeam() {
         return teams.stream().min((t1, t2) -> {
             int towers1 = getTowersByColor(t1.getTowerColor());
@@ -422,19 +602,37 @@ public class Match extends Observable<UpdateViewMessage> {
         }).get();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isGameFinished() {
         return gameFinished;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isLastTurn() {
         return lastTurn;
     }
 
+    /**
+     *
+     * @param currentPlayer
+     */
     public void setCurrentPlayer(String currentPlayer) {
         this.currentPlayer = currentPlayer;
         updateView();
     }
 
+    /**
+     *
+     * @param playerName
+     * @param value
+     * @throws IllegalMoveException
+     */
     public void useAssistant(String playerName, int value) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         int playerPos = getPosFromName(playerName);
@@ -465,6 +663,13 @@ public class Match extends Observable<UpdateViewMessage> {
         }
     }
 
+    /**
+     *
+     * @param playerName
+     * @param islandsStudents
+     * @param tableStudents
+     * @throws IllegalMoveException
+     */
     public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
         //Check that the player has moved exactly three students
         if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(Map.Entry::getValue).sum() +
@@ -492,6 +697,9 @@ public class Match extends Observable<UpdateViewMessage> {
         updateView();
     }
 
+    /**
+     *
+     */
     public void updateView() {
         notifyObservers(new UpdateViewMessage(
             teams,

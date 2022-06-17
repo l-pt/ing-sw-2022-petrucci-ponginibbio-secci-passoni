@@ -62,7 +62,10 @@ public class ClientCLI extends Client{
     }
 
     /**
+     *
+     * @param msg
      * @return boolean true if the match has started, false otherwise
+     * @throws IOException
      */
     public boolean handleLobbyMessage(Message msg) throws IOException {
         //We have received a server message, check its Type to answer appropriately
@@ -102,6 +105,10 @@ public class ClientCLI extends Client{
         return false;
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void game() throws IOException {
         boolean running = true;
         while (running) {
@@ -121,6 +128,11 @@ public class ClientCLI extends Client{
         closeProgram();
     }
 
+    /**
+     *
+     * @param msg
+     * @throws IOException
+     */
     public void handleGameMessage(Message msg) throws IOException {
         switch (msg.getMessageId()) {
             case ASK_ASSISTANT -> {
@@ -204,6 +216,11 @@ public class ClientCLI extends Client{
         }
     }
 
+    /**
+     *
+     * @param index
+     * @return
+     */
     public boolean checkCharacters(int index){
         if (view.getCharacters().get(index).getId() == 9) {
             return view.getPlayerFromName(name).getSchool().getTables().values().stream().mapToInt(List::size).sum() != 0;
@@ -218,6 +235,10 @@ public class ClientCLI extends Client{
         return true;
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void handleCharacter() throws IOException {
         if(view.isExpert() && ((view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() && checkCharacters(0)) ||
                 (view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(1).getCost() && checkCharacters(1)) ||
@@ -269,6 +290,11 @@ public class ClientCLI extends Client{
         }
     }
 
+    /**
+     *
+     * @param characterId
+     * @throws IOException
+     */
     public void askCharacterParameters(int characterId) throws IOException {
         Character c = null;
         for (Character character : view.getCharacters()) {
@@ -453,6 +479,9 @@ public class ClientCLI extends Client{
         }
     }
 
+    /**
+     *
+     */
     public void closeProgram() {
         stdin.close();
         super.closeProgram();
@@ -460,6 +489,8 @@ public class ClientCLI extends Client{
 
     /**
      * Read an int from stdin
+     * @param prompt
+     * @return
      */
     private int readInt(String prompt) {
         return readInt(prompt, n -> true, "");
@@ -467,6 +498,10 @@ public class ClientCLI extends Client{
 
     /**
      * Read an int from stdin until it satisfies predicate
+     * @param prompt
+     * @param predicate
+     * @param error
+     * @return
      */
     private int readInt(String prompt, IntPredicate predicate, String error) {
         while (true) {

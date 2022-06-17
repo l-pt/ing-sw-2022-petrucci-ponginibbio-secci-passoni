@@ -28,18 +28,25 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     }
 
     /**
+     *
      * @return String the player's name, or null if the name is yet to be entered
      */
     public synchronized String getName() {
         return name;
     }
 
+    /**
+     *
+     * @return
+     */
     private synchronized boolean isActive(){
         return this.isActive;
     }
 
     /**
-     * Send a message to the client
+     *
+     * @param msg
+     * @throws IOException
      */
     public void sendMessage(Message msg) throws IOException {
         String json = GsonSingleton.get().toJson(msg);
@@ -50,7 +57,10 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     }
 
     /**
-     * Receive a message from the client
+     *
+     * @return
+     * @throws JsonSyntaxException
+     * @throws IOException
      */
     private Message readMessage() throws JsonSyntaxException, IOException {
         String json = in.readUTF();
@@ -58,12 +68,20 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     }
 
     /**
-     * Receive a message from the client
+     *
+     * @param messageClass
+     * @param <T>
+     * @return
+     * @throws JsonSyntaxException
+     * @throws IOException
      */
     private <T extends Message> T readMessage(Class<T> messageClass) throws JsonSyntaxException, IOException {
         return messageClass.cast(readMessage());
     }
 
+    /**
+     *
+     */
     private void closeConnection(){
         //attempt to close connection via socket object method
         try{
@@ -77,6 +95,9 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
         this.isActive = false;
     }
 
+    /**
+     *
+     */
     public synchronized void close(){
         if (setPlayersAndExpert) {
             server.setMatchParameters(null);
