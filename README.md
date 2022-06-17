@@ -18,7 +18,13 @@ I seguenti diagrammi delle classi rappresentano rispettivamente il diagramma UML
 - [UML basso livello]()
 
 ### Peer review
-TO DO
+Review al progetto del gruppo 10:
+- [Peer review 1](peer_review/review1.pdf)
+- [Peer review 2](peer_review/review2.pdf)
+
+Review del gruppo 55 al nostro pregetto:
+- [Peer review 1](peer_review/ReviewGC65.pdf)
+- [Peer review 2](peer_review/ReviewGC65_Connessione.pdf)
 
 ### JavaDoc
 La seguente documentazione include una descrizione delle classi e dei metodi utilizzati, può essere consultata al seguente indirizzo: [Javadoc]()
