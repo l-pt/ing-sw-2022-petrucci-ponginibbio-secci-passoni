@@ -44,47 +44,49 @@ public class Server {
     }
 
     /**
-     * getWaitingConnections returns List<Connection> waiting in the Eryantis lobby.
-     * @return
+     * getWaitingConnections()
+     * @return List<Connection> waiting in the Eryantis lobby.
      */
     public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
 
-    /** getMatchParameters returns matchParameters consisting of (int playerNumber, boolean expert).
-     * @return
+    /** getMatchParameters()
+     * @return matchParameters consisting of (number of players, isExpert).
      */
     public synchronized MatchParameters getMatchParameters() {
         return matchParameters;
     }
 
-    /** getFirstConnection() returns firstConnection.
+    /** getFirstConnection()
+     * @return firstConnection
      * Note: client of firstConnection decides matchParameters.
-     * @return
      */
     public Connection getFirstConnection() {
         return firstConnection;
     }
 
-    /** setMatchParameters() sets number of players, and if game is expert.
-     * Note: client of firstConnection decides matchParameters.
+    /** setMatchParameters()
      * @param waitingConnectionMax
      * @param expert
+     * sets number of players, and if game is expert.
+     * Note: client of firstConnection decides matchParameters.
      */
     public synchronized void setMatchParameters(int waitingConnectionMax, boolean expert) {
         matchParameters = new MatchParameters(waitingConnectionMax, expert);
     }
 
-    /** setMatchParameters() sets only number of players if game is not expert.
-     * Note: client of firstConnection decides matchParameters
+    /** setMatchParameters()
      * @param parameters
+     * sets only number of players if game is not expert.
+     * Note: client of firstConnection decides matchParameters.
      */
     public synchronized void setMatchParameters(MatchParameters parameters) {
         matchParameters = parameters;
     }
 
-    /** getConnectionFromName() returns Connection of client with given name
+    /** getConnectionFromName()
      * @param name
-     * @return
-     * @throws IllegalMoveException
+     * @return Connection of client with given name
+     * @throws IllegalMoveException when there is no client with given name
      */
     public Connection getConnectionFromName(String name) throws IllegalMoveException {
 
@@ -95,20 +97,21 @@ public class Server {
         throw new IllegalMoveException("There is no player with that name.");
     }
 
-    /** getConnectionsFromController() returns List<Connection> of clients with given controller.
-     * Note: association is by connectionControllerMap
+    /** getConnectionsFromController()
      * @param controller
-     * @return
+     * @return List<Connection> of clients with given controller.
+     * Note: association is by connectionControllerMap.
      */
     public List<Connection> getConnectionsFromController(Controller controller) {
         return connectionControllerMap.entrySet().stream().filter(e -> e.getValue() == controller).map(Map.Entry::getKey).toList();
     }
 
 
-    /** notifyMessage receives new messages from client's connection,
-     * puts message into the messageQueue, and notifies the server.
+    /** notifyMessage
      * @param connection
      * @param message
+     * receives new messages from client's connection,
+     * puts message into the messageQueue, and notifies the server.
      */
     public void notifyMessage(Connection connection, Message message) {
         synchronized (messageQueue) {
@@ -117,8 +120,9 @@ public class Server {
         }
     }
 
-    /** registerConnection() adds newConnection to the server's connections and waitingConnection lists.
+    /** registerConnection()
      * @param newConnection
+     * adds newConnection to the server's connections and waitingConnection lists.
      */
     public synchronized void registerConnection(Connection newConnection){
         connections.add(newConnection);
@@ -130,8 +134,9 @@ public class Server {
         }
     }
 
-    /** deregisterConnection() closes connection and removed it from the server's connections and waitingConnection lists.
+    /** deregisterConnection()
      * @param connection
+     * closes connection and removed it from the server's connections and waitingConnection lists.
      */
     public synchronized void deregisterConnection(Connection connection){
         connection.close();
@@ -164,9 +169,9 @@ public class Server {
         }
     }
 
-    /** true if there is a connected player with the same name,
+    /** nameUsed()
      * @param name
-     * @return
+     * @return true if there is a connected player with the same name,
      */
     public synchronized boolean nameUsed(String name) {
         for (Connection connection : connections) {
@@ -178,11 +183,12 @@ public class Server {
     }
 
     /**
+     * checkWaitingConnections()
+     * @throws IOException
+     * @throws IllegalMoveException
      * This function starts a new match, if there are enough players in the lobby.
      * It is called from Connection.run() (another thread) when a client has provided all
      * the required information (name, (max players, expert mode))
-     * @throws IOException
-     * @throws IllegalMoveException
      */
     public synchronized void checkWaitingConnections() throws IOException, IllegalMoveException {
 
@@ -237,9 +243,10 @@ public class Server {
     }
 
     /**
-     * Main server loop: processes all messages in the messageQueue
+     * run() main server loop
      * @throws InterruptedException
      * @throws IOException
+     * processes all messages in the messageQueue
      */
     public void run() throws InterruptedException, IOException {
 
@@ -269,11 +276,12 @@ public class Server {
         //serverSocketThread.close();
     }
 
-    /** handleClientMessage(connection, message) forwards the given message to all connections in the match controller.
-     * Note: if message is END_GAME, then deregister all Connections associated to match controller.
+    /** handleClientMessage()
      * @param connection
      * @param message
      * @throws IOException
+     * forwards the given message to all connections in the match controller.
+     * Note: if message is END_GAME, then deregister all Connections associated to match controller.
      */
     public void handleClientMessage(Connection connection, Message message) throws IOException {
 
@@ -305,7 +313,9 @@ public class Server {
         }
     }
 
-    /** close() closes the server. The serverSocketThread stops TCP listening.*/
+    /** close() closes the server.
+     * The serverSocketThread stops TCP listening.
+     */
     public void close() {
         serverSocketThread.close();
     }
