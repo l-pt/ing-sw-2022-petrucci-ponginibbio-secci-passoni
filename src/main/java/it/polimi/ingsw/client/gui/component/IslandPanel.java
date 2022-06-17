@@ -15,14 +15,21 @@ public class IslandPanel extends JPanel {
      * Size of the grid layout
      */
     private static final int DIM = 8;
-    private Island island;
+    private int islandSize;
     private ImageProvider imageProvider;
 
     public IslandPanel(Island island, boolean motherNature, int index, ImageProvider imageProvider) {
         super(new GridLayout(DIM, DIM));
-        this.island = island;
+        this.islandSize = Math.max(island.getTowers().size(), 1);
         this.imageProvider = imageProvider;
-        setBorder(BorderFactory.createTitledBorder("Island " + (index + 1)));
+        String title = "Island " + (index + 1);
+        if (islandSize > 1) {
+            title = title + " (x" + islandSize + ")";
+        }
+        if (island.getNoEntry() > 0) {
+            title = title + " (" + island.getNoEntry() + " no entry)";
+        }
+        setBorder(BorderFactory.createTitledBorder(title));
         JLabel[] grid = new JLabel[DIM * DIM];
         List<Object> pieces = new ArrayList<>(island.getStudents().size() + island.getTowers().size());
         pieces.addAll(island.getStudents());
@@ -60,6 +67,6 @@ public class IslandPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(imageProvider.getIsland(Math.max(island.getTowers().size(), 1)).getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+        g.drawImage(imageProvider.getIsland(islandSize).getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
     }
 }

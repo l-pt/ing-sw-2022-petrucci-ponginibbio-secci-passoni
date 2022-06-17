@@ -73,5 +73,6 @@ public class Character1Test extends TestCase {
         int cost = character.getCost();
         character.use(match, player1.getName(), color, 0);
         Assertions.assertEquals(character.getCost(), cost + 1);
+        Assertions.assertTrue(character.getCoin());
     }
 }

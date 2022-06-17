@@ -7,6 +7,7 @@ import it.polimi.ingsw.client.gui.component.StudentSelectorByColor;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.impl.Character1;
+import it.polimi.ingsw.model.character.impl.Character10;
 import it.polimi.ingsw.model.character.impl.Character11;
 import it.polimi.ingsw.model.character.impl.Character7;
 import it.polimi.ingsw.protocol.Message;
@@ -15,19 +16,33 @@ import it.polimi.ingsw.protocol.message.character.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.*;
+import java.util.List;
 
 public class ClientGUI extends Client {
     private JFrame frame;
     private JPanel questionsPanel;
     private JLabel errorLabel;
     private ViewGUI view;
+    private ClientSocketWorker socketWorker;
+    private Thread socketWorkerThread;
 
     public JFrame getFrame() {
         return frame;
+    }
+
+    private void sendMessageAsync(Message msg) {
+        executorService.submit(() -> {
+            try {
+                sendMessage(msg);
+            } catch (IOException e) {
+                finalMessage("Connection lost");
+            }
+        });
     }
 
     @Override
@@ -64,7 +79,7 @@ public class ClientGUI extends Client {
             questionsPanel.add(portField);
             JButton confirm = new JButton("Connect");
             confirm.setAlignmentX(Component.CENTER_ALIGNMENT);
-            confirm.addActionListener(actionEvent -> {
+            ActionListener actionListener = actionEvent -> {
                 int port;
                 try {
                     port = Integer.parseInt(portField.getText());
@@ -77,17 +92,21 @@ public class ClientGUI extends Client {
                 try {
                     socket = new Socket();
                     socket.connect(new InetSocketAddress(ipField.getText(), port), 5000);
+                    socket.setSoTimeout(2000);
                     in = new DataInputStream(socket.getInputStream());
                     out = new DataOutputStream(socket.getOutputStream());
                     errorLabel.setText("");
-                    Thread t = new Thread(new ClientSocketWorker(this));
-                    t.start();
+                    socketWorkerThread = new Thread(socketWorker = new ClientSocketWorker(this));
+                    socketWorkerThread.start();
                 } catch (IOException e) {
                     errorLabel.setText("Connection failed: " + e.getMessage());
                     frame.revalidate();
                     frame.repaint();
                 }
-            });
+            };
+            ipField.addActionListener(actionListener);
+            portField.addActionListener(actionListener);
+            confirm.addActionListener(actionListener);
             questionsPanel.add(errorLabel);
             questionsPanel.add(confirm);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -97,6 +116,10 @@ public class ClientGUI extends Client {
     }
 
     public void processMessage(Message msg) {
+        if (msg == null) {
+            finalMessage("Connection lost");
+            return;
+        }
         //We have received a server message, check its Type to answer appropriately
         switch (msg.getMessageId()) {
             case ERROR -> {
@@ -219,7 +242,7 @@ public class ClientGUI extends Client {
                 view.getBottomPanel().add(titleLbl);
 
                 int i = 0;
-                JPanel selectorsPanel = new JPanel();
+                JPanel selectorsPanel = new JPanel(new GridLayout(1, player.getSchool().getEntrance().size()));
                 selectorsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
                 EntranceStudentSelectorPanel[] studentSelectors = new EntranceStudentSelectorPanel[player.getSchool().getEntrance().size()];
                 for (Student student : player.getSchool().getEntrance()) {
@@ -324,21 +347,30 @@ public class ClientGUI extends Client {
                     askCharacterParameters(characterMessage.getCharacterId());
                 }
             }
+            case END_GAME -> {
+                EndGameMessage endGameMessage = (EndGameMessage) msg;
+                String message = "Game over. Winners: " + String.join(", ", endGameMessage.getWinner().getPlayers().stream().map(Player::getName).toArray(String[]::new));
+                finalMessage(message);
+            }
         }
     }
 
     private void handleCharacter() {
-        int coins = view.getPlayerFromName(name).getCoins();
-        if (view.isExpert() && (coins >= view.getCharacters().get(0).getCost() ||
-                coins >= view.getCharacters().get(1).getCost() ||
-                coins >= view.getCharacters().get(2).getCost())) {
+        Player player = view.getPlayerFromName(name);
+        int coins = player.getCoins();
+        List<Character> usableCharacters = new ArrayList<>(view.getCharacters().stream().filter(c -> coins >= c.getCost()).toList());
+        if (player.getSchool().getTables().values().stream().mapToInt(List::size).sum() == 0) {
+            //If the table is empty, we can't play Character10, so remove it from usableCharacters
+            usableCharacters.removeIf(c -> c instanceof Character10);
+        }
+        if (view.isExpert() && !usableCharacters.isEmpty()) {
             JLabel titleLbl = new JLabel("Choose a character");
             titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
             view.getBottomPanel().add(titleLbl);
 
             JPanel charPanel = new JPanel();
             charPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(view.getCharacters());
+            CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(usableCharacters);
             charPanel.add(characterSelectorPanel);
 
             JButton confirm = new JButton("Confirm");
@@ -351,7 +383,7 @@ public class ClientGUI extends Client {
                 if (sel == CharacterSelectorPanel.SELECTION_NONE) {
                     sendMessageAsync(new UseNoCharacterMessage());
                 } else {
-                    askCharacterParameters(view.getCharacters().get(sel));
+                    askCharacterParameters(usableCharacters.get(sel));
                 }
             });
             charPanel.add(confirm);
@@ -440,12 +472,14 @@ public class ClientGUI extends Client {
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
                     Map<PawnColor, Integer> entranceToCardMap = entranceSel.getSelection();
+                    int entranceToCardMapCount = entranceToCardMap.values().stream().mapToInt(Integer::intValue).sum();
                     Map<PawnColor, Integer> cardToEntranceMap = characterSel.getSelection();
-                    if (entranceToCardMap.size() != cardToEntranceMap.size()) {
+                    int cardToEntranceMapCount = cardToEntranceMap.values().stream().mapToInt(Integer::intValue).sum();
+                    if (entranceToCardMapCount != cardToEntranceMapCount) {
                         errorLabel.setText("You must select the same number of students from entrance and card");
                         frame.revalidate();
                         frame.repaint();
-                    } else if (entranceToCardMap.size() < 1 || entranceToCardMap.size() > 3) {
+                    } else if (entranceToCardMapCount < 1 || entranceToCardMapCount > 3) {
                         errorLabel.setText("You may only select up to 3 students");
                         frame.revalidate();
                         frame.repaint();
@@ -486,14 +520,16 @@ public class ClientGUI extends Client {
 
                 JButton confirm = new JButton("Confirm");
                 confirm.addActionListener(actionEvent -> {
-                    Map<PawnColor, Integer> entranceToCardMap = entranceSel.getSelection();
-                    Map<PawnColor, Integer> cardToEntranceMap = tableSel.getSelection();
-                    if (entranceToCardMap.size() != cardToEntranceMap.size()) {
+                    Map<PawnColor, Integer> entranceToTableMap = entranceSel.getSelection();
+                    int entranceToTableMapCount = entranceToTableMap.values().stream().mapToInt(Integer::intValue).sum();
+                    Map<PawnColor, Integer> tableToEntranceMap = tableSel.getSelection();
+                    int tableToEntranceMapCount = tableToEntranceMap.values().stream().mapToInt(Integer::intValue).sum();
+                    if (entranceToTableMapCount != tableToEntranceMapCount) {
                         errorLabel.setText("You must select the same number of students from entrance and card");
                         frame.revalidate();
                         frame.repaint();
-                    } else if (entranceToCardMap.size() < 1 || entranceToCardMap.size() > 2) {
-                        errorLabel.setText("You may only select up to 3 students");
+                    } else if (entranceToTableMapCount < 1 || entranceToTableMapCount > 2) {
+                        errorLabel.setText("You may only select up to 2 students");
                         frame.revalidate();
                         frame.repaint();
                     } else {
@@ -501,7 +537,7 @@ public class ClientGUI extends Client {
                         errorLabel.setText("");
                         frame.revalidate();
                         frame.repaint();
-                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToCardMap, cardToEntranceMap));
+                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToTableMap, tableToEntranceMap));
                     }
                 });
                 selPanel.add(confirm);
@@ -530,5 +566,62 @@ public class ClientGUI extends Client {
         view.getBottomPanel().add(errorLabel);
         frame.revalidate();
         frame.repaint();
+    }
+
+    /**
+     * Display a final message on the screen and a button to close the program.
+     * Free all resources (socket worker, socket, threads)
+     * @param message The message to display on the screen (e.g. "Game over")
+     */
+    private void finalMessage(String message) {
+        SwingUtilities.invokeLater(() -> {
+            JPanel pane;
+            if (view != null) {
+                pane = view.getBottomPanel();
+            } else {
+                pane = questionsPanel;
+            }
+            pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+            pane.removeAll();
+            JLabel title = new JLabel(message);
+            title.setAlignmentX(Component.CENTER_ALIGNMENT);
+            pane.add(title);
+            JButton quit = new JButton("Close Program");
+            quit.setMaximumSize(new Dimension(160, 40));
+            quit.setAlignmentX(Component.CENTER_ALIGNMENT);
+            quit.addActionListener(actionEvent -> frame.dispose());
+            pane.add(quit);
+            frame.revalidate();
+            frame.repaint();
+
+            if (socketWorker != null) {
+                socketWorker.setRunning(false);
+                try {
+                    socketWorkerThread.join();
+                } catch (InterruptedException ignored) {
+                }
+                socketWorker = null;
+                socketWorkerThread = null;
+            }
+            closeSilent(in);
+            in = null;
+            closeSilent(out);
+            out = null;
+            closeSilent(socket);
+            socket = null;
+            if (executorService != null) {
+                executorService.shutdown();
+                executorService = null;
+            }
+        });
+    }
+
+    private static void closeSilent(Closeable c) {
+        if (c != null) {
+            try {
+                c.close();
+            } catch (IOException ignored) {
+            }
+        }
     }
 }

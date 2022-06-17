@@ -1,10 +1,7 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.View;
-import it.polimi.ingsw.client.gui.component.CloudPanel;
-import it.polimi.ingsw.client.gui.component.DynamicIcon;
-import it.polimi.ingsw.client.gui.component.IslandPanel;
-import it.polimi.ingsw.client.gui.component.SchoolPanel;
+import it.polimi.ingsw.client.gui.component.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 
@@ -167,10 +164,9 @@ public abstract class ViewGUI extends View<ClientGUI> {
 
             JPanel charactersPanel = new JPanel(new GridLayout(1, 3, 7, 0));
             for (Character character : characters) {
-                lbl = new JLabel(" ", new DynamicIcon(imageProvider.getCharacter(character)), SwingConstants.TRAILING);
-                lbl.setToolTipText("<html>Character " + (character.getId() + 1) + "<br>" + character.getDescription() + "</html>");
-                charactersPanel.add(lbl);
-                //TODO draw students and no entry cards on them
+                CharacterPanel characterPanel = new CharacterPanel(character, imageProvider);
+                characterPanel.setToolTipText("<html>Character " + (character.getId() + 1) + "<br>" + character.getDescription() + "</html>");
+                charactersPanel.add(characterPanel);
             }
             expertPanel.add(charactersPanel, BorderLayout.CENTER);
         }

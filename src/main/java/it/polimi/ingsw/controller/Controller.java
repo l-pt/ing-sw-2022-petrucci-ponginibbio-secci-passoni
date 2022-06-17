@@ -23,7 +23,11 @@ public class Controller {
     private Map<String, Message> nextMessage = new HashMap<>();
 
     public Controller(Server server, List<String> connectionsNames) throws IllegalMoveException {
+
+        //sets this server to the passed arg
         this.server = server;
+
+        //gets list of players from arg
         List<Player> players = new ArrayList<>(server.getMatchParameters().getPlayerNumber());
         List<Team> teams = new ArrayList<>(server.getMatchParameters().getPlayerNumber() == 4 ? 2 : server.getMatchParameters().getPlayerNumber());
         switch (server.getMatchParameters().getPlayerNumber()) {
@@ -259,29 +263,6 @@ public class Controller {
                 match.setCurrentPlayer(match.getPlayersOrder().get(0).getName());
                 match.populateClouds();
                 return Map.of(match.getPlayersOrder().get(0).getName(), List.of(new AskAssistantMessage()));
-            }
-        }
-    }
-
-    public void handleClientMessage(Connection connection, Message message) throws IOException {
-        boolean gameFinished = false;
-        for (Map.Entry<String, List<Message>> entry : handleMessage(connection.getName(), message).entrySet()) {
-            Connection c;
-            try {
-                c = server.getConnectionFromName(entry.getKey());
-            } catch (IllegalMoveException e) {
-                throw new AssertionError();
-            }
-            for (Message m : entry.getValue()) {
-                if (m.getMessageId() == MessageId.END_GAME) {
-                    gameFinished = true;
-                }
-                c.sendMessage(m);
-            }
-        }
-        if (gameFinished) {
-            for (Connection c : server.getConnectionsFromController(this)) {
-                server.deregisterConnection(c);
             }
         }
     }
