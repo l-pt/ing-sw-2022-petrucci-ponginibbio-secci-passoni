@@ -23,7 +23,7 @@ public class ControllerTest extends TestCase {
     private static Server server;
     static {
         try {
-            server = new Server();
+            server = new Server(61863);
         } catch (IOException e) {
             e.printStackTrace();
         }

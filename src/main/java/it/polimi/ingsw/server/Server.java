@@ -36,8 +36,8 @@ public class Server {
     private Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
 
     /** Eryantis Server */
-    public Server() throws IOException{
-        serverSocketThread = new ServerSocketThread();
+    public Server(int port) throws IOException{
+        serverSocketThread = new ServerSocketThread(port);
         executor.submit(serverSocketThread);
         firstConnection = null;
         matchParameters = null;
@@ -49,14 +49,16 @@ public class Server {
      */
     public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
 
-    /** getMatchParameters()
+    /**
+     * getMatchParameters()
      * @return matchParameters consisting of (number of players, isExpert).
      */
     public synchronized MatchParameters getMatchParameters() {
         return matchParameters;
     }
 
-    /** getFirstConnection()
+    /**
+     * getFirstConnection()
      * @return firstConnection
      * Note: client of firstConnection decides matchParameters.
      */
@@ -64,7 +66,8 @@ public class Server {
         return firstConnection;
     }
 
-    /** setMatchParameters()
+    /**
+     * setMatchParameters()
      * @param waitingConnectionMax
      * @param expert
      * sets number of players, and if game is expert.
@@ -74,7 +77,8 @@ public class Server {
         matchParameters = new MatchParameters(waitingConnectionMax, expert);
     }
 
-    /** setMatchParameters()
+    /**
+     * setMatchParameters()
      * @param parameters
      * sets only number of players if game is not expert.
      * Note: client of firstConnection decides matchParameters.
@@ -83,7 +87,8 @@ public class Server {
         matchParameters = parameters;
     }
 
-    /** getConnectionFromName()
+    /**
+     * getConnectionFromName()
      * @param name
      * @return Connection of client with given name
      * @throws IllegalMoveException when there is no client with given name
@@ -97,7 +102,8 @@ public class Server {
         throw new IllegalMoveException("There is no player with that name.");
     }
 
-    /** getConnectionsFromController()
+    /**
+     * getConnectionsFromController()
      * @param controller
      * @return List<Connection> of clients with given controller.
      * Note: association is by connectionControllerMap.
@@ -107,7 +113,8 @@ public class Server {
     }
 
 
-    /** notifyMessage
+    /**
+     * notifyMessage
      * @param connection
      * @param message
      * receives new messages from client's connection,
@@ -120,7 +127,8 @@ public class Server {
         }
     }
 
-    /** registerConnection()
+    /**
+     * registerConnection()
      * @param newConnection
      * adds newConnection to the server's connections and waitingConnection lists.
      */
@@ -134,7 +142,8 @@ public class Server {
         }
     }
 
-    /** deregisterConnection()
+    /**
+     * deregisterConnection()
      * @param connection
      * closes connection and removed it from the server's connections and waitingConnection lists.
      */
@@ -169,7 +178,8 @@ public class Server {
         }
     }
 
-    /** nameUsed()
+    /**
+     * nameUsed()
      * @param name
      * @return true if there is a connected player with the same name,
      */
@@ -253,7 +263,7 @@ public class Server {
         //loop message handler
         while (true) {
 
-            //set enrty to be first message in queue
+            //set entry to be first message in queue
             MessageQueueEntry entry;
             synchronized (messageQueue) {
                 while (messageQueue.isEmpty()) {
@@ -276,7 +286,8 @@ public class Server {
         //serverSocketThread.close();
     }
 
-    /** handleClientMessage()
+    /**
+     * handleClientMessage()
      * @param connection
      * @param message
      * @throws IOException
@@ -313,7 +324,8 @@ public class Server {
         }
     }
 
-    /** close() closes the server.
+    /**
+     * close() closes the server.
      * The serverSocketThread stops TCP listening.
      */
     public void close() {
@@ -330,8 +342,8 @@ public class Server {
         private int port;
         private boolean active;
 
-        public ServerSocketThread() throws IOException {
-            port = 61863; //Politecnico di Milano Est. 1863
+        public ServerSocketThread(int port) throws IOException {
+            this.port = port;
             serverSocket = new ServerSocket(port);
             active = true;
         }
