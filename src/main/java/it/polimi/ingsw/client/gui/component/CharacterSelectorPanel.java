@@ -23,7 +23,7 @@ public class CharacterSelectorPanel extends JPanel {
         }
         comboBox.addActionListener(actionEvent -> {
             String sel = (String) comboBox.getSelectedItem();
-            if (sel.equals("Don't use any characters")) {
+            if (sel.equals("Don't use any character")) {
                 selection = SELECTION_NONE;
             } else {
                 selection = characterMap.get(Integer.parseInt(sel.split(" ")[1]));

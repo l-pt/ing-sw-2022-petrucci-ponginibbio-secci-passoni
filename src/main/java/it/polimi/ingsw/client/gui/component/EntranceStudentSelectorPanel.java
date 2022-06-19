@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.gui.component;
 
 import it.polimi.ingsw.model.Island;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Student;
 
 import javax.swing.*;
@@ -12,13 +13,15 @@ public class EntranceStudentSelectorPanel extends JPanel {
     private Student student;
     private int selection = SELECTION_NONE;
 
-    public EntranceStudentSelectorPanel(Student student, List<Island> islands) {
+    public EntranceStudentSelectorPanel(Student student, List<Island> islands, Player player) {
         super();
         this.student = student;
         add(new JLabel(student.getColor().name() + " Student: "));
         JComboBox<String> comboBox = new JComboBox<>();
         comboBox.addItem("Don't move");
-        comboBox.addItem("Table");
+        if (player.getSchool().getTableCount(student.getColor()) < 10) {
+            comboBox.addItem("Table");
+        }
         for (int i = 0; i < islands.size(); ++i) {
             comboBox.addItem("Island " + (i + 1));
         }

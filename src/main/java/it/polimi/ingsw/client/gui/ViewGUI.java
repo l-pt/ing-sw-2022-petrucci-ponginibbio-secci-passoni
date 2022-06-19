@@ -165,7 +165,7 @@ public abstract class ViewGUI extends View<ClientGUI> {
             JPanel charactersPanel = new JPanel(new GridLayout(1, 3, 7, 0));
             for (Character character : characters) {
                 CharacterPanel characterPanel = new CharacterPanel(character, imageProvider);
-                characterPanel.setToolTipText("<html>Character " + (character.getId() + 1) + "<br>" + character.getDescription() + "</html>");
+                characterPanel.setToolTipText("<html>Character " + (character.getId() + 1) + "<br><p width=\"350px\">" + character.getDescription() + "</p></html>");
                 charactersPanel.add(characterPanel);
             }
             expertPanel.add(charactersPanel, BorderLayout.CENTER);

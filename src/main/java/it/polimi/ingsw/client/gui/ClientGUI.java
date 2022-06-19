@@ -22,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClientGUI extends Client {
     private JFrame frame;
@@ -46,7 +47,7 @@ public class ClientGUI extends Client {
     }
 
     @Override
-    public void run() throws IOException {
+    public void run() {
         SwingUtilities.invokeLater(() -> {
             frame = new JFrame("Eriantys");
 
@@ -246,7 +247,7 @@ public class ClientGUI extends Client {
                 selectorsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
                 EntranceStudentSelectorPanel[] studentSelectors = new EntranceStudentSelectorPanel[player.getSchool().getEntrance().size()];
                 for (Student student : player.getSchool().getEntrance()) {
-                    selectorsPanel.add(studentSelectors[i++] = new EntranceStudentSelectorPanel(student, view.getIslands()));
+                    selectorsPanel.add(studentSelectors[i++] = new EntranceStudentSelectorPanel(student, view.getIslands(), player));
                 }
                 view.getBottomPanel().add(selectorsPanel);
 
@@ -359,8 +360,17 @@ public class ClientGUI extends Client {
         Player player = view.getPlayerFromName(name);
         int coins = player.getCoins();
         List<Character> usableCharacters = new ArrayList<>(view.getCharacters().stream().filter(c -> coins >= c.getCost()).toList());
-        if (player.getSchool().getTables().values().stream().mapToInt(List::size).sum() == 0) {
+        int tableTotalStudents = player.getSchool().getTables().values().stream().mapToInt(List::size).sum();
+        if (tableTotalStudents == 0) {
             //If the table is empty, we can't play Character10, so remove it from usableCharacters
+            usableCharacters.removeIf(c -> c instanceof Character10);
+        } else if (tableTotalStudents == 10 * PawnColor.values().length) {
+            //If the table is full, we can't play Character11
+            usableCharacters.removeIf(c -> c instanceof Character11);
+        }
+        //Remove Character10 from the list if it is not possible to make a legal move
+        Set<PawnColor> fullTableColors = Arrays.stream(PawnColor.values()).filter(color -> player.getSchool().getTableCount(color) == 10).collect(Collectors.toSet());
+        if (!fullTableColors.isEmpty() && fullTableColors.containsAll(player.getSchool().getEntrance().stream().map(Student::getColor).toList())) {
             usableCharacters.removeIf(c -> c instanceof Character10);
         }
         if (view.isExpert() && !usableCharacters.isEmpty()) {
@@ -509,13 +519,14 @@ public class ClientGUI extends Client {
                 paramsPanel.add(confirm);
             }
             case 9 -> {
+                Player player = view.getPlayerFromName(name);
                 titleLbl.setText("Select up to 2 entrance students and table students to exchange");
 
                 JPanel selPanel = new JPanel(null);
                 selPanel.setLayout(new BoxLayout(selPanel, BoxLayout.Y_AXIS));
-                StudentSelectorByColor entranceSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getEntrance(), 2, "Entrance: ");
+                StudentSelectorByColor entranceSel = new StudentSelectorByColor(player.getSchool().getEntrance(), 2, "Entrance: ");
                 selPanel.add(entranceSel);
-                StudentSelectorByColor tableSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getTables().values().stream().flatMap(Collection::stream).toList(), 2, "Table: ");
+                StudentSelectorByColor tableSel = new StudentSelectorByColor(player.getSchool().getTables().values().stream().flatMap(Collection::stream).toList(), 2, "Table: ");
                 selPanel.add(tableSel);
 
                 JButton confirm = new JButton("Confirm");
@@ -533,21 +544,51 @@ public class ClientGUI extends Client {
                         frame.revalidate();
                         frame.repaint();
                     } else {
-                        view.getBottomPanel().removeAll();
-                        errorLabel.setText("");
-                        frame.revalidate();
-                        frame.repaint();
-                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToTableMap, tableToEntranceMap));
+                        //Check if the move surpasses the limit of 10 students per table
+                        School tempSchool = new School();
+                        tempSchool.addStudentsToTable(player.getSchool().getTables().values().stream().flatMap(Collection::stream).toList());
+                        for (Map.Entry<PawnColor, Integer> entry : entranceToTableMap.entrySet()) {
+                            List<Student> students = new ArrayList<>(entry.getValue());
+                            for (int i = 0; i < entry.getValue(); ++i) {
+                                students.add(new Student(entry.getKey()));
+                            }
+                            tempSchool.addStudentsToTable(students);
+                        }
+                        for (Map.Entry<PawnColor, Integer> entry : tableToEntranceMap.entrySet()) {
+                            tempSchool.removeStudentsByColor(entry.getKey(), entry.getValue());
+                        }
+                        boolean error = false;
+                        for (PawnColor color : PawnColor.values()) {
+                            if (tempSchool.getTableCount(color) > 10) {
+                                error = true;
+                                break;
+                            }
+                        }
+                        if (!error) {
+                            view.getBottomPanel().removeAll();
+                            errorLabel.setText("");
+                            frame.revalidate();
+                            frame.repaint();
+                            sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToTableMap, tableToEntranceMap));
+                        } else {
+                            errorLabel.setText("A table can only contain 10 students");
+                            frame.revalidate();
+                            frame.repaint();
+                        }
                     }
                 });
                 selPanel.add(confirm);
                 paramsPanel.add(selPanel);
             }
             case 10 -> {
+                Player player = view.getPlayerFromName(name);
                 Character11 c11 = (Character11) c;
                 titleLbl.setText("Choose a student to move from the character card to your dining room");
 
-                JComboBox<PawnColor> comboBox = new JComboBox<>(c11.getStudents().stream().map(Student::getColor).distinct().toArray(PawnColor[]::new));
+                Set<PawnColor> availableColors = c11.getStudents().stream().map(Student::getColor).collect(Collectors.toSet());
+                //If the player has 10 students of a given color in the table, remove the color from the list
+                availableColors.removeIf(color -> player.getSchool().getTableCount(color) == 10);
+                JComboBox<PawnColor> comboBox = new JComboBox<>(availableColors.toArray(PawnColor[]::new));
                 paramsPanel.add(comboBox);
 
                 JButton confirm = new JButton("Confirm");
@@ -581,8 +622,8 @@ public class ClientGUI extends Client {
             } else {
                 pane = questionsPanel;
             }
-            pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
             pane.removeAll();
+            pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
             JLabel title = new JLabel(message);
             title.setAlignmentX(Component.CENTER_ALIGNMENT);
             pane.add(title);
