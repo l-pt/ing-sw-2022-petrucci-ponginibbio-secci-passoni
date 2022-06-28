@@ -9,9 +9,18 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class TwoPlayersViewGUI extends ViewGUI {
+    /**
+     * Panel with player information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel playerPanel;
+    /**
+     * Panel with opponent information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel opponentPanel;
 
+    /**
+     * @see ViewGUI#ViewGUI
+     */
     protected TwoPlayersViewGUI(ClientGUI client) {
         super(client);
         mainPanel.setLayout(new GridBagLayout());
@@ -99,6 +108,9 @@ public class TwoPlayersViewGUI extends ViewGUI {
         ));
     }
 
+    /**
+     * Update the players panels and call {@link ViewGUI#print}
+     */
     @Override
     public void print() {
         super.print();

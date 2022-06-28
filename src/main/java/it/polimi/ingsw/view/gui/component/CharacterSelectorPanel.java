@@ -7,9 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Panel used for selecting the character to play during the match. It also has an option to play no characters.
+ */
 public class CharacterSelectorPanel extends JPanel {
     public static final int SELECTION_NONE = -1;
-    //Maps character number [1-12] to character index [0-2]
+    /**
+     * Maps character number [1-12] to character index [0, characters.size())
+     */
     private Map<Integer, Integer> characterMap = new HashMap<>(3);
     private int selection = SELECTION_NONE;
 
@@ -33,8 +38,8 @@ public class CharacterSelectorPanel extends JPanel {
     }
 
     /**
-     * @return SELECTION_NONE if "Don't use any character" was selected,
-     * otherwise the index of the selected character [0, characters.size()) is returned
+     * @return {@link CharacterSelectorPanel#SELECTION_NONE} if "Don't use any character" was selected,
+     * otherwise the index of the selected character in the interval [0, characters.size()) is returned
      */
     public int getSelection() {
         return selection;

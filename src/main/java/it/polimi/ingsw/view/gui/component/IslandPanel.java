@@ -10,6 +10,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Panel for drawing island cards and character, towers on them.
+ */
 public class IslandPanel extends JPanel {
     /**
      * Size of the grid layout

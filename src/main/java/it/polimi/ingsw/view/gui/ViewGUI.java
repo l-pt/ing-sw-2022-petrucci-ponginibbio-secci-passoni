@@ -14,14 +14,39 @@ import java.util.List;
 public abstract class ViewGUI extends View<ClientGUI> {
     private ImageProvider imageProvider;
 
+    /**
+     * The main panel of the frame that contains all the view elements (player boards, clouds, islands, etc)
+     */
     protected JPanel mainPanel;
+    /**
+     * The panel that contains island cards
+     */
     protected JPanel islandsPanel;
+    /**
+     * The panel that contains clouds and professors that have not been acquired by players yet
+     */
     protected JPanel cpPanel;
+    /**
+     * The panel with expert mode information: coin reserve and character cards
+     */
     protected JPanel expertPanel;
+    /**
+     * This panel contains the player's assistants
+     */
     protected JPanel assistantsPanel;
 
+    /**
+     * Panel reserved for "controller" elements like buttons, menus, etc. that are used to make a move
+     */
     protected JPanel bottomPanel;
 
+    /**
+     * Factory method to create a ViewGUI instance
+     * @param client The client that holds the view
+     * @param playerNumber Number of players in the match, [2-4].
+     * @return An object of a ViewGUI subclass (either {@link TwoPlayersViewGUI},
+     * {@link ThreePlayersViewGUI} or {@link FourPlayersViewGUI})
+     */
     public static ViewGUI create(ClientGUI client, int playerNumber) {
         switch (playerNumber) {
             case 2 -> {
@@ -39,6 +64,11 @@ public abstract class ViewGUI extends View<ClientGUI> {
         }
     }
 
+    /**
+     * ViewGUI constructor used by the {@link ViewGUI#create} factory method.
+     * This constructor is protected. To create a ViewGUI object, use {@link ViewGUI#create}
+     * @param client The client that holds the view
+     */
     protected ViewGUI(ClientGUI client) {
         this.client = client;
         imageProvider = new ImageProvider();
@@ -69,6 +99,10 @@ public abstract class ViewGUI extends View<ClientGUI> {
         client.getFrame().repaint();
     }
 
+    /**
+     * Update all the panels (except for players, which are handled by subclasses) on the view
+     * with the latest information and repaint the frame
+     */
     @Override
     public void print() {
         drawIslands();
@@ -79,14 +113,9 @@ public abstract class ViewGUI extends View<ClientGUI> {
         client.getFrame().repaint();
     }
 
-    public Player getPlayerFromName(String name){
-        for (Player player : playersOrder) {
-            if (player.getName().equals(name))
-                return player;
-        }
-        throw new IllegalArgumentException();
-    }
-
+    /**
+     * Update the {@link ViewGUI#islandsPanel} JPanel
+     */
     private void drawIslands() {
         islandsPanel.removeAll();
 
@@ -112,6 +141,9 @@ public abstract class ViewGUI extends View<ClientGUI> {
         }
     }
 
+    /**
+     * Update the {@link ViewGUI#cpPanel} JPanel
+     */
     private void drawCloudsAndProfessors() {
         cpPanel.removeAll();
 
@@ -149,6 +181,9 @@ public abstract class ViewGUI extends View<ClientGUI> {
         ));
     }
 
+    /**
+     * Update the {@link ViewGUI#expertPanel} JPanel
+     */
     private void drawExpertMode() {
         expertPanel.removeAll();
         if (!expert) {
@@ -173,6 +208,13 @@ public abstract class ViewGUI extends View<ClientGUI> {
         }
     }
 
+    /**
+     * Draw the school, coins, assistant number, last played assistant (if applicable) of the provided player and towers
+     * on the given panel
+     * @param playerPanel The panel where player information is drawn
+     * @param player A player object
+     * @param towers A list of towers to draw onto the tower space of the school
+     */
     protected void drawPlayer(JPanel playerPanel, Player player, List<Tower> towers) {
         playerPanel.removeAll();
         if (playerPanel.getBorder() == null) {
@@ -205,6 +247,9 @@ public abstract class ViewGUI extends View<ClientGUI> {
         playerPanel.add(schoolPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Update the {@link ViewGUI#assistantsPanel} JPanel
+     */
     private void drawAssistants() {
         assistantsPanel.removeAll();
         for (Assistant assistant : assistants) {
@@ -214,6 +259,10 @@ public abstract class ViewGUI extends View<ClientGUI> {
         }
     }
 
+    /**
+     * Get the panel at the bottom of the screen
+     * @return The {@link ViewGUI#bottomPanel} attribute
+     */
     public JPanel getBottomPanel() {
         return bottomPanel;
     }

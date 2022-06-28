@@ -11,10 +11,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThreePlayersViewGUI extends ViewGUI {
+    /**
+     * Panel with player information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel playerPanel;
+    /**
+     * Panel with opponent information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel opponent1Panel;
+    /**
+     * Panel with opponent information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel opponent2Panel;
 
+    /**
+     * @see ViewGUI#ViewGUI
+     */
     protected ThreePlayersViewGUI(ClientGUI client) {
         super(client);
         mainPanel.setLayout(new GridBagLayout());
@@ -111,6 +123,9 @@ public class ThreePlayersViewGUI extends ViewGUI {
         ));
     }
 
+    /**
+     * Update the players panels and call {@link ViewGUI#print}
+     */
     @Override
     public void print() {
         super.print();

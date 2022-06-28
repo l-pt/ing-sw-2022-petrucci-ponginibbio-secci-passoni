@@ -7,6 +7,9 @@ import it.polimi.ingsw.model.Student;
 import javax.swing.*;
 import java.util.List;
 
+/**
+ * Panel for selecting where to move an entrance student (table or island)
+ */
 public class EntranceStudentSelectorPanel extends JPanel {
     public static final int SELECTION_NONE = -2;
     public static final int SELECTION_TABLE = -1;
@@ -42,7 +45,8 @@ public class EntranceStudentSelectorPanel extends JPanel {
     }
 
     /**
-     * @return SELECTION_NONE if "Don't move" was selected, SELECTION_TABLE if "Table" was selected,
+     * @return {@link EntranceStudentSelectorPanel#SELECTION_NONE} if "Don't move" was selected,
+     * {@link EntranceStudentSelectorPanel#SELECTION_TABLE} if "Table" was selected,
      * otherwise the index of the selected island [0, islands.size()) is returned
      */
     public int getSelection() {

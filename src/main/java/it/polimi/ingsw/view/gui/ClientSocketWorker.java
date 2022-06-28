@@ -9,6 +9,11 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.List;
 
+/**
+ * The ClientSocketWorker runs in the background and fetches new messages from the server
+ * until it is stopped with {@link ClientSocketWorker#setRunning}.
+ * When a new message is available, it calls {@link it.polimi.ingsw.client.ClientGUI#processMessage}
+ */
 public class ClientSocketWorker extends SwingWorker<Void, Message> {
     private ClientGUI client;
     private boolean running;
@@ -26,6 +31,11 @@ public class ClientSocketWorker extends SwingWorker<Void, Message> {
         this.running = running;
     }
 
+    /**
+     * Wait for new server messages.
+     *
+     * This method is called automatically by {@link SwingWorker} and is executed on a separate thread.
+     */
     @Override
     protected Void doInBackground() {
         while (isRunning()) {
@@ -43,6 +53,12 @@ public class ClientSocketWorker extends SwingWorker<Void, Message> {
         return null;
     }
 
+    /**
+     * Notify the client about new messages.
+     *
+     * This method is called automatically by {@link SwingWorker} and is executed on the Event Dispatcher Thread.
+     * @param chunks A list of new messages
+     */
     @Override
     protected void process(List<Message> chunks) {
         for (Message msg : chunks) {

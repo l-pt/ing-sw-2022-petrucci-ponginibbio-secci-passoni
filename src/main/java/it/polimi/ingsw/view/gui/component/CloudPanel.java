@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * Panel for drawing cloud cards and students on them.
+ */
 public class CloudPanel extends JPanel {
     /**
      * Size of the grid layout

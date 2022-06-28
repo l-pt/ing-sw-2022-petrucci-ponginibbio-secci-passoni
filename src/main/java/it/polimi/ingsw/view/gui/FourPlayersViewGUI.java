@@ -12,11 +12,26 @@ import java.util.Collections;
 import java.util.List;
 
 public class FourPlayersViewGUI extends ViewGUI {
+    /**
+     * Panel with player information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel playerPanel;
+    /**
+     * Panel with team mate information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel teamMatePanel;
+    /**
+     * Panel with opponent information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel opponent1Panel;
+    /**
+     * Panel with opponent information (board, coins, number of assistants, last played assistant)
+     */
     private JPanel opponent2Panel;
 
+    /**
+     * @see ViewGUI#ViewGUI
+     */
     protected FourPlayersViewGUI(ClientGUI client) {
         super(client);
         mainPanel.setLayout(new GridBagLayout());
@@ -127,6 +142,9 @@ public class FourPlayersViewGUI extends ViewGUI {
         ));
     }
 
+    /**
+     * Update the players panels and call {@link ViewGUI#print}
+     */
     @Override
     public void print() {
         super.print();

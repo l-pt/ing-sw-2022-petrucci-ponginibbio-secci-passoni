@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The ImageProvider class provides methods to get {@link BufferedImage} objects of the game elements, like students,
+ * assistants, professors, etc.
+ * Images are cached to avoid reading them from disk over and over again.
+ */
 public class ImageProvider {
     private BufferedImage school;
     private BufferedImage[] island;

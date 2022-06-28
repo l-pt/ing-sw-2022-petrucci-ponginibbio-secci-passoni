@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Panel for selecting from a list of students.
+ */
 public class StudentSelectorByColor extends JPanel {
     private Map<PawnColor, Integer> selections = new HashMap<>(PawnColor.values().length);
 
@@ -35,6 +38,10 @@ public class StudentSelectorByColor extends JPanel {
         }
     }
 
+    /**
+     * Get the number of selected students for each color
+     * @return A {@link Map} that maps a {@link PawnColor} to the number of selected students of that color
+     */
     public Map<PawnColor, Integer> getSelection() {
         return selections;
     }

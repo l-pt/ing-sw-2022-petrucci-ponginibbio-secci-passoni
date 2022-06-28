@@ -25,18 +25,48 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the graphical user interface client
+ */
 public class ClientGUI extends Client {
+    /**
+     * Main program frame
+     */
     private JFrame frame;
+    /**
+     * Panel used when asking username, server IP and port, expert mode, players number
+     */
     private JPanel questionsPanel;
+    /**
+     * A label that can contain an error message
+     */
     private JLabel errorLabel;
+    /**
+     * The view contains the current game state
+     */
     private ViewGUI view;
+    /**
+     * Background worker used to fetch new server messages
+     */
     private ClientSocketWorker socketWorker;
+    /**
+     * Thread where the {@link ClientGUI#socketWorker} runs
+     */
     private Thread socketWorkerThread;
 
+    /**
+     * Get the main program frame
+     * @return The main program frame
+     */
     public JFrame getFrame() {
         return frame;
     }
 
+    /**
+     * Send a message to the server on another thread.
+     * If the message cannot be sent due to a network error, stop the game and display an error.
+     * @param msg The message to send to the server
+     */
     private void sendMessageAsync(Message msg) {
         executorService.submit(() -> {
             try {
@@ -47,6 +77,9 @@ public class ClientGUI extends Client {
         });
     }
 
+    /**
+     * Initialize the client: open the main frame and ask for server IP and port
+     */
     @Override
     public void run() {
         SwingUtilities.invokeLater(() -> {
@@ -117,6 +150,11 @@ public class ClientGUI extends Client {
         });
     }
 
+    /**
+     * This method is called in the Event Dispatcher Thread by the {@link ClientGUI#socketWorker} whenever a new
+     * server messages is available.
+     * @param msg The new server message to process
+     */
     public void processMessage(Message msg) {
         if (msg == null) {
             finalMessage("Connection lost");
@@ -357,6 +395,10 @@ public class ClientGUI extends Client {
         }
     }
 
+    /**
+     * Determine if there are characters that the player can play. If so, ask the player which character to play and
+     * ask for the required parameters to make the move.
+     */
     private void handleCharacter() {
         Player player = view.getPlayerFromName(name);
         int coins = player.getCoins();
@@ -406,6 +448,10 @@ public class ClientGUI extends Client {
         }
     }
 
+    /**
+     * Ask the player the parameters required to play the character with the given id
+     * @param characterId The character ID (0-12)
+     */
     private void askCharacterParameters(int characterId) {
         Character c = null;
         for (Character character : view.getCharacters()) {
@@ -417,6 +463,9 @@ public class ClientGUI extends Client {
         askCharacterParameters(c);
     }
 
+    /**
+     * Ask the player the parameters required to play the given character
+     */
     private void askCharacterParameters(Character c) {
         JLabel titleLbl = new JLabel();
         titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -658,6 +707,10 @@ public class ClientGUI extends Client {
         });
     }
 
+    /**
+     * Helper method to close an object without raising exceptions
+     * @param c The object to close
+     */
     private static void closeSilent(Closeable c) {
         if (c != null) {
             try {
