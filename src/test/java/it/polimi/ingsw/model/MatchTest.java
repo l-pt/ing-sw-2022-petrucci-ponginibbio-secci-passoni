@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.character.Character;
-import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.Character1;
 import it.polimi.ingsw.model.character.impl.Character2;
 import it.polimi.ingsw.model.character.impl.Character3;
@@ -175,7 +174,7 @@ public class MatchTest extends TestCase {
         }
 
         player1.getSchool().addProfessor(professor);
-        Assertions.assertEquals(player1, match.whoHaveProfessor(PawnColor.RED));
+        Assertions.assertEquals(player1, match.whoHasProfessor(PawnColor.RED));
     }
 
     @Test
@@ -205,7 +204,7 @@ public class MatchTest extends TestCase {
         Assertions.assertEquals(1, player1.getSchool().getTableCount(color));
         Assertions.assertEquals(oldEntranceCount - 1, player1.getSchool().getEntranceCount(color));
 
-        Assertions.assertEquals(player1, match.whoHaveProfessor(color));
+        Assertions.assertEquals(player1, match.whoHasProfessor(color));
 
         player1.getSchool().addStudentsToTable(List.of(new Student(color), new Student(color)));
         match.checkNumberStudents(player1.getName(), color);
@@ -224,12 +223,12 @@ public class MatchTest extends TestCase {
 
         player1.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED), new Student(PawnColor.RED)));
         match.playerMoveStudents(player1.getName(), PawnColor.RED, 2);
-        Assertions.assertEquals(player1, match.whoHaveProfessor(PawnColor.RED));
+        Assertions.assertEquals(player1, match.whoHasProfessor(PawnColor.RED));
 
 
         player3.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED), new Student(PawnColor.RED), new Student(PawnColor.RED)));
         match.playerMoveStudents(player3.getName(), PawnColor.RED, 3);
-        Assertions.assertEquals(player3, match.whoHaveProfessor(PawnColor.RED));
+        Assertions.assertEquals(player3, match.whoHasProfessor(PawnColor.RED));
     }
 
     @Test
@@ -493,7 +492,7 @@ public class MatchTest extends TestCase {
         team1.removeTowers(5);
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         player1.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED)));
-        match.playerMoveStudent(player1.getName(), PawnColor.RED);
+        match.playerMoveStudents(player1.getName(), PawnColor.RED, 1);
         match.islandInfluence(0, false);
 
         Assertions.assertTrue(match.isGameFinished());
@@ -513,7 +512,7 @@ public class MatchTest extends TestCase {
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         match.getIslands().get(0).addStudent(new Student(PawnColor.RED));
         player1.getSchool().addStudentsToEntrance(List.of(new Student(PawnColor.RED)));
-        match.playerMoveStudent(player1.getName(), PawnColor.RED);
+        match.playerMoveStudents(player1.getName(), PawnColor.RED, 1);
         match.getIslands().get(0).addTowers(List.of(new Tower(TowerColor.BLACK)));
         match.islandInfluence(0, false);
 

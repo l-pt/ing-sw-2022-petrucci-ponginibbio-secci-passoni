@@ -302,27 +302,13 @@ public class Match extends Observable<UpdateViewMessage> {
      * @param color
      * @return
      */
-    public Player whoHaveProfessor(PawnColor color){
+    public Player whoHasProfessor(PawnColor color){
         for (Player player : playerOrder) {
             if (player.getSchool().isColoredProfessor(color)) {
                 return player;
             }
         }
         return null;
-    }
-
-    /**
-     *
-     * @param playerName
-     * @param color
-     * @throws IllegalMoveException
-     */
-    public void playerMoveStudent(String playerName, PawnColor color) throws IllegalMoveException {
-        getPlayerFromName(playerName).getSchool().addStudentToTable(color);
-        if(expert) {
-            checkNumberStudents(playerName, color);
-        }
-        checkProfessors(playerName, color);
     }
 
     /**
@@ -337,7 +323,11 @@ public class Match extends Observable<UpdateViewMessage> {
             throw new IllegalArgumentException("n must be non negative");
         }
         for(int i = 0; i < n; ++i) {
-            playerMoveStudent(playerName, color);
+            getPlayerFromName(playerName).getSchool().addStudentFromEntranceToTable(color);
+            if(expert) {
+                checkNumberStudents(playerName, color);
+            }
+            checkProfessors(playerName, color);
         }
     }
 
@@ -364,12 +354,12 @@ public class Match extends Observable<UpdateViewMessage> {
     public void checkProfessors(String playerName, PawnColor color) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
         if(!player.getSchool().isColoredProfessor(color)){
-            if(whoHaveProfessor(color) == null) {
+            if(whoHasProfessor(color) == null) {
                 player.getSchool().addProfessor(removeProfessor(color));
-            } else if(player.getSchool().getTableCount(color) == whoHaveProfessor(color).getSchool().getTableCount(color) && drawAllowed) {
-                player.getSchool().addProfessor(whoHaveProfessor(color).getSchool().removeProfessor(color));
-            }else if(player.getSchool().getTableCount(color) > whoHaveProfessor(color).getSchool().getTableCount(color)) {
-                player.getSchool().addProfessor(whoHaveProfessor(color).getSchool().removeProfessor(color));
+            } else if(player.getSchool().getTableCount(color) == whoHasProfessor(color).getSchool().getTableCount(color) && drawAllowed) {
+                player.getSchool().addProfessor(whoHasProfessor(color).getSchool().removeProfessor(color));
+            }else if(player.getSchool().getTableCount(color) > whoHasProfessor(color).getSchool().getTableCount(color)) {
+                player.getSchool().addProfessor(whoHasProfessor(color).getSchool().removeProfessor(color));
             }
         }
     }
@@ -441,11 +431,7 @@ public class Match extends Observable<UpdateViewMessage> {
      * @return
      */
     public int islandIndex(int idx) {
-        int mod = idx % islands.size();
-        if (mod < 0) {
-            mod += islands.size();
-        }
-        return mod;
+        return ((idx % islands.size()) < 0) ? (idx % islands.size()) + islands.size() : idx % islands.size();
     }
 
     /**

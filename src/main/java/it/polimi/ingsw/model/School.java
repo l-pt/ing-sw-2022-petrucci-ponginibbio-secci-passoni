@@ -15,39 +15,32 @@ public class School {
             tables.put(color, new ArrayList<>());
     }
 
-    public void addStudentsToEntrance(List<Student> students) {
-        entrance.addAll(students);
-    }
-
     public List<Student> getEntrance() {
         return entrance;
     }
 
-    public Map<PawnColor, List<Student>> getTables() {
-        return tables;
+    public int getEntranceCount(PawnColor color) {
+        int count = 0;
+        for (Student student : entrance)
+            if (student.getColor() == color)
+                ++count;
+        return count;
     }
 
-    public void addStudentToTable(PawnColor color) throws IllegalMoveException {
+    public void addStudentsToEntrance(List<Student> students) {
+        entrance.addAll(students);
+    }
+
+    public void addStudentFromEntranceToTable(PawnColor color) throws IllegalMoveException {
         if (getEntranceCount(color) == 0) {
             throw new IllegalMoveException("There are no students with color " + color.name() + " in the entrance");
         }
         for (Student student : entrance)
-            if(student.getColor().equals(color)){
+            if (student.getColor().equals(color)) {
                 entrance.remove(student);
                 tables.get(color).add(student);
                 break;
             }
-    }
-
-    public void addStudents(List<Student> students) throws IllegalMoveException {
-        for (Student student : students)
-            addStudentToTable(student.getColor());
-    }
-
-    public void addStudentsToTable(List<Student> students) {
-        for (Student student : students) {
-            tables.get(student.getColor()).add(student);
-        }
     }
 
     /**
@@ -70,26 +63,15 @@ public class School {
         throw new IllegalArgumentException("There are not enough students with color " + color.name() + " in the entrance");
     }
 
-    public int getEntranceCount(PawnColor color) {
-        int count = 0;
-        for (Student student : entrance)
-            if (student.getColor() == color)
-                ++count;
-        return count;
-    }
-
-    public List<Student> removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException{
-        if (tables.get(color).size() < n) {
-            throw new IllegalArgumentException("There are not enough students with color " + color.name() + " on the table");
-        }
-        List<Student> result = new ArrayList<>(n);
-        for(int i=0; i<n; ++i)
-            result.add(tables.get(color).remove(tables.get(color).size()-1));
-        return result;
-    }
-
     public List<Professor> getProfessors() {
         return professors;
+    }
+
+    public boolean isColoredProfessor(PawnColor color){
+        for (Professor professor : professors)
+            if (professor.getColor().equals(color))
+                return true;
+        return false;
     }
 
     public void addProfessor(Professor professor) {
@@ -109,14 +91,27 @@ public class School {
         return professor;
     }
 
-    public boolean isColoredProfessor(PawnColor color){
-        for (Professor professor : professors)
-            if (professor.getColor().equals(color))
-                return true;
-        return false;
+    public Map<PawnColor, List<Student>> getTables() {
+        return tables;
     }
 
     public int getTableCount(PawnColor color) {
         return tables.get(color).size();
+    }
+
+    public void addStudentsToTable(List<Student> students) {
+        for (Student student : students) {
+            tables.get(student.getColor()).add(student);
+        }
+    }
+
+    public List<Student> removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException{
+        if (tables.get(color).size() < n) {
+            throw new IllegalArgumentException("There are not enough students with color " + color.name() + " on the table");
+        }
+        List<Student> result = new ArrayList<>(n);
+        for(int i=0; i<n; ++i)
+            result.add(tables.get(color).remove(tables.get(color).size()-1));
+        return result;
     }
 }

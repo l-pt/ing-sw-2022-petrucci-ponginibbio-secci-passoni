@@ -31,7 +31,7 @@ public class Character10Test extends TestCase {
         //Move a student from entrance to table
         PawnColor tableColor = null;
         for (Student student : player1.getSchool().getEntrance()) {
-            player1.getSchool().addStudentToTable(student.getColor());
+            player1.getSchool().addStudentFromEntranceToTable(student.getColor());
             tableColor = student.getColor();
             break;
         }

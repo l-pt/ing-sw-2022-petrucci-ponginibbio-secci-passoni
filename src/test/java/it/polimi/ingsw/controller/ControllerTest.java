@@ -236,7 +236,7 @@ public class ControllerTest extends TestCase {
         team1.addTower(new Tower(team1.getTowerColor()));
         Assertions.assertEquals(1, team1.getTowers().size());
         PawnColor color = player1.getSchool().getEntrance().get(0).getColor();
-        controller.getMatch().playerMoveStudent(name1, color);
+        controller.getMatch().playerMoveStudents(name1, color, 1);
         Assertions.assertTrue(player1.getSchool().isColoredProfessor(color));
         controller.getMatch().getIslands().get((pos + 4) % controller.getMatch().getIslands().size()).addStudent(new Student(color));
 
@@ -635,7 +635,7 @@ public class ControllerTest extends TestCase {
         Assertions.assertEquals(1, team1.getTowers().size());
 
         PawnColor color = player1.getSchool().getEntrance().get(0).getColor();
-        controller.getMatch().playerMoveStudent(name1, color);
+        controller.getMatch().playerMoveStudents(name1, color, 1);
         Assertions.assertTrue(player1.getSchool().isColoredProfessor(color));
         controller.getMatch().getIslands().get(1).addStudent(new Student(color));
 
