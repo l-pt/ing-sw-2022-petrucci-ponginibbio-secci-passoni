@@ -30,7 +30,7 @@ Review del gruppo 55 al nostro pregetto:
 La seguente documentazione include una descrizione delle classi e dei metodi utilizzati, può essere consultata al seguente indirizzo: [Javadoc]()
 
 ### Test di unità
-I test di Junit puntano a massimizzare la coverage del model (99%) e del controller (100%). Al seguente link è possibile consultare il report della coverage dei test effettuati: [Report]()
+I test di Junit puntano a massimizzare la coverage del model (99%) e del controller (100%). Al seguente link è possibile consultare il report della coverage dei test effettuati: [Report](deliverables/report)
 
 ### Librerie e Plugins
 |Libreria/Plugin|Descrizione|
