@@ -1,0 +1,800 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ClientGUI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientGUI (it.polimi.ingsw.client)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientGUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/486)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ClientGUI$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/29)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/487)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.client;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.server.protocol.message.*;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.server.protocol.message.character.*;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.view.gui.ClientSocketWorker;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.view.gui.ViewGUI;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.view.gui.component.CharacterSelectorPanel;
+<i class="no-highlight">8</i>&nbsp;import it.polimi.ingsw.view.gui.component.EntranceStudentSelectorPanel;
+<i class="no-highlight">9</i>&nbsp;import it.polimi.ingsw.view.gui.component.StudentSelectorByColor;
+<i class="no-highlight">10</i>&nbsp;import it.polimi.ingsw.model.*;
+<i class="no-highlight">11</i>&nbsp;import it.polimi.ingsw.model.character.Character;
+<i class="no-highlight">12</i>&nbsp;import it.polimi.ingsw.model.character.impl.Character1;
+<i class="no-highlight">13</i>&nbsp;import it.polimi.ingsw.model.character.impl.Character10;
+<i class="no-highlight">14</i>&nbsp;import it.polimi.ingsw.model.character.impl.Character11;
+<i class="no-highlight">15</i>&nbsp;import it.polimi.ingsw.model.character.impl.Character7;
+<i class="no-highlight">16</i>&nbsp;import it.polimi.ingsw.server.protocol.Message;
+<i class="no-highlight">17</i>&nbsp;
+<i class="no-highlight">18</i>&nbsp;import javax.swing.*;
+<i class="no-highlight">19</i>&nbsp;import java.awt.*;
+<i class="no-highlight">20</i>&nbsp;import java.awt.event.ActionListener;
+<i class="no-highlight">21</i>&nbsp;import java.io.*;
+<i class="no-highlight">22</i>&nbsp;import java.net.InetSocketAddress;
+<i class="no-highlight">23</i>&nbsp;import java.net.Socket;
+<i class="no-highlight">24</i>&nbsp;import java.util.*;
+<i class="no-highlight">25</i>&nbsp;import java.util.List;
+<i class="no-highlight">26</i>&nbsp;import java.util.stream.Collectors;
+<i class="no-highlight">27</i>&nbsp;
+<b class="nc"><i class="no-highlight">28</i>&nbsp;public class ClientGUI extends Client {</b>
+<i class="no-highlight">29</i>&nbsp;    private JFrame frame;
+<i class="no-highlight">30</i>&nbsp;    private JPanel questionsPanel;
+<i class="no-highlight">31</i>&nbsp;    private JLabel errorLabel;
+<i class="no-highlight">32</i>&nbsp;    private ViewGUI view;
+<i class="no-highlight">33</i>&nbsp;    private ClientSocketWorker socketWorker;
+<i class="no-highlight">34</i>&nbsp;    private Thread socketWorkerThread;
+<i class="no-highlight">35</i>&nbsp;
+<i class="no-highlight">36</i>&nbsp;    public JFrame getFrame() {
+<b class="nc"><i class="no-highlight">37</i>&nbsp;        return frame;</b>
+<i class="no-highlight">38</i>&nbsp;    }
+<i class="no-highlight">39</i>&nbsp;
+<i class="no-highlight">40</i>&nbsp;    private void sendMessageAsync(Message msg) {
+<b class="nc"><i class="no-highlight">41</i>&nbsp;        executorService.submit(() -&gt; {</b>
+<i class="no-highlight">42</i>&nbsp;            try {
+<b class="nc"><i class="no-highlight">43</i>&nbsp;                sendMessage(msg);</b>
+<b class="nc"><i class="no-highlight">44</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">45</i>&nbsp;                finalMessage(&quot;Connection lost&quot;);</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;            }</b>
+<i class="no-highlight">47</i>&nbsp;        });
+<i class="no-highlight">48</i>&nbsp;    }
+<i class="no-highlight">49</i>&nbsp;
+<i class="no-highlight">50</i>&nbsp;    @Override
+<i class="no-highlight">51</i>&nbsp;    public void run() {
+<b class="nc"><i class="no-highlight">52</i>&nbsp;        SwingUtilities.invokeLater(() -&gt; {</b>
+<b class="nc"><i class="no-highlight">53</i>&nbsp;            frame = new JFrame(&quot;Eriantys&quot;);</b>
+<i class="no-highlight">54</i>&nbsp;
+<b class="nc"><i class="no-highlight">55</i>&nbsp;            JPanel contentPane = new JPanel();</b>
+<b class="nc"><i class="no-highlight">56</i>&nbsp;            contentPane.setOpaque(true);</b>
+<b class="nc"><i class="no-highlight">57</i>&nbsp;            contentPane.setBackground(Color.WHITE);</b>
+<b class="nc"><i class="no-highlight">58</i>&nbsp;            contentPane.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">59</i>&nbsp;            contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));</b>
+<b class="nc"><i class="no-highlight">60</i>&nbsp;            contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));</b>
+<i class="no-highlight">61</i>&nbsp;
+<b class="nc"><i class="no-highlight">62</i>&nbsp;            questionsPanel = new JPanel();</b>
+<b class="nc"><i class="no-highlight">63</i>&nbsp;            questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));</b>
+<b class="nc"><i class="no-highlight">64</i>&nbsp;            questionsPanel.setMaximumSize(new Dimension(320, 90));</b>
+<b class="nc"><i class="no-highlight">65</i>&nbsp;            questionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">66</i>&nbsp;            contentPane.add(questionsPanel);</b>
+<i class="no-highlight">67</i>&nbsp;
+<b class="nc"><i class="no-highlight">68</i>&nbsp;            errorLabel = new JLabel();</b>
+<b class="nc"><i class="no-highlight">69</i>&nbsp;            errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<i class="no-highlight">70</i>&nbsp;
+<b class="nc"><i class="no-highlight">71</i>&nbsp;            frame.setContentPane(contentPane);</b>
+<i class="no-highlight">72</i>&nbsp;
+<b class="nc"><i class="no-highlight">73</i>&nbsp;            JLabel titleLbl = new JLabel(&quot;Insert IP address and port&quot;);</b>
+<b class="nc"><i class="no-highlight">74</i>&nbsp;            titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">75</i>&nbsp;            questionsPanel.add(titleLbl);</b>
+<b class="nc"><i class="no-highlight">76</i>&nbsp;            JTextField ipField = new JTextField();</b>
+<b class="nc"><i class="no-highlight">77</i>&nbsp;            ipField.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">78</i>&nbsp;            questionsPanel.add(ipField);</b>
+<b class="nc"><i class="no-highlight">79</i>&nbsp;            JTextField portField = new JTextField(&quot;61863&quot;);</b>
+<b class="nc"><i class="no-highlight">80</i>&nbsp;            portField.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">81</i>&nbsp;            questionsPanel.add(portField);</b>
+<b class="nc"><i class="no-highlight">82</i>&nbsp;            JButton confirm = new JButton(&quot;Connect&quot;);</b>
+<b class="nc"><i class="no-highlight">83</i>&nbsp;            confirm.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">84</i>&nbsp;            ActionListener actionListener = actionEvent -&gt; {</b>
+<i class="no-highlight">85</i>&nbsp;                int port;
+<i class="no-highlight">86</i>&nbsp;                try {
+<b class="nc"><i class="no-highlight">87</i>&nbsp;                    port = Integer.parseInt(portField.getText());</b>
+<b class="nc"><i class="no-highlight">88</i>&nbsp;                } catch (NumberFormatException e) {</b>
+<b class="nc"><i class="no-highlight">89</i>&nbsp;                    errorLabel.setText(&quot;Invalid port&quot;);</b>
+<b class="nc"><i class="no-highlight">90</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">91</i>&nbsp;                    frame.repaint();</b>
+<i class="no-highlight">92</i>&nbsp;                    return;
+<b class="nc"><i class="no-highlight">93</i>&nbsp;                }</b>
+<i class="no-highlight">94</i>&nbsp;                try {
+<b class="nc"><i class="no-highlight">95</i>&nbsp;                    socket = new Socket();</b>
+<b class="nc"><i class="no-highlight">96</i>&nbsp;                    socket.connect(new InetSocketAddress(ipField.getText(), port), 5000);</b>
+<b class="nc"><i class="no-highlight">97</i>&nbsp;                    socket.setSoTimeout(2000);</b>
+<b class="nc"><i class="no-highlight">98</i>&nbsp;                    in = new DataInputStream(socket.getInputStream());</b>
+<b class="nc"><i class="no-highlight">99</i>&nbsp;                    out = new DataOutputStream(socket.getOutputStream());</b>
+<b class="nc"><i class="no-highlight">100</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">101</i>&nbsp;                    socketWorkerThread = new Thread(socketWorker = new ClientSocketWorker(this));</b>
+<b class="nc"><i class="no-highlight">102</i>&nbsp;                    socketWorkerThread.start();</b>
+<b class="nc"><i class="no-highlight">103</i>&nbsp;                } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">104</i>&nbsp;                    errorLabel.setText(&quot;Connection failed: &quot; + e.getMessage());</b>
+<b class="nc"><i class="no-highlight">105</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">106</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">107</i>&nbsp;                }</b>
+<i class="no-highlight">108</i>&nbsp;            };
+<b class="nc"><i class="no-highlight">109</i>&nbsp;            ipField.addActionListener(actionListener);</b>
+<b class="nc"><i class="no-highlight">110</i>&nbsp;            portField.addActionListener(actionListener);</b>
+<b class="nc"><i class="no-highlight">111</i>&nbsp;            confirm.addActionListener(actionListener);</b>
+<b class="nc"><i class="no-highlight">112</i>&nbsp;            questionsPanel.add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">113</i>&nbsp;            questionsPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">114</i>&nbsp;            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);</b>
+<b class="nc"><i class="no-highlight">115</i>&nbsp;            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</b>
+<b class="nc"><i class="no-highlight">116</i>&nbsp;            frame.setVisible(true);</b>
+<i class="no-highlight">117</i>&nbsp;        });
+<i class="no-highlight">118</i>&nbsp;    }
+<i class="no-highlight">119</i>&nbsp;
+<i class="no-highlight">120</i>&nbsp;    public void processMessage(Message msg) {
+<b class="nc"><i class="no-highlight">121</i>&nbsp;        if (msg == null) {</b>
+<b class="nc"><i class="no-highlight">122</i>&nbsp;            finalMessage(&quot;Connection lost&quot;);</b>
+<i class="no-highlight">123</i>&nbsp;            return;
+<i class="no-highlight">124</i>&nbsp;        }
+<i class="no-highlight">125</i>&nbsp;        //We have received a server message, check its Type to answer appropriately
+<b class="nc"><i class="no-highlight">126</i>&nbsp;        switch (msg.getMessageId()) {</b>
+<i class="no-highlight">127</i>&nbsp;            case ERROR -&gt; {
+<b class="nc"><i class="no-highlight">128</i>&nbsp;                errorLabel.setText(&quot;Server error: &quot; + ((ErrorMessage) msg).getError());</b>
+<b class="nc"><i class="no-highlight">129</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">130</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">131</i>&nbsp;            }</b>
+<i class="no-highlight">132</i>&nbsp;            case ASK_USERNAME -&gt; {
+<b class="nc"><i class="no-highlight">133</i>&nbsp;                questionsPanel.removeAll();</b>
+<b class="nc"><i class="no-highlight">134</i>&nbsp;                JLabel titleLbl = new JLabel(&quot;Insert username&quot;);</b>
+<b class="nc"><i class="no-highlight">135</i>&nbsp;                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">136</i>&nbsp;                questionsPanel.add(titleLbl);</b>
+<b class="nc"><i class="no-highlight">137</i>&nbsp;                JTextField usernameTextField = new JTextField();</b>
+<b class="nc"><i class="no-highlight">138</i>&nbsp;                usernameTextField.setPreferredSize(new Dimension(320, 40));</b>
+<b class="nc"><i class="no-highlight">139</i>&nbsp;                usernameTextField.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">140</i>&nbsp;                usernameTextField.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">141</i>&nbsp;                    if (usernameTextField.getText().isEmpty()) {</b>
+<i class="no-highlight">142</i>&nbsp;                        return;
+<i class="no-highlight">143</i>&nbsp;                    }
+<b class="nc"><i class="no-highlight">144</i>&nbsp;                    questionsPanel.removeAll();</b>
+<b class="nc"><i class="no-highlight">145</i>&nbsp;                    JLabel waitLbl = new JLabel(&quot;Waiting for other players...&quot;);</b>
+<b class="nc"><i class="no-highlight">146</i>&nbsp;                    waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">147</i>&nbsp;                    questionsPanel.add(waitLbl);</b>
+<b class="nc"><i class="no-highlight">148</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">149</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">150</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">151</i>&nbsp;                    name = usernameTextField.getText();</b>
+<b class="nc"><i class="no-highlight">152</i>&nbsp;                    sendMessageAsync(new SetUsernameMessage(usernameTextField.getText()));</b>
+<i class="no-highlight">153</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">154</i>&nbsp;                questionsPanel.add(usernameTextField);</b>
+<b class="nc"><i class="no-highlight">155</i>&nbsp;                questionsPanel.add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">156</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">157</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">158</i>&nbsp;            }</b>
+<i class="no-highlight">159</i>&nbsp;            case ASK_PLAYER_NUMBER -&gt; {
+<b class="nc"><i class="no-highlight">160</i>&nbsp;                questionsPanel.removeAll(); //Remove the &quot;Waiting for other players...&quot; JLabel</b>
+<b class="nc"><i class="no-highlight">161</i>&nbsp;                JLabel titleLbl = new JLabel(&quot;Choose player number&quot;);</b>
+<b class="nc"><i class="no-highlight">162</i>&nbsp;                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">163</i>&nbsp;                questionsPanel.add(titleLbl);</b>
+<b class="nc"><i class="no-highlight">164</i>&nbsp;                JComboBox&lt;Integer&gt; comboBox = new JComboBox&lt;&gt;(new Integer[]{2, 3, 4});</b>
+<b class="nc"><i class="no-highlight">165</i>&nbsp;                comboBox.setMaximumSize(new Dimension(320, 40));</b>
+<b class="nc"><i class="no-highlight">166</i>&nbsp;                comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">167</i>&nbsp;                questionsPanel.add(comboBox);</b>
+<b class="nc"><i class="no-highlight">168</i>&nbsp;                JButton confirmPlayers = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">169</i>&nbsp;                confirmPlayers.setMaximumSize(new Dimension(320, 40));</b>
+<b class="nc"><i class="no-highlight">170</i>&nbsp;                confirmPlayers.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">171</i>&nbsp;                confirmPlayers.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">172</i>&nbsp;                    questionsPanel.removeAll();</b>
+<b class="nc"><i class="no-highlight">173</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">174</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">175</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">176</i>&nbsp;                    sendMessageAsync(new SetPlayerNumberMessage((Integer) comboBox.getSelectedItem()));</b>
+<i class="no-highlight">177</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">178</i>&nbsp;                questionsPanel.add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">179</i>&nbsp;                questionsPanel.add(confirmPlayers);</b>
+<b class="nc"><i class="no-highlight">180</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">181</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">182</i>&nbsp;            }</b>
+<i class="no-highlight">183</i>&nbsp;            case ASK_EXPERT -&gt; {
+<b class="nc"><i class="no-highlight">184</i>&nbsp;                JLabel titleLbl = new JLabel(&quot;Activate expert mode?&quot;);</b>
+<b class="nc"><i class="no-highlight">185</i>&nbsp;                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">186</i>&nbsp;                questionsPanel.add(titleLbl);</b>
+<b class="nc"><i class="no-highlight">187</i>&nbsp;                JComboBox&lt;String&gt; comboBox = new JComboBox&lt;&gt;(new String[]{&quot;Yes&quot;, &quot;No&quot;});</b>
+<b class="nc"><i class="no-highlight">188</i>&nbsp;                comboBox.setMaximumSize(new Dimension(320, 40));</b>
+<b class="nc"><i class="no-highlight">189</i>&nbsp;                comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">190</i>&nbsp;                questionsPanel.add(comboBox);</b>
+<b class="nc"><i class="no-highlight">191</i>&nbsp;                JButton confirmExpert = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">192</i>&nbsp;                confirmExpert.setMaximumSize(new Dimension(320, 40));</b>
+<b class="nc"><i class="no-highlight">193</i>&nbsp;                confirmExpert.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">194</i>&nbsp;                confirmExpert.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">195</i>&nbsp;                    questionsPanel.removeAll();</b>
+<b class="nc"><i class="no-highlight">196</i>&nbsp;                    JLabel waitLbl = new JLabel(&quot;Waiting for other players...&quot;);</b>
+<b class="nc"><i class="no-highlight">197</i>&nbsp;                    waitLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">198</i>&nbsp;                    questionsPanel.add(waitLbl);</b>
+<b class="nc"><i class="no-highlight">199</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">200</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">201</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">202</i>&nbsp;                    sendMessageAsync(new SetExpertMessage(comboBox.getSelectedItem().equals(&quot;Yes&quot;)));</b>
+<i class="no-highlight">203</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">204</i>&nbsp;                questionsPanel.add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">205</i>&nbsp;                questionsPanel.add(confirmExpert);</b>
+<b class="nc"><i class="no-highlight">206</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">207</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">208</i>&nbsp;            }</b>
+<i class="no-highlight">209</i>&nbsp;            case UPDATE_VIEW -&gt; {
+<b class="nc"><i class="no-highlight">210</i>&nbsp;                questionsPanel = null;</b>
+<b class="nc"><i class="no-highlight">211</i>&nbsp;                if (view == null) {</b>
+<b class="nc"><i class="no-highlight">212</i>&nbsp;                    view = ViewGUI.create(this, ((UpdateViewMessage) msg).getPlayersOrder().size());</b>
+<i class="no-highlight">213</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">214</i>&nbsp;                view.handleUpdateView((UpdateViewMessage) msg);</b>
+<b class="nc"><i class="no-highlight">215</i>&nbsp;            }</b>
+<i class="no-highlight">216</i>&nbsp;            case ASK_ASSISTANT -&gt; {
+<b class="nc"><i class="no-highlight">217</i>&nbsp;                JLabel titleLbl = new JLabel(&quot;Choose an assistant&quot;);</b>
+<b class="nc"><i class="no-highlight">218</i>&nbsp;                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">219</i>&nbsp;                view.getBottomPanel().add(titleLbl);</b>
+<i class="no-highlight">220</i>&nbsp;
+<b class="nc"><i class="no-highlight">221</i>&nbsp;                JPanel assistPanel = new JPanel();</b>
+<b class="nc"><i class="no-highlight">222</i>&nbsp;                assistPanel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">223</i>&nbsp;                JComboBox&lt;Integer&gt; comboBox = new JComboBox&lt;&gt;(view.getAssistants().stream().map(Assistant::getValue).toArray(Integer[]::new));</b>
+<b class="nc"><i class="no-highlight">224</i>&nbsp;                assistPanel.add(comboBox);</b>
+<b class="nc"><i class="no-highlight">225</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">226</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">227</i>&nbsp;                    view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">228</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">229</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">230</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">231</i>&nbsp;                    sendMessageAsync(new SetAssistantMessage((Integer) comboBox.getSelectedItem()));</b>
+<i class="no-highlight">232</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">233</i>&nbsp;                assistPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">234</i>&nbsp;                view.getBottomPanel().add(assistPanel);</b>
+<b class="nc"><i class="no-highlight">235</i>&nbsp;                view.getBottomPanel().add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">236</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">237</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">238</i>&nbsp;            }</b>
+<i class="no-highlight">239</i>&nbsp;            case ASK_ENTRANCE_STUDENT -&gt; {
+<b class="nc"><i class="no-highlight">240</i>&nbsp;                Player player = view.getPlayerFromName(name);</b>
+<i class="no-highlight">241</i>&nbsp;
+<b class="nc"><i class="no-highlight">242</i>&nbsp;                JLabel titleLbl = new JLabel(&quot;Move 3 entrance students&quot;);</b>
+<b class="nc"><i class="no-highlight">243</i>&nbsp;                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">244</i>&nbsp;                view.getBottomPanel().add(titleLbl);</b>
+<i class="no-highlight">245</i>&nbsp;
+<b class="nc"><i class="no-highlight">246</i>&nbsp;                int i = 0;</b>
+<b class="nc"><i class="no-highlight">247</i>&nbsp;                JPanel selectorsPanel = new JPanel(new GridLayout(1, player.getSchool().getEntrance().size()));</b>
+<b class="nc"><i class="no-highlight">248</i>&nbsp;                selectorsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">249</i>&nbsp;                EntranceStudentSelectorPanel[] studentSelectors = new EntranceStudentSelectorPanel[player.getSchool().getEntrance().size()];</b>
+<b class="nc"><i class="no-highlight">250</i>&nbsp;                for (Student student : player.getSchool().getEntrance()) {</b>
+<b class="nc"><i class="no-highlight">251</i>&nbsp;                    selectorsPanel.add(studentSelectors[i++] = new EntranceStudentSelectorPanel(student, view.getIslands(), player));</b>
+<b class="nc"><i class="no-highlight">252</i>&nbsp;                }</b>
+<b class="nc"><i class="no-highlight">253</i>&nbsp;                view.getBottomPanel().add(selectorsPanel);</b>
+<i class="no-highlight">254</i>&nbsp;
+<b class="nc"><i class="no-highlight">255</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">256</i>&nbsp;                confirm.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">257</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">258</i>&nbsp;                    Map&lt;Integer, Map&lt;PawnColor, Integer&gt;&gt; islandsStudents = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">259</i>&nbsp;                    Map&lt;PawnColor, Integer&gt; tableStudents = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">260</i>&nbsp;                    int totalStudents = 0;</b>
+<b class="nc"><i class="no-highlight">261</i>&nbsp;                    for (EntranceStudentSelectorPanel pan : studentSelectors) {</b>
+<b class="nc"><i class="no-highlight">262</i>&nbsp;                        if (pan.getSelection() == EntranceStudentSelectorPanel.SELECTION_TABLE) {</b>
+<b class="nc"><i class="no-highlight">263</i>&nbsp;                            ++totalStudents;</b>
+<b class="nc"><i class="no-highlight">264</i>&nbsp;                            tableStudents.put(pan.getStudent().getColor(), tableStudents.getOrDefault(pan.getStudent().getColor(), 0) + 1);</b>
+<b class="nc"><i class="no-highlight">265</i>&nbsp;                        } else if (pan.getSelection() &gt;= 0) {</b>
+<b class="nc"><i class="no-highlight">266</i>&nbsp;                            ++totalStudents;</b>
+<b class="nc"><i class="no-highlight">267</i>&nbsp;                            if (!islandsStudents.containsKey(pan.getSelection())) {</b>
+<b class="nc"><i class="no-highlight">268</i>&nbsp;                                islandsStudents.put(pan.getSelection(), new HashMap&lt;&gt;());</b>
+<i class="no-highlight">269</i>&nbsp;                            }
+<b class="nc"><i class="no-highlight">270</i>&nbsp;                            islandsStudents.get(pan.getSelection()).put(pan.getStudent().getColor(), islandsStudents.get(pan.getSelection()).getOrDefault(pan.getStudent().getColor(), 0) + 1);</b>
+<i class="no-highlight">271</i>&nbsp;                        }
+<i class="no-highlight">272</i>&nbsp;                    }
+<b class="nc"><i class="no-highlight">273</i>&nbsp;                    if (totalStudents == 3) {</b>
+<b class="nc"><i class="no-highlight">274</i>&nbsp;                        view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">275</i>&nbsp;                        errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">276</i>&nbsp;                        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">277</i>&nbsp;                        frame.repaint();</b>
+<b class="nc"><i class="no-highlight">278</i>&nbsp;                        sendMessageAsync(new SetEntranceStudentMessage(islandsStudents, tableStudents));</b>
+<i class="no-highlight">279</i>&nbsp;                    } else {
+<b class="nc"><i class="no-highlight">280</i>&nbsp;                        errorLabel.setText(&quot;You must select exactly three students&quot;);</b>
+<b class="nc"><i class="no-highlight">281</i>&nbsp;                        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">282</i>&nbsp;                        frame.repaint();</b>
+<i class="no-highlight">283</i>&nbsp;                    }
+<i class="no-highlight">284</i>&nbsp;                });
+<i class="no-highlight">285</i>&nbsp;
+<b class="nc"><i class="no-highlight">286</i>&nbsp;                view.getBottomPanel().add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">287</i>&nbsp;                view.getBottomPanel().add(confirm);</b>
+<b class="nc"><i class="no-highlight">288</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">289</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">290</i>&nbsp;            }</b>
+<i class="no-highlight">291</i>&nbsp;            case ASK_MOTHER_NATURE -&gt; {
+<b class="nc"><i class="no-highlight">292</i>&nbsp;                JLabel titleLbl = new JLabel(&quot;Move mother nature&quot;);</b>
+<b class="nc"><i class="no-highlight">293</i>&nbsp;                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">294</i>&nbsp;                view.getBottomPanel().add(titleLbl);</b>
+<i class="no-highlight">295</i>&nbsp;
+<b class="nc"><i class="no-highlight">296</i>&nbsp;                JPanel movesPanel = new JPanel();</b>
+<b class="nc"><i class="no-highlight">297</i>&nbsp;                movesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">298</i>&nbsp;                JComboBox&lt;Integer&gt; comboBox = new JComboBox&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">299</i>&nbsp;                Player player = view.getPlayerFromName(name);</b>
+<b class="nc"><i class="no-highlight">300</i>&nbsp;                for (int i = 1; i &lt;= player.getCurrentAssistant().getMoves() + player.getAdditionalMoves(); ++i) {</b>
+<b class="nc"><i class="no-highlight">301</i>&nbsp;                    comboBox.addItem(i);</b>
+<i class="no-highlight">302</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">303</i>&nbsp;                movesPanel.add(comboBox);</b>
+<b class="nc"><i class="no-highlight">304</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">305</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">306</i>&nbsp;                    view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">307</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">308</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">309</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">310</i>&nbsp;                    sendMessageAsync(new SetMotherNatureMessage((Integer) comboBox.getSelectedItem()));</b>
+<i class="no-highlight">311</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">312</i>&nbsp;                movesPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">313</i>&nbsp;                view.getBottomPanel().add(movesPanel);</b>
+<b class="nc"><i class="no-highlight">314</i>&nbsp;                view.getBottomPanel().add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">315</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">316</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">317</i>&nbsp;            }</b>
+<i class="no-highlight">318</i>&nbsp;            case ASK_CLOUD -&gt; {
+<b class="nc"><i class="no-highlight">319</i>&nbsp;                JLabel titleLbl = new JLabel(&quot;Choose a cloud&quot;);</b>
+<b class="nc"><i class="no-highlight">320</i>&nbsp;                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">321</i>&nbsp;                view.getBottomPanel().add(titleLbl);</b>
+<i class="no-highlight">322</i>&nbsp;
+<b class="nc"><i class="no-highlight">323</i>&nbsp;                JPanel cloudPanel = new JPanel();</b>
+<b class="nc"><i class="no-highlight">324</i>&nbsp;                cloudPanel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">325</i>&nbsp;                JComboBox&lt;Integer&gt; comboBox = new JComboBox&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">326</i>&nbsp;                for (int i = 1; i &lt;= view.getClouds().size(); ++i) {</b>
+<b class="nc"><i class="no-highlight">327</i>&nbsp;                    comboBox.addItem(i);</b>
+<i class="no-highlight">328</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">329</i>&nbsp;                cloudPanel.add(comboBox);</b>
+<b class="nc"><i class="no-highlight">330</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">331</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">332</i>&nbsp;                    view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">333</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">334</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">335</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">336</i>&nbsp;                    sendMessageAsync(new SetCloudMessage((Integer) comboBox.getSelectedItem() - 1));</b>
+<i class="no-highlight">337</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">338</i>&nbsp;                cloudPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">339</i>&nbsp;                view.getBottomPanel().add(cloudPanel);</b>
+<b class="nc"><i class="no-highlight">340</i>&nbsp;                view.getBottomPanel().add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">341</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">342</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">343</i>&nbsp;            }</b>
+<i class="no-highlight">344</i>&nbsp;            case ASK_CHARACTER -&gt; {
+<b class="nc"><i class="no-highlight">345</i>&nbsp;                AskCharacterMessage characterMessage = (AskCharacterMessage) msg;</b>
+<b class="nc"><i class="no-highlight">346</i>&nbsp;                if (characterMessage.getCharacterId() == -1) {</b>
+<b class="nc"><i class="no-highlight">347</i>&nbsp;                    handleCharacter();</b>
+<i class="no-highlight">348</i>&nbsp;                } else {
+<b class="nc"><i class="no-highlight">349</i>&nbsp;                    askCharacterParameters(characterMessage.getCharacterId());</b>
+<i class="no-highlight">350</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">351</i>&nbsp;            }</b>
+<i class="no-highlight">352</i>&nbsp;            case END_GAME -&gt; {
+<b class="nc"><i class="no-highlight">353</i>&nbsp;                EndGameMessage endGameMessage = (EndGameMessage) msg;</b>
+<b class="nc"><i class="no-highlight">354</i>&nbsp;                String message = &quot;Game over. Winners: &quot; + String.join(&quot;, &quot;, endGameMessage.getWinner().getPlayers().stream().map(Player::getName).toArray(String[]::new));</b>
+<b class="nc"><i class="no-highlight">355</i>&nbsp;                finalMessage(message);</b>
+<i class="no-highlight">356</i>&nbsp;            }
+<i class="no-highlight">357</i>&nbsp;        }
+<i class="no-highlight">358</i>&nbsp;    }
+<i class="no-highlight">359</i>&nbsp;
+<i class="no-highlight">360</i>&nbsp;    private void handleCharacter() {
+<b class="nc"><i class="no-highlight">361</i>&nbsp;        Player player = view.getPlayerFromName(name);</b>
+<b class="nc"><i class="no-highlight">362</i>&nbsp;        int coins = player.getCoins();</b>
+<b class="nc"><i class="no-highlight">363</i>&nbsp;        List&lt;Character&gt; usableCharacters = new ArrayList&lt;&gt;(view.getCharacters().stream().filter(c -&gt; coins &gt;= c.getCost()).toList());</b>
+<b class="nc"><i class="no-highlight">364</i>&nbsp;        int tableTotalStudents = player.getSchool().getTables().values().stream().mapToInt(List::size).sum();</b>
+<b class="nc"><i class="no-highlight">365</i>&nbsp;        if (tableTotalStudents == 0) {</b>
+<i class="no-highlight">366</i>&nbsp;            //If the table is empty, we can&#39;t play Character10, so remove it from usableCharacters
+<b class="nc"><i class="no-highlight">367</i>&nbsp;            usableCharacters.removeIf(c -&gt; c instanceof Character10);</b>
+<b class="nc"><i class="no-highlight">368</i>&nbsp;        } else if (tableTotalStudents == 10 * PawnColor.values().length) {</b>
+<i class="no-highlight">369</i>&nbsp;            //If the table is full, we can&#39;t play Character11
+<b class="nc"><i class="no-highlight">370</i>&nbsp;            usableCharacters.removeIf(c -&gt; c instanceof Character11);</b>
+<i class="no-highlight">371</i>&nbsp;        }
+<i class="no-highlight">372</i>&nbsp;        //Remove Character10 from the list if it is not possible to make a legal move
+<b class="nc"><i class="no-highlight">373</i>&nbsp;        Set&lt;PawnColor&gt; fullTableColors = Arrays.stream(PawnColor.values()).filter(color -&gt; player.getSchool().getTableCount(color) == 10).collect(Collectors.toSet());</b>
+<b class="nc"><i class="no-highlight">374</i>&nbsp;        if (!fullTableColors.isEmpty() &amp;&amp; fullTableColors.containsAll(player.getSchool().getEntrance().stream().map(Student::getColor).toList())) {</b>
+<b class="nc"><i class="no-highlight">375</i>&nbsp;            usableCharacters.removeIf(c -&gt; c instanceof Character10);</b>
+<i class="no-highlight">376</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">377</i>&nbsp;        if (view.isExpert() &amp;&amp; !usableCharacters.isEmpty()) {</b>
+<b class="nc"><i class="no-highlight">378</i>&nbsp;            JLabel titleLbl = new JLabel(&quot;Choose a character&quot;);</b>
+<b class="nc"><i class="no-highlight">379</i>&nbsp;            titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">380</i>&nbsp;            view.getBottomPanel().add(titleLbl);</b>
+<i class="no-highlight">381</i>&nbsp;
+<b class="nc"><i class="no-highlight">382</i>&nbsp;            JPanel charPanel = new JPanel();</b>
+<b class="nc"><i class="no-highlight">383</i>&nbsp;            charPanel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">384</i>&nbsp;            CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(usableCharacters);</b>
+<b class="nc"><i class="no-highlight">385</i>&nbsp;            charPanel.add(characterSelectorPanel);</b>
+<i class="no-highlight">386</i>&nbsp;
+<b class="nc"><i class="no-highlight">387</i>&nbsp;            JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">388</i>&nbsp;            confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">389</i>&nbsp;                view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">390</i>&nbsp;                errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">391</i>&nbsp;                frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">392</i>&nbsp;                frame.repaint();</b>
+<b class="nc"><i class="no-highlight">393</i>&nbsp;                int sel = characterSelectorPanel.getSelection();</b>
+<b class="nc"><i class="no-highlight">394</i>&nbsp;                if (sel == CharacterSelectorPanel.SELECTION_NONE) {</b>
+<b class="nc"><i class="no-highlight">395</i>&nbsp;                    sendMessageAsync(new UseNoCharacterMessage());</b>
+<i class="no-highlight">396</i>&nbsp;                } else {
+<b class="nc"><i class="no-highlight">397</i>&nbsp;                    askCharacterParameters(usableCharacters.get(sel));</b>
+<i class="no-highlight">398</i>&nbsp;                }
+<i class="no-highlight">399</i>&nbsp;            });
+<b class="nc"><i class="no-highlight">400</i>&nbsp;            charPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">401</i>&nbsp;            view.getBottomPanel().add(charPanel);</b>
+<b class="nc"><i class="no-highlight">402</i>&nbsp;            frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">403</i>&nbsp;            frame.repaint();</b>
+<b class="nc"><i class="no-highlight">404</i>&nbsp;        } else {</b>
+<b class="nc"><i class="no-highlight">405</i>&nbsp;            sendMessageAsync(new UseNoCharacterMessage());</b>
+<i class="no-highlight">406</i>&nbsp;        }
+<i class="no-highlight">407</i>&nbsp;    }
+<i class="no-highlight">408</i>&nbsp;
+<i class="no-highlight">409</i>&nbsp;    private void askCharacterParameters(int characterId) {
+<b class="nc"><i class="no-highlight">410</i>&nbsp;        Character c = null;</b>
+<b class="nc"><i class="no-highlight">411</i>&nbsp;        for (Character character : view.getCharacters()) {</b>
+<b class="nc"><i class="no-highlight">412</i>&nbsp;            if (character.getId() == characterId) {</b>
+<b class="nc"><i class="no-highlight">413</i>&nbsp;                c = character;</b>
+<b class="nc"><i class="no-highlight">414</i>&nbsp;                break;</b>
+<i class="no-highlight">415</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">416</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">417</i>&nbsp;        askCharacterParameters(c);</b>
+<i class="no-highlight">418</i>&nbsp;    }
+<i class="no-highlight">419</i>&nbsp;
+<i class="no-highlight">420</i>&nbsp;    private void askCharacterParameters(Character c) {
+<b class="nc"><i class="no-highlight">421</i>&nbsp;        JLabel titleLbl = new JLabel();</b>
+<b class="nc"><i class="no-highlight">422</i>&nbsp;        titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">423</i>&nbsp;        JPanel paramsPanel = new JPanel();</b>
+<b class="nc"><i class="no-highlight">424</i>&nbsp;        paramsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">425</i>&nbsp;        switch (c.getId()) {</b>
+<i class="no-highlight">426</i>&nbsp;            case 0 -&gt; {
+<b class="nc"><i class="no-highlight">427</i>&nbsp;                Character1 c1 = (Character1) c;</b>
+<b class="nc"><i class="no-highlight">428</i>&nbsp;                titleLbl.setText(&quot;Choose a student to move from the character card and an island&quot;);</b>
+<i class="no-highlight">429</i>&nbsp;
+<b class="nc"><i class="no-highlight">430</i>&nbsp;                JComboBox&lt;PawnColor&gt; comboBox = new JComboBox&lt;&gt;(c1.getStudents().stream().map(Student::getColor).distinct().toArray(PawnColor[]::new));</b>
+<b class="nc"><i class="no-highlight">431</i>&nbsp;                paramsPanel.add(comboBox);</b>
+<i class="no-highlight">432</i>&nbsp;
+<b class="nc"><i class="no-highlight">433</i>&nbsp;                JComboBox&lt;String&gt; islandsComboBox = new JComboBox&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">434</i>&nbsp;                for (int i = 0; i &lt; view.getIslands().size(); ++i) {</b>
+<b class="nc"><i class="no-highlight">435</i>&nbsp;                    islandsComboBox.addItem(&quot;Island &quot; + (i + 1));</b>
+<i class="no-highlight">436</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">437</i>&nbsp;                paramsPanel.add(islandsComboBox);</b>
+<i class="no-highlight">438</i>&nbsp;
+<b class="nc"><i class="no-highlight">439</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">440</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">441</i>&nbsp;                    view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">442</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">443</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">444</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">445</i>&nbsp;                    int islandIndex = Integer.parseInt(((String) islandsComboBox.getSelectedItem()).split(&quot; &quot;)[1]) - 1;</b>
+<b class="nc"><i class="no-highlight">446</i>&nbsp;                    sendMessageAsync(new UseCharacterColorIslandMessage((PawnColor) comboBox.getSelectedItem(), islandIndex));</b>
+<i class="no-highlight">447</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">448</i>&nbsp;                paramsPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">449</i>&nbsp;            }</b>
+<i class="no-highlight">450</i>&nbsp;            case 1,3,5,7 -&gt; {
+<b class="nc"><i class="no-highlight">451</i>&nbsp;                sendMessageAsync(new UseCharacterMessage(c.getId()));</b>
+<i class="no-highlight">452</i>&nbsp;                return;
+<i class="no-highlight">453</i>&nbsp;            }
+<i class="no-highlight">454</i>&nbsp;            case 2,4 -&gt; {
+<b class="nc"><i class="no-highlight">455</i>&nbsp;                titleLbl.setText(&quot;Choose an island&quot;);</b>
+<b class="nc"><i class="no-highlight">456</i>&nbsp;                JComboBox&lt;String&gt; islandsComboBox = new JComboBox&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">457</i>&nbsp;                for (int i = 0; i &lt; view.getIslands().size(); ++i) {</b>
+<b class="nc"><i class="no-highlight">458</i>&nbsp;                    islandsComboBox.addItem(&quot;Island &quot; + (i + 1));</b>
+<i class="no-highlight">459</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">460</i>&nbsp;                paramsPanel.add(islandsComboBox);</b>
+<b class="nc"><i class="no-highlight">461</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">462</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">463</i>&nbsp;                    view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">464</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">465</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">466</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">467</i>&nbsp;                    int islandIndex = Integer.parseInt(((String) islandsComboBox.getSelectedItem()).split(&quot; &quot;)[1]) - 1;</b>
+<b class="nc"><i class="no-highlight">468</i>&nbsp;                    sendMessageAsync(new UseCharacterIslandMessage(c.getId(), islandIndex));</b>
+<i class="no-highlight">469</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">470</i>&nbsp;                paramsPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">471</i>&nbsp;            }</b>
+<i class="no-highlight">472</i>&nbsp;            case 6 -&gt; {
+<b class="nc"><i class="no-highlight">473</i>&nbsp;                Character7 c7 = (Character7) c;</b>
+<b class="nc"><i class="no-highlight">474</i>&nbsp;                titleLbl.setText(&quot;Select up to 3 entrance students and character students to exchange&quot;);</b>
+<i class="no-highlight">475</i>&nbsp;
+<b class="nc"><i class="no-highlight">476</i>&nbsp;                JPanel selPanel = new JPanel(null);</b>
+<b class="nc"><i class="no-highlight">477</i>&nbsp;                selPanel.setLayout(new BoxLayout(selPanel, BoxLayout.Y_AXIS));</b>
+<b class="nc"><i class="no-highlight">478</i>&nbsp;                StudentSelectorByColor entranceSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getEntrance(), 3, &quot;Entrance: &quot;);</b>
+<b class="nc"><i class="no-highlight">479</i>&nbsp;                selPanel.add(entranceSel);</b>
+<b class="nc"><i class="no-highlight">480</i>&nbsp;                StudentSelectorByColor characterSel = new StudentSelectorByColor(c7.getStudents(), 3, &quot;Character: &quot;);</b>
+<b class="nc"><i class="no-highlight">481</i>&nbsp;                selPanel.add(characterSel);</b>
+<i class="no-highlight">482</i>&nbsp;
+<b class="nc"><i class="no-highlight">483</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">484</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">485</i>&nbsp;                    Map&lt;PawnColor, Integer&gt; entranceToCardMap = entranceSel.getSelection();</b>
+<b class="nc"><i class="no-highlight">486</i>&nbsp;                    int entranceToCardMapCount = entranceToCardMap.values().stream().mapToInt(Integer::intValue).sum();</b>
+<b class="nc"><i class="no-highlight">487</i>&nbsp;                    Map&lt;PawnColor, Integer&gt; cardToEntranceMap = characterSel.getSelection();</b>
+<b class="nc"><i class="no-highlight">488</i>&nbsp;                    int cardToEntranceMapCount = cardToEntranceMap.values().stream().mapToInt(Integer::intValue).sum();</b>
+<b class="nc"><i class="no-highlight">489</i>&nbsp;                    if (entranceToCardMapCount != cardToEntranceMapCount) {</b>
+<b class="nc"><i class="no-highlight">490</i>&nbsp;                        errorLabel.setText(&quot;You must select the same number of students from entrance and card&quot;);</b>
+<b class="nc"><i class="no-highlight">491</i>&nbsp;                        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">492</i>&nbsp;                        frame.repaint();</b>
+<b class="nc"><i class="no-highlight">493</i>&nbsp;                    } else if (entranceToCardMapCount &lt; 1 || entranceToCardMapCount &gt; 3) {</b>
+<b class="nc"><i class="no-highlight">494</i>&nbsp;                        errorLabel.setText(&quot;You may only select up to 3 students&quot;);</b>
+<b class="nc"><i class="no-highlight">495</i>&nbsp;                        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">496</i>&nbsp;                        frame.repaint();</b>
+<i class="no-highlight">497</i>&nbsp;                    } else {
+<b class="nc"><i class="no-highlight">498</i>&nbsp;                        view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">499</i>&nbsp;                        errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">500</i>&nbsp;                        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">501</i>&nbsp;                        frame.repaint();</b>
+<b class="nc"><i class="no-highlight">502</i>&nbsp;                        sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToCardMap, cardToEntranceMap));</b>
+<i class="no-highlight">503</i>&nbsp;                    }
+<i class="no-highlight">504</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">505</i>&nbsp;                selPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">506</i>&nbsp;                paramsPanel.add(selPanel);</b>
+<b class="nc"><i class="no-highlight">507</i>&nbsp;            }</b>
+<i class="no-highlight">508</i>&nbsp;            case 8,11 -&gt; {
+<b class="nc"><i class="no-highlight">509</i>&nbsp;                titleLbl.setText(&quot;Choose a student color&quot;);</b>
+<b class="nc"><i class="no-highlight">510</i>&nbsp;                JComboBox&lt;PawnColor&gt; comboBox = new JComboBox&lt;&gt;(PawnColor.values());</b>
+<b class="nc"><i class="no-highlight">511</i>&nbsp;                paramsPanel.add(comboBox);</b>
+<b class="nc"><i class="no-highlight">512</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">513</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">514</i>&nbsp;                    view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">515</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">516</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">517</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">518</i>&nbsp;                    sendMessageAsync(new UseCharacterColorMessage(c.getId(), (PawnColor) comboBox.getSelectedItem()));</b>
+<i class="no-highlight">519</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">520</i>&nbsp;                paramsPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">521</i>&nbsp;            }</b>
+<i class="no-highlight">522</i>&nbsp;            case 9 -&gt; {
+<b class="nc"><i class="no-highlight">523</i>&nbsp;                Player player = view.getPlayerFromName(name);</b>
+<b class="nc"><i class="no-highlight">524</i>&nbsp;                titleLbl.setText(&quot;Select up to 2 entrance students and table students to exchange&quot;);</b>
+<i class="no-highlight">525</i>&nbsp;
+<b class="nc"><i class="no-highlight">526</i>&nbsp;                JPanel selPanel = new JPanel(null);</b>
+<b class="nc"><i class="no-highlight">527</i>&nbsp;                selPanel.setLayout(new BoxLayout(selPanel, BoxLayout.Y_AXIS));</b>
+<b class="nc"><i class="no-highlight">528</i>&nbsp;                StudentSelectorByColor entranceSel = new StudentSelectorByColor(player.getSchool().getEntrance(), 2, &quot;Entrance: &quot;);</b>
+<b class="nc"><i class="no-highlight">529</i>&nbsp;                selPanel.add(entranceSel);</b>
+<b class="nc"><i class="no-highlight">530</i>&nbsp;                StudentSelectorByColor tableSel = new StudentSelectorByColor(player.getSchool().getTables().values().stream().flatMap(Collection::stream).toList(), 2, &quot;Table: &quot;);</b>
+<b class="nc"><i class="no-highlight">531</i>&nbsp;                selPanel.add(tableSel);</b>
+<i class="no-highlight">532</i>&nbsp;
+<b class="nc"><i class="no-highlight">533</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">534</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">535</i>&nbsp;                    Map&lt;PawnColor, Integer&gt; entranceToTableMap = entranceSel.getSelection();</b>
+<b class="nc"><i class="no-highlight">536</i>&nbsp;                    int entranceToTableMapCount = entranceToTableMap.values().stream().mapToInt(Integer::intValue).sum();</b>
+<b class="nc"><i class="no-highlight">537</i>&nbsp;                    Map&lt;PawnColor, Integer&gt; tableToEntranceMap = tableSel.getSelection();</b>
+<b class="nc"><i class="no-highlight">538</i>&nbsp;                    int tableToEntranceMapCount = tableToEntranceMap.values().stream().mapToInt(Integer::intValue).sum();</b>
+<b class="nc"><i class="no-highlight">539</i>&nbsp;                    if (entranceToTableMapCount != tableToEntranceMapCount) {</b>
+<b class="nc"><i class="no-highlight">540</i>&nbsp;                        errorLabel.setText(&quot;You must select the same number of students from entrance and card&quot;);</b>
+<b class="nc"><i class="no-highlight">541</i>&nbsp;                        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">542</i>&nbsp;                        frame.repaint();</b>
+<b class="nc"><i class="no-highlight">543</i>&nbsp;                    } else if (entranceToTableMapCount &lt; 1 || entranceToTableMapCount &gt; 2) {</b>
+<b class="nc"><i class="no-highlight">544</i>&nbsp;                        errorLabel.setText(&quot;You may only select up to 2 students&quot;);</b>
+<b class="nc"><i class="no-highlight">545</i>&nbsp;                        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">546</i>&nbsp;                        frame.repaint();</b>
+<i class="no-highlight">547</i>&nbsp;                    } else {
+<i class="no-highlight">548</i>&nbsp;                        //Check if the move surpasses the limit of 10 students per table
+<b class="nc"><i class="no-highlight">549</i>&nbsp;                        School tempSchool = new School();</b>
+<b class="nc"><i class="no-highlight">550</i>&nbsp;                        tempSchool.addStudentsToTable(player.getSchool().getTables().values().stream().flatMap(Collection::stream).toList());</b>
+<b class="nc"><i class="no-highlight">551</i>&nbsp;                        for (Map.Entry&lt;PawnColor, Integer&gt; entry : entranceToTableMap.entrySet()) {</b>
+<b class="nc"><i class="no-highlight">552</i>&nbsp;                            List&lt;Student&gt; students = new ArrayList&lt;&gt;(entry.getValue());</b>
+<b class="nc"><i class="no-highlight">553</i>&nbsp;                            for (int i = 0; i &lt; entry.getValue(); ++i) {</b>
+<b class="nc"><i class="no-highlight">554</i>&nbsp;                                students.add(new Student(entry.getKey()));</b>
+<i class="no-highlight">555</i>&nbsp;                            }
+<b class="nc"><i class="no-highlight">556</i>&nbsp;                            tempSchool.addStudentsToTable(students);</b>
+<b class="nc"><i class="no-highlight">557</i>&nbsp;                        }</b>
+<b class="nc"><i class="no-highlight">558</i>&nbsp;                        for (Map.Entry&lt;PawnColor, Integer&gt; entry : tableToEntranceMap.entrySet()) {</b>
+<b class="nc"><i class="no-highlight">559</i>&nbsp;                            tempSchool.removeStudentsByColor(entry.getKey(), entry.getValue());</b>
+<b class="nc"><i class="no-highlight">560</i>&nbsp;                        }</b>
+<b class="nc"><i class="no-highlight">561</i>&nbsp;                        boolean error = false;</b>
+<b class="nc"><i class="no-highlight">562</i>&nbsp;                        for (PawnColor color : PawnColor.values()) {</b>
+<b class="nc"><i class="no-highlight">563</i>&nbsp;                            if (tempSchool.getTableCount(color) &gt; 10) {</b>
+<b class="nc"><i class="no-highlight">564</i>&nbsp;                                error = true;</b>
+<b class="nc"><i class="no-highlight">565</i>&nbsp;                                break;</b>
+<i class="no-highlight">566</i>&nbsp;                            }
+<i class="no-highlight">567</i>&nbsp;                        }
+<b class="nc"><i class="no-highlight">568</i>&nbsp;                        if (!error) {</b>
+<b class="nc"><i class="no-highlight">569</i>&nbsp;                            view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">570</i>&nbsp;                            errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">571</i>&nbsp;                            frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">572</i>&nbsp;                            frame.repaint();</b>
+<b class="nc"><i class="no-highlight">573</i>&nbsp;                            sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToTableMap, tableToEntranceMap));</b>
+<i class="no-highlight">574</i>&nbsp;                        } else {
+<b class="nc"><i class="no-highlight">575</i>&nbsp;                            errorLabel.setText(&quot;A table can only contain 10 students&quot;);</b>
+<b class="nc"><i class="no-highlight">576</i>&nbsp;                            frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">577</i>&nbsp;                            frame.repaint();</b>
+<i class="no-highlight">578</i>&nbsp;                        }
+<i class="no-highlight">579</i>&nbsp;                    }
+<i class="no-highlight">580</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">581</i>&nbsp;                selPanel.add(confirm);</b>
+<b class="nc"><i class="no-highlight">582</i>&nbsp;                paramsPanel.add(selPanel);</b>
+<b class="nc"><i class="no-highlight">583</i>&nbsp;            }</b>
+<i class="no-highlight">584</i>&nbsp;            case 10 -&gt; {
+<b class="nc"><i class="no-highlight">585</i>&nbsp;                Player player = view.getPlayerFromName(name);</b>
+<b class="nc"><i class="no-highlight">586</i>&nbsp;                Character11 c11 = (Character11) c;</b>
+<b class="nc"><i class="no-highlight">587</i>&nbsp;                titleLbl.setText(&quot;Choose a student to move from the character card to your dining room&quot;);</b>
+<i class="no-highlight">588</i>&nbsp;
+<b class="nc"><i class="no-highlight">589</i>&nbsp;                Set&lt;PawnColor&gt; availableColors = c11.getStudents().stream().map(Student::getColor).collect(Collectors.toSet());</b>
+<i class="no-highlight">590</i>&nbsp;                //If the player has 10 students of a given color in the table, remove the color from the list
+<b class="nc"><i class="no-highlight">591</i>&nbsp;                availableColors.removeIf(color -&gt; player.getSchool().getTableCount(color) == 10);</b>
+<b class="nc"><i class="no-highlight">592</i>&nbsp;                JComboBox&lt;PawnColor&gt; comboBox = new JComboBox&lt;&gt;(availableColors.toArray(PawnColor[]::new));</b>
+<b class="nc"><i class="no-highlight">593</i>&nbsp;                paramsPanel.add(comboBox);</b>
+<i class="no-highlight">594</i>&nbsp;
+<b class="nc"><i class="no-highlight">595</i>&nbsp;                JButton confirm = new JButton(&quot;Confirm&quot;);</b>
+<b class="nc"><i class="no-highlight">596</i>&nbsp;                confirm.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">597</i>&nbsp;                    view.getBottomPanel().removeAll();</b>
+<b class="nc"><i class="no-highlight">598</i>&nbsp;                    errorLabel.setText(&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">599</i>&nbsp;                    frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">600</i>&nbsp;                    frame.repaint();</b>
+<b class="nc"><i class="no-highlight">601</i>&nbsp;                    sendMessageAsync(new UseCharacterColorMessage(c.getId(), (PawnColor) comboBox.getSelectedItem()));</b>
+<i class="no-highlight">602</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">603</i>&nbsp;                paramsPanel.add(confirm);</b>
+<i class="no-highlight">604</i>&nbsp;            }
+<i class="no-highlight">605</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">606</i>&nbsp;        view.getBottomPanel().add(titleLbl);</b>
+<b class="nc"><i class="no-highlight">607</i>&nbsp;        view.getBottomPanel().add(paramsPanel);</b>
+<b class="nc"><i class="no-highlight">608</i>&nbsp;        view.getBottomPanel().add(errorLabel);</b>
+<b class="nc"><i class="no-highlight">609</i>&nbsp;        frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">610</i>&nbsp;        frame.repaint();</b>
+<i class="no-highlight">611</i>&nbsp;    }
+<i class="no-highlight">612</i>&nbsp;
+<i class="no-highlight">613</i>&nbsp;    /**
+<i class="no-highlight">614</i>&nbsp;     * Display a final message on the screen and a button to close the program.
+<i class="no-highlight">615</i>&nbsp;     * Free all resources (socket worker, socket, threads)
+<i class="no-highlight">616</i>&nbsp;     * @param message The message to display on the screen (e.g. &quot;Game over&quot;)
+<i class="no-highlight">617</i>&nbsp;     */
+<i class="no-highlight">618</i>&nbsp;    private void finalMessage(String message) {
+<b class="nc"><i class="no-highlight">619</i>&nbsp;        SwingUtilities.invokeLater(() -&gt; {</b>
+<i class="no-highlight">620</i>&nbsp;            JPanel pane;
+<b class="nc"><i class="no-highlight">621</i>&nbsp;            if (view != null) {</b>
+<b class="nc"><i class="no-highlight">622</i>&nbsp;                pane = view.getBottomPanel();</b>
+<i class="no-highlight">623</i>&nbsp;            } else {
+<b class="nc"><i class="no-highlight">624</i>&nbsp;                pane = questionsPanel;</b>
+<i class="no-highlight">625</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">626</i>&nbsp;            pane.removeAll();</b>
+<b class="nc"><i class="no-highlight">627</i>&nbsp;            pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));</b>
+<b class="nc"><i class="no-highlight">628</i>&nbsp;            JLabel title = new JLabel(message);</b>
+<b class="nc"><i class="no-highlight">629</i>&nbsp;            title.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">630</i>&nbsp;            pane.add(title);</b>
+<b class="nc"><i class="no-highlight">631</i>&nbsp;            JButton quit = new JButton(&quot;Close Program&quot;);</b>
+<b class="nc"><i class="no-highlight">632</i>&nbsp;            quit.setMaximumSize(new Dimension(160, 40));</b>
+<b class="nc"><i class="no-highlight">633</i>&nbsp;            quit.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i class="no-highlight">634</i>&nbsp;            quit.addActionListener(actionEvent -&gt; frame.dispose());</b>
+<b class="nc"><i class="no-highlight">635</i>&nbsp;            pane.add(quit);</b>
+<b class="nc"><i class="no-highlight">636</i>&nbsp;            frame.revalidate();</b>
+<b class="nc"><i class="no-highlight">637</i>&nbsp;            frame.repaint();</b>
+<i class="no-highlight">638</i>&nbsp;
+<b class="nc"><i class="no-highlight">639</i>&nbsp;            if (socketWorker != null) {</b>
+<b class="nc"><i class="no-highlight">640</i>&nbsp;                socketWorker.setRunning(false);</b>
+<i class="no-highlight">641</i>&nbsp;                try {
+<b class="nc"><i class="no-highlight">642</i>&nbsp;                    socketWorkerThread.join();</b>
+<b class="nc"><i class="no-highlight">643</i>&nbsp;                } catch (InterruptedException ignored) {</b>
+<b class="nc"><i class="no-highlight">644</i>&nbsp;                }</b>
+<b class="nc"><i class="no-highlight">645</i>&nbsp;                socketWorker = null;</b>
+<b class="nc"><i class="no-highlight">646</i>&nbsp;                socketWorkerThread = null;</b>
+<i class="no-highlight">647</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">648</i>&nbsp;            closeSilent(in);</b>
+<b class="nc"><i class="no-highlight">649</i>&nbsp;            in = null;</b>
+<b class="nc"><i class="no-highlight">650</i>&nbsp;            closeSilent(out);</b>
+<b class="nc"><i class="no-highlight">651</i>&nbsp;            out = null;</b>
+<b class="nc"><i class="no-highlight">652</i>&nbsp;            closeSilent(socket);</b>
+<b class="nc"><i class="no-highlight">653</i>&nbsp;            socket = null;</b>
+<b class="nc"><i class="no-highlight">654</i>&nbsp;            if (executorService != null) {</b>
+<b class="nc"><i class="no-highlight">655</i>&nbsp;                executorService.shutdown();</b>
+<b class="nc"><i class="no-highlight">656</i>&nbsp;                executorService = null;</b>
+<i class="no-highlight">657</i>&nbsp;            }
+<i class="no-highlight">658</i>&nbsp;        });
+<i class="no-highlight">659</i>&nbsp;    }
+<i class="no-highlight">660</i>&nbsp;
+<i class="no-highlight">661</i>&nbsp;    private static void closeSilent(Closeable c) {
+<b class="nc"><i class="no-highlight">662</i>&nbsp;        if (c != null) {</b>
+<i class="no-highlight">663</i>&nbsp;            try {
+<b class="nc"><i class="no-highlight">664</i>&nbsp;                c.close();</b>
+<b class="nc"><i class="no-highlight">665</i>&nbsp;            } catch (IOException ignored) {</b>
+<b class="nc"><i class="no-highlight">666</i>&nbsp;            }</b>
+<i class="no-highlight">667</i>&nbsp;        }
+<i class="no-highlight">668</i>&nbsp;    }
+<i class="no-highlight">669</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-06-28 17:46</div>
+</div>
+</body>
+</html>

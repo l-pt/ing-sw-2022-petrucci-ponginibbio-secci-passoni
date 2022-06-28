@@ -1,0 +1,133 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MessageTypeAdapter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.server.protocol</a>
+</div>
+
+<h1>Coverage Summary for Class: MessageTypeAdapter (it.polimi.ingsw.server.protocol)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MessageTypeAdapter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.server.protocol;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import com.google.gson.*;
+<i class="no-highlight">4</i>&nbsp;
+<i class="no-highlight">5</i>&nbsp;import java.lang.reflect.Type;
+<i class="no-highlight">6</i>&nbsp;
+<i class="no-highlight">7</i>&nbsp;/**
+<i class="no-highlight">8</i>&nbsp; * Adapter class needed by GSON library to deserialize JSON-encoded messages
+<i class="no-highlight">9</i>&nbsp; * when the MessageId is not known in advance
+<i class="no-highlight">10</i>&nbsp; *
+<i class="no-highlight">11</i>&nbsp; * Documentation:
+<i class="no-highlight">12</i>&nbsp; * https://www.javadoc.io/static/com.google.code.gson/gson/2.9.0/com.google.gson/com/google/gson/GsonBuilder.html#registerTypeAdapter(java.lang.reflect.Type,java.lang.Object)
+<i class="no-highlight">13</i>&nbsp; * https://www.javadoc.io/static/com.google.code.gson/gson/2.9.0/com.google.gson/com/google/gson/JsonDeserializer.html
+<i class="no-highlight">14</i>&nbsp; */
+<b class="nc"><i class="no-highlight">15</i>&nbsp;public class MessageTypeAdapter implements JsonDeserializer&lt;Message&gt; {</b>
+<i class="no-highlight">16</i>&nbsp;    @Override
+<i class="no-highlight">17</i>&nbsp;    public Message deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+<b class="nc"><i class="no-highlight">18</i>&nbsp;        JsonObject obj = jsonElement.getAsJsonObject();</b>
+<i class="no-highlight">19</i>&nbsp;        MessageId messageId;
+<i class="no-highlight">20</i>&nbsp;        try {
+<b class="nc"><i class="no-highlight">21</i>&nbsp;            messageId = MessageId.valueOf(obj.get(&quot;messageId&quot;).getAsString());</b>
+<b class="nc"><i class="no-highlight">22</i>&nbsp;        } catch (IllegalArgumentException e) {</b>
+<b class="nc"><i class="no-highlight">23</i>&nbsp;            throw new JsonParseException(e);</b>
+<b class="nc"><i class="no-highlight">24</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">25</i>&nbsp;        Class&lt;? extends Message&gt; messageClass = messageId.getMessageClass();</b>
+<b class="nc"><i class="no-highlight">26</i>&nbsp;        return jsonDeserializationContext.deserialize(jsonElement, messageClass);</b>
+<i class="no-highlight">27</i>&nbsp;    }
+<i class="no-highlight">28</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-06-28 17:46</div>
+</div>
+</body>
+</html>

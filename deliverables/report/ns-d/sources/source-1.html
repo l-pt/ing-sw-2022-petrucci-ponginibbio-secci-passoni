@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CharacterPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.view.gui.component</a>
+</div>
+
+<h1>Coverage Summary for Class: CharacterPanel (it.polimi.ingsw.view.gui.component)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CharacterPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.view.gui.component;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.view.gui.ImageProvider;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.model.character.Character;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.model.character.StudentCharacter;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.model.character.impl.Character5;
+<i class="no-highlight">7</i>&nbsp;
+<i class="no-highlight">8</i>&nbsp;import javax.swing.*;
+<i class="no-highlight">9</i>&nbsp;import java.awt.*;
+<i class="no-highlight">10</i>&nbsp;import java.awt.image.BufferedImage;
+<i class="no-highlight">11</i>&nbsp;import java.util.Arrays;
+<i class="no-highlight">12</i>&nbsp;import java.util.stream.IntStream;
+<i class="no-highlight">13</i>&nbsp;
+<i class="no-highlight">14</i>&nbsp;/**
+<i class="no-highlight">15</i>&nbsp; * Panel with
+<i class="no-highlight">16</i>&nbsp; */
+<i class="no-highlight">17</i>&nbsp;public class CharacterPanel extends JPanel {
+<i class="no-highlight">18</i>&nbsp;    private Character character;
+<i class="no-highlight">19</i>&nbsp;    private ImageProvider imageProvider;
+<i class="no-highlight">20</i>&nbsp;
+<i class="no-highlight">21</i>&nbsp;    public CharacterPanel(Character character, ImageProvider imageProvider) {
+<b class="nc"><i class="no-highlight">22</i>&nbsp;        super(new GridBagLayout());</b>
+<b class="nc"><i class="no-highlight">23</i>&nbsp;        this.character = character;</b>
+<b class="nc"><i class="no-highlight">24</i>&nbsp;        this.imageProvider = imageProvider;</b>
+<b class="nc"><i class="no-highlight">25</i>&nbsp;        JPanel topPanel = new JPanel();</b>
+<b class="nc"><i class="no-highlight">26</i>&nbsp;        topPanel.setOpaque(false);</b>
+<b class="nc"><i class="no-highlight">27</i>&nbsp;        add(topPanel, new GridBagConstraints(</b>
+<i class="no-highlight">28</i>&nbsp;                0, 0,
+<i class="no-highlight">29</i>&nbsp;                1, 1,
+<i class="no-highlight">30</i>&nbsp;                1D, 0.6D,
+<i class="no-highlight">31</i>&nbsp;                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+<i class="no-highlight">32</i>&nbsp;                new Insets(0, 0, 0, 0), 0, 0
+<i class="no-highlight">33</i>&nbsp;        ));
+<i class="no-highlight">34</i>&nbsp;
+<b class="nc"><i class="no-highlight">35</i>&nbsp;        JPanel bottomPanel = new JPanel(new GridLayout(2, 4, 10, 10));</b>
+<b class="nc"><i class="no-highlight">36</i>&nbsp;        bottomPanel.setOpaque(false);</b>
+<i class="no-highlight">37</i>&nbsp;        BufferedImage[] images;
+<b class="nc"><i class="no-highlight">38</i>&nbsp;        if (character instanceof StudentCharacter) {</b>
+<b class="nc"><i class="no-highlight">39</i>&nbsp;            images = ((StudentCharacter) character).getStudents().stream().map(s -&gt; imageProvider.getStudent(s.getColor())).toArray(BufferedImage[]::new);</b>
+<b class="nc"><i class="no-highlight">40</i>&nbsp;        } else if (character instanceof Character5) {</b>
+<b class="nc"><i class="no-highlight">41</i>&nbsp;            images = IntStream.range(0, ((Character5) character).getNoEntry()).mapToObj(i -&gt; imageProvider.getNoEntry()).toArray(BufferedImage[]::new);</b>
+<i class="no-highlight">42</i>&nbsp;        } else {
+<b class="nc"><i class="no-highlight">43</i>&nbsp;            images = new BufferedImage[0];</b>
+<i class="no-highlight">44</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        if (character.getCoin()) {</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;            images = Arrays.copyOf(images, images.length + 1);</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;            images[images.length - 1] = imageProvider.getCoin();</b>
+<i class="no-highlight">48</i>&nbsp;        }
+<i class="no-highlight">49</i>&nbsp;
+<b class="nc"><i class="no-highlight">50</i>&nbsp;        for (BufferedImage image : images) {</b>
+<b class="nc"><i class="no-highlight">51</i>&nbsp;            bottomPanel.add(new JLabel(&quot; &quot;, new DynamicIcon(image), SwingConstants.TRAILING));</b>
+<i class="no-highlight">52</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">53</i>&nbsp;        for (int i = 0; i &lt; 8 - images.length; ++i) {</b>
+<b class="nc"><i class="no-highlight">54</i>&nbsp;            bottomPanel.add(new JLabel());</b>
+<i class="no-highlight">55</i>&nbsp;        }
+<i class="no-highlight">56</i>&nbsp;
+<b class="nc"><i class="no-highlight">57</i>&nbsp;        add(bottomPanel, new GridBagConstraints(</b>
+<i class="no-highlight">58</i>&nbsp;                0, 1,
+<i class="no-highlight">59</i>&nbsp;                1, 1,
+<i class="no-highlight">60</i>&nbsp;                1D, 0.4D,
+<i class="no-highlight">61</i>&nbsp;                GridBagConstraints.PAGE_END, GridBagConstraints.BOTH,
+<i class="no-highlight">62</i>&nbsp;                new Insets(0, 0, 0, 0), 0, 0
+<i class="no-highlight">63</i>&nbsp;        ));
+<i class="no-highlight">64</i>&nbsp;    }
+<i class="no-highlight">65</i>&nbsp;
+<i class="no-highlight">66</i>&nbsp;    @Override
+<i class="no-highlight">67</i>&nbsp;    protected void paintComponent(Graphics g) {
+<b class="nc"><i class="no-highlight">68</i>&nbsp;        super.paintComponent(g);</b>
+<b class="nc"><i class="no-highlight">69</i>&nbsp;        g.drawImage(imageProvider.getCharacter(character).getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);</b>
+<i class="no-highlight">70</i>&nbsp;    }
+<i class="no-highlight">71</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-06-28 17:46</div>
+</div>
+</body>
+</html>
