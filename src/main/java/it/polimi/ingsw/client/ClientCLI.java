@@ -206,7 +206,9 @@ public class ClientCLI extends Client{
             }
             case END_GAME -> {
                 Team winner = ((EndGameMessage) msg).getWinner();
-                if (view.getPlayersOrder().size() == 4) {
+                if (winner == null) {
+                    System.out.println("Game over (draw).");
+                } else if (view.getPlayersOrder().size() == 4) {
                     System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(Player::getName).toList()));
                 } else {
                     System.out.println("Game over. Winner: " + winner.getPlayers().get(0));

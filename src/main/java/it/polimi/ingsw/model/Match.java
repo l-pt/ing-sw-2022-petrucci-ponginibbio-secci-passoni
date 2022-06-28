@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.protocol.message.UpdateViewMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Match extends Observable<UpdateViewMessage> {
     protected List<Team> teams;
@@ -573,19 +574,41 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @return
+     * Get the winning team
+     * @return The winning team, or null in case of a draw
      */
     public Team getWinningTeam() {
-        return teams.stream().min((t1, t2) -> {
-            int towers1 = getTowersByColor(t1.getTowerColor());
-            int towers2 = getTowersByColor(t2.getTowerColor());
-            if (towers1 == towers2) {
-                return t2.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum() - t1.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum();
-            } else {
-                return towers2 - towers1;
+        int maxTowers = -1;
+        List<Team> teamsWithMaxTowers = new ArrayList<>(teams.size());
+        for (Team t : teams) {
+            int teamTowers = getTowersByColor(t.getTowerColor());
+            if (teamTowers > maxTowers) {
+                maxTowers = teamTowers;
+                teamsWithMaxTowers.clear();
+                teamsWithMaxTowers.add(t);
+            } else if (teamTowers == maxTowers) {
+                teamsWithMaxTowers.add(t);
             }
-        }).get();
+        }
+        if (teamsWithMaxTowers.size() == 1) {
+            return teamsWithMaxTowers.get(0);
+        }
+        int maxProfessors = -1;
+        List<Team> teamsWithMaxProfessors = new ArrayList<>(teams.size());
+        for (Team t : teamsWithMaxTowers) {
+            int teamProfessors = t.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum();
+            if (teamProfessors > maxProfessors) {
+                maxProfessors = teamProfessors;
+                teamsWithMaxProfessors.clear();
+                teamsWithMaxProfessors.add(t);
+            } else if (teamProfessors == maxProfessors) {
+                teamsWithMaxProfessors.add(t);
+            }
+        }
+        if (teamsWithMaxProfessors.size() == 1) {
+            return teamsWithMaxProfessors.get(0);
+        }
+        return null;
     }
 
     /**

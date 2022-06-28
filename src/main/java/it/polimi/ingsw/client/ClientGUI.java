@@ -389,7 +389,12 @@ public class ClientGUI extends Client {
             }
             case END_GAME -> {
                 EndGameMessage endGameMessage = (EndGameMessage) msg;
-                String message = "Game over. Winners: " + String.join(", ", endGameMessage.getWinner().getPlayers().stream().map(Player::getName).toArray(String[]::new));
+                String message;
+                if (endGameMessage.getWinner() == null) {
+                    message = "Game over (draw)";
+                } else {
+                    message = "Game over. Winners: " + String.join(", ", endGameMessage.getWinner().getPlayers().stream().map(Player::getName).toArray(String[]::new));
+                }
                 finalMessage(message);
             }
         }
