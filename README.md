@@ -14,7 +14,7 @@ Il progetto consiste nell'implementazione del gioco da tavolo [ERIANTYS](http://
 
 ### UML
 I seguenti diagrammi delle classi rappresentano rispettivamente il diagramma UML riassuntivo e il diagramma UML di dettaglio che mostrano come è stato progettato il software:
-- [UML alto livello]()
+- [UML alto livello](deliverables/uml_high_level)
 - [UML basso livello]()
 
 ### Peer review
