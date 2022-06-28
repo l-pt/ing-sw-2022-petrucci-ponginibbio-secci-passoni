@@ -4,14 +4,11 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.impl.*;
-import it.polimi.ingsw.protocol.Message;
-import it.polimi.ingsw.protocol.MessageId;
-import it.polimi.ingsw.protocol.message.*;
-import it.polimi.ingsw.protocol.message.character.*;
-import it.polimi.ingsw.server.Connection;
+import it.polimi.ingsw.server.protocol.Message;
 import it.polimi.ingsw.server.Server;
+import it.polimi.ingsw.server.protocol.message.*;
+import it.polimi.ingsw.server.protocol.message.character.*;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 

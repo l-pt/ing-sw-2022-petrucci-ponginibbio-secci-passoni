@@ -6,10 +6,11 @@ import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.impl.Character1;
 import it.polimi.ingsw.model.character.impl.Character11;
 import it.polimi.ingsw.model.character.impl.Character7;
-import it.polimi.ingsw.protocol.Message;
-import it.polimi.ingsw.protocol.MessageId;
-import it.polimi.ingsw.protocol.message.*;
-import it.polimi.ingsw.protocol.message.character.*;
+import it.polimi.ingsw.server.protocol.Message;
+import it.polimi.ingsw.server.protocol.MessageId;
+import it.polimi.ingsw.server.protocol.message.*;
+import it.polimi.ingsw.server.protocol.message.character.*;
+import it.polimi.ingsw.view.ViewCLI;
 
 import java.io.*;
 import java.net.Socket;

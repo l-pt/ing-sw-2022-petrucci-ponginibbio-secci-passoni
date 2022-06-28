@@ -3,8 +3,8 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.*;
-import it.polimi.ingsw.observer.Observable;
-import it.polimi.ingsw.protocol.message.UpdateViewMessage;
+import it.polimi.ingsw.model.observer.Observable;
+import it.polimi.ingsw.server.protocol.message.UpdateViewMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;

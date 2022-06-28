@@ -2,11 +2,11 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.impl.*;
-import it.polimi.ingsw.protocol.Message;
-import it.polimi.ingsw.protocol.MessageId;
-import it.polimi.ingsw.protocol.message.*;
-import it.polimi.ingsw.protocol.message.character.*;
+import it.polimi.ingsw.server.protocol.Message;
+import it.polimi.ingsw.server.protocol.MessageId;
 import it.polimi.ingsw.server.Server;
+import it.polimi.ingsw.server.protocol.message.*;
+import it.polimi.ingsw.server.protocol.message.character.*;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;

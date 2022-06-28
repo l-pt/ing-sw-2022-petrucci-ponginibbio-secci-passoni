@@ -2,9 +2,10 @@ package it.polimi.ingsw.server;
 
 import com.google.gson.*;
 import it.polimi.ingsw.model.IllegalMoveException;
-import it.polimi.ingsw.observer.Observer;
-import it.polimi.ingsw.protocol.*;
-import it.polimi.ingsw.protocol.message.*;
+import it.polimi.ingsw.model.observer.Observer;
+import it.polimi.ingsw.server.protocol.GsonSingleton;
+import it.polimi.ingsw.server.protocol.Message;
+import it.polimi.ingsw.server.protocol.message.*;
 
 import java.io.*;
 import java.net.Socket;

@@ -1,7 +1,8 @@
 package it.polimi.ingsw.client;
 
 import com.google.gson.JsonSyntaxException;
-import it.polimi.ingsw.protocol.*;
+import it.polimi.ingsw.server.protocol.GsonSingleton;
+import it.polimi.ingsw.server.protocol.Message;
 
 import java.io.*;
 import java.net.Socket;

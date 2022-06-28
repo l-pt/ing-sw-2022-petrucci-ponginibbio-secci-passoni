@@ -2,10 +2,10 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.protocol.Message;
-import it.polimi.ingsw.protocol.MessageId;
-import it.polimi.ingsw.protocol.message.AskAssistantMessage;
-import it.polimi.ingsw.protocol.message.UpdateViewMessage;
+import it.polimi.ingsw.server.protocol.Message;
+import it.polimi.ingsw.server.protocol.MessageId;
+import it.polimi.ingsw.server.protocol.message.AskAssistantMessage;
+import it.polimi.ingsw.server.protocol.message.UpdateViewMessage;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -32,7 +32,6 @@ public class Server {
 
     /** Match & Controller Management */
     private MatchParameters matchParameters; //implemented locally in this Server.java class; contains (numberOfPlayers, isExpertMode)
-    private List<Controller> controllers = new ArrayList<>(); //list of Controllers
     private Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
 
     /** Eryantis Server */
@@ -237,7 +236,6 @@ public class Server {
         connectedPlayers.get(0).sendMessage(new AskAssistantMessage());
 
         //send group of connected playerConnections to a match
-        controllers.add(controller);
         for (Connection c : connectedPlayers) {
             connectionControllerMap.put(c, controller);
         }
