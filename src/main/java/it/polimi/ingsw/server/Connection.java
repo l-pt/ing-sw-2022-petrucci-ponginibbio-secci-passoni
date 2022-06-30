@@ -12,7 +12,7 @@ import java.net.Socket;
 
 /**
  * Connection Class
- * types: Runnable, Observer
+ * Implements: Runnable, Observer
  */
 public class Connection implements Runnable, Observer<UpdateViewMessage> {
 
