@@ -10,15 +10,36 @@ import it.polimi.ingsw.server.protocol.message.*;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Connection Class
+ * types: Runnable, Observer
+ */
 public class Connection implements Runnable, Observer<UpdateViewMessage> {
+
+    /**
+     * Allocate memory for Socket and Server.
+     * Declare i/o stream variables.
+     */
     private final Socket socket;
     private final DataInputStream in;
     private final DataOutputStream out;
     private final Server server;
+
+    /**
+     * Personalize Connection: name, isActive, setParameters
+     */
     private String name;
     private boolean isActive;
     private boolean setPlayersAndExpert;
 
+    /**
+     * Constructor requires socket and server as parameters for this Connection.
+     * Initializes new i/o streams as channel for data exchange through this Connection.
+     * Initializes isActive to true, setPlayersAndExpert to false.
+     * @param socket stored as this.socket
+     * @param server stored as this.server
+     * @throws IOException
+     */
     public Connection(Socket socket, Server server) throws IOException {
         this.socket = socket;
         this.server = server;
@@ -29,37 +50,39 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @return String the player's name, or null if the name is yet to be entered
+     * getName()
+     * @return player's name as String, or null if the name is yet to be entered
      */
     public synchronized String getName() {
         return name;
     }
 
     /**
-     *
-     * @return
+     * isActive() returns the isActive status
+     * @return this.isActive
      */
     private synchronized boolean isActive(){
         return this.isActive;
     }
 
     /**
-     *
-     * @param msg
+     * Takes Message msg as input, converts msg to a JSON object, then outputs the msg_json to the DataOutputStream this.out
+     * @param msg outgoing message
      * @throws IOException
      */
     public void sendMessage(Message msg) throws IOException {
-        String json = GsonSingleton.get().toJson(msg);
+        String msg_json = GsonSingleton.get().toJson(msg);
         synchronized (out) {
-            out.writeUTF(json);
+            out.writeUTF(msg_json);
             out.flush();
         }
     }
 
     /**
-     *
-     * @return
+     * Reads data from DataInputStream this.in which is expected in JSON format.
+     * The method then converts the JSON into a java object, specifically a Message.class object.
+     * The Message object is then returned
+     * @return Message read from input stream
      * @throws JsonSyntaxException
      * @throws IOException
      */
@@ -69,10 +92,10 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     }
 
     /**
-     *
+     * Reads message of Class object, and casts it into a Message object.
      * @param messageClass
      * @param <T>
-     * @return
+     * @return <T extends Message> T
      * @throws JsonSyntaxException
      * @throws IOException
      */
@@ -81,7 +104,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     }
 
     /**
-     *
+     * Closes connection by deactivating socket.
      */
     private void closeConnection(){
         //attempt to close connection via socket object method
@@ -97,7 +120,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     }
 
     /**
-     *
+     * Close the connection if there are no match parameters.
      */
     public synchronized void close(){
         if (setPlayersAndExpert) {
@@ -107,10 +130,14 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
         closeConnection();
     }
 
+    /**
+     * Run() for Connection Class
+     */
     @Override
     public void run(){
         try{
-            //get name of connected user
+
+            //ask player to enter username
             SetUsernameMessage usernameMessage = null;
             while (usernameMessage == null) {
                 sendMessage(new AskUsernameMessage());
@@ -126,9 +153,13 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
             }
             name = usernameMessage.getUsername();
 
+            //establish server and match parameters
             synchronized (server) {
+
+                //if player is the first connected, he is match admin
                 if (server.getFirstConnection() == this) {
-                    //Ask number of players in the match
+
+                    //match admin sets number of players in the match
                     SetPlayerNumberMessage playerNumberMessage = null;
                     while (playerNumberMessage == null) {
                         sendMessage(new AskPlayerNumberMessage());
@@ -142,7 +173,8 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
                             sendMessage(new ErrorMessage("Error reading player number"));
                         }
                     }
-                    //Ask whether to activate expert mode
+
+                    //match admin decides to activate expert mode or not
                     SetExpertMessage expertMessage = null;
                     while (expertMessage == null) {
                         sendMessage(new AskExpertMessage());
@@ -156,28 +188,46 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
                     setPlayersAndExpert = true;
                 }
             }
+
+            //check if match is full
             if(server.getWaitingConnections().size() >= server.getMatchParameters().getPlayerNumber()) {
+
+                //check lobby
                 server.checkWaitingConnections();
+
             }else {
+
+                //continue waiting for new connections
                 sendMessage(new WaitingMessage("\nWaiting for other players to connect...\n"));
             }
 
+            //to do loop for this connection
             while(this.isActive()){
-                //Wait for messages from the client
+
+                //wait for messages from the client
                 Message read = readMessage();
-                //When a new message arrives, put it in the server's messageQueue
+
+                //when message arrives, notify server and forward messages
+                //server will queue incoming messages
                 server.notifyMessage(this, read);
             }
+
+        //exceptions
         } catch (IllegalMoveException e) {
             System.err.println(e.getMessage());
         } catch (IOException e) {
             System.err.println("Connection lost");
         } finally {
-            //Notify the server with a null message to signal that the connection is broken
+
+            //notify the server with a null message to signal that the connection is broken
             server.notifyMessage(this, null);
         }
     }
 
+    /**
+     * When connection is lost, send a message to the player's interface
+     * @param msg
+     */
     @Override
     public void notifyObserver(UpdateViewMessage msg) {
         try {

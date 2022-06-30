@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class ServerApp {
     /**
-     *
+     * Main Method of ServerApp
      * @param args
      */
     public static void main( String[] args ) {
