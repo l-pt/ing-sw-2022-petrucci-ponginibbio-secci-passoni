@@ -63,7 +63,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     *
+     * Process the received message
      * @param msg
      * @return boolean true if the match has started, false otherwise
      * @throws IOException
@@ -107,7 +107,8 @@ public class ClientCLI extends Client{
     }
 
     /**
-     *
+     * Loop executed when the match has started
+     * Client waits for server questions about game moves
      * @throws IOException
      */
     public void game() throws IOException {
@@ -130,7 +131,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     *
+     * Process the received message
      * @param msg
      * @throws IOException
      */
@@ -220,9 +221,9 @@ public class ClientCLI extends Client{
     }
 
     /**
-     *
+     * Check if the conditions for using the characters apply
      * @param index
-     * @return
+     * @return true if the conditions are verified
      */
     public boolean checkCharacters(int index){
         if (view.getCharacters().get(index).getId() == 9) {
@@ -239,7 +240,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     *
+     * Ask the client whether to activate the effect of some character
      * @throws IOException
      */
     public void handleCharacter() throws IOException {
@@ -294,7 +295,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     *
+     * Ask the client how to use the character effect
      * @param characterId
      * @throws IOException
      */
@@ -483,7 +484,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     *
+     * Close scanner and call super.closeProgram()
      */
     public void closeProgram() {
         stdin.close();

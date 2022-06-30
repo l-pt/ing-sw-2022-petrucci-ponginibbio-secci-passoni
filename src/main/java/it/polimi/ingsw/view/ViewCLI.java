@@ -11,27 +11,44 @@ import java.util.Formatter;
 
 public class ViewCLI extends View<ClientCLI> {
 
-    //get os type
+    //Get OS type
     private final String OS = System.getProperty("os.name").toLowerCase();
 
-    //link client to view
+    /**
+     * ViewCLI()
+     * @param client to link to the view
+     */
     public ViewCLI(ClientCLI client) {
         this.client = client;
     }
 
+    /**
+     * isWindows()
+     * @return true if the OS type is Windows
+     */
     public boolean isWindows() {
         return (OS.contains("win"));
     }
 
+    /**
+     * isUnix()
+     * @return true if the OS type is Unix
+     */
     public boolean isUnix() {
         return (OS.contains("nix") || OS.contains("nux") || OS.contains("aix"));
     }
 
+    /**
+     * isMac()
+     * @return true if the OS type is Mac
+     */
     public boolean isMac() {
         return (OS.contains("mac"));
     }
 
-    /** clear screen in all os **/
+    /**
+     * Clear the screen
+     */
     public void clearScreen(){
         try{
             if (isWindows()) {
@@ -46,7 +63,10 @@ public class ViewCLI extends View<ClientCLI> {
         }
     }
 
-    /** print String in all os **/
+    /**
+     * printToScreen()
+     * @param output is the string to print on screen
+     */
     public void printToScreen(String output){
         try{
             System.out.print(output);
@@ -57,7 +77,7 @@ public class ViewCLI extends View<ClientCLI> {
     }
 
     /**
-     * Print title
+     * Print the name of the game
      */
     public void printTitle() {
         clearScreen();
@@ -83,7 +103,7 @@ public class ViewCLI extends View<ClientCLI> {
     }
 
     /**
-     * Print the description of the elements of the game interface
+     * Print the description of the game elements
      */
     public void printDescription() {
         clearScreen();
@@ -107,7 +127,7 @@ public class ViewCLI extends View<ClientCLI> {
     }
 
     /**
-     * Print view
+     * Print on screen
      */
     @Override
     public void print() {
@@ -409,7 +429,7 @@ public class ViewCLI extends View<ClientCLI> {
             }
         }
 
-        //Print players' coin reserve
+        //Print players' coin reserves
         if (expert) {
             moveCursor = "\u001b[1;81H";
             curRow = 2;

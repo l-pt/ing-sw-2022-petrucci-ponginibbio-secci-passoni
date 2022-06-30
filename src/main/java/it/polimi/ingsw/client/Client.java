@@ -18,12 +18,18 @@ public abstract class Client {
     protected DataOutputStream out;
     protected ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    /**
+     * getName()
+     * @return the username of the client
+     */
     public String getName() {
         return name;
     }
 
     /**
      * Send a message to the server
+     * @param msg is the message to send
+     * @throws IOException
      */
     public void sendMessage(Message msg) throws IOException {
         String json = GsonSingleton.get().toJson(msg);
@@ -35,6 +41,9 @@ public abstract class Client {
 
     /**
      * Receive a message from the server
+     * @return the message sent by the server
+     * @throws JsonSyntaxException
+     * @throws IOException
      */
     public Message readMessage() throws JsonSyntaxException, IOException {
         String json = in.readUTF();
@@ -43,6 +52,11 @@ public abstract class Client {
 
     /**
      * Receive a message from the server
+     * @param messageClass
+     * @param <T>
+     * @return
+     * @throws JsonSyntaxException
+     * @throws IOException
      */
     public <T extends Message> T readMessage(Class<T> messageClass) throws JsonSyntaxException, IOException {
         return messageClass.cast(readMessage());
