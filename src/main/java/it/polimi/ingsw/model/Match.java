@@ -8,7 +8,6 @@ import it.polimi.ingsw.server.protocol.message.UpdateViewMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Match extends Observable<UpdateViewMessage> {
     protected List<Team> teams;
@@ -53,7 +52,7 @@ public class Match extends Observable<UpdateViewMessage> {
 
             //add random student to all islands except where mother nature is and directly across (+/- 6 positions)
             if(i != posMotherNature && i != (posMotherNature + 6) % 12)
-                islands.get(i).addStudent(extractStudent(1).get(0));
+                islands.get(i).addStudent(extractStudents(1).get(0));
         }
 
         //fill the bag with the rest of the students
@@ -62,7 +61,7 @@ public class Match extends Observable<UpdateViewMessage> {
                 studentBag.add(new Student(color));
 
         for (Player player : playerOrder)
-            player.getSchool().addStudentsToEntrance(extractStudent(7));
+            player.getSchool().addStudentsToEntrance(extractStudents(7));
 
         //add a cloud for each player
         for (int i = 0; i < playerOrder.size(); ++i)
@@ -124,7 +123,7 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
+     * Adds 8 towers to all the teams (for a 2 or 4 players match)
      */
     public void setupTowers(){
         for (Team team : teams) {
@@ -135,16 +134,16 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @return
+     * getTeams()
+     * @return The teams of the match
      */
     public List<Team> getTeams() {return teams;}
 
     /**
-     *
-     * @param color
-     * @return
-     * @throws IllegalMoveException
+     * Searches for a team with a certain tower color
+     * @param color TowerColor of a team
+     * @return The team with the given tower color
+     * @throws IllegalMoveException When there isn't a team with the given tower color
      */
     public Team getTeamFromColor(TowerColor color) throws IllegalMoveException {
         for(Team team : teams) {
@@ -156,10 +155,10 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param player
-     * @return
-     * @throws IllegalMoveException
+     * Searches for a team which a certain player is part of
+     * @param player Player
+     * @return The team which the given player is part of
+     * @throws IllegalMoveException When the given player isn't part of any teams
      */
     public Team getTeamFromPlayer(Player player) throws IllegalMoveException {
         for (Team team : teams) {
@@ -169,14 +168,14 @@ public class Match extends Observable<UpdateViewMessage> {
                 }
             }
         }
-        throw new IllegalMoveException("Player is not in a team");
+        throw new IllegalMoveException(player.getName() + " is not in a team");
     }
 
     /**
-     *
-     * @param playerName
-     * @return
-     * @throws IllegalMoveException
+     * Searches for a player with a certain name
+     * @param playerName The username of a player
+     * @return The player with the given name
+     * @throws IllegalMoveException When there aren't any players with the given name
      */
     public Player getPlayerFromName(String playerName) throws IllegalMoveException {
         for(Player player : playerOrder) {
@@ -188,10 +187,10 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param playerName
-     * @return
-     * @throws IllegalMoveException
+     * Searches for the position of a player with a certain name in the order of play for the current turn
+     * @param playerName The username of a player
+     * @return The position of a player with the given name in the order of play for the current turn
+     * @throws IllegalMoveException When there aren't any players with the given name
      */
     public int getPosFromName(String playerName) throws IllegalMoveException {
         for (int i = 0; i < playerOrder.size(); ++i) {
@@ -203,91 +202,91 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @return
+     * getPlayersOrder()
+     * @return The order of play for the current turn
      */
     public List<Player> getPlayersOrder() {
         return playerOrder;
     }
 
     /**
-     *
-     * @return
+     * getPosMotherNature()
+     * @return The island number which mother nature is currently on
      */
     public int getPosMotherNature() {
         return posMotherNature;
     }
 
     /**
-     *
-     * @return
+     * getCharacters()
+     * @return The 3 characters of the match
      */
     public List<Character> getCharacters() {
         return characters;
     }
 
     /**
-     *
-     * @return
+     * getIslands()
+     * @return The islands of the match
      */
     public List<Island> getIslands() {
         return islands;
     }
 
     /**
-     *
-     * @return
+     * getClouds()
+     * @return The clouds of the match
      */
     public List<Cloud> getClouds() {
         return clouds;
     }
 
     /**
-     *
-     * @return
+     * getStudentBag()
+     * @return The students remaining in the student bag
      */
     public List<Student> getStudentBag(){return studentBag;}
 
     /**
-     *
-     * @return
+     * getProfessors()
+     * @return The professors that aren't taken by any players
      */
     public List<Professor> getProfessors() {
         return professors;
     }
 
     /**
-     *
-     * @param students
+     * Adds the given students to studentBag
+     * @param students List of students
      */
     public void addStudents(List<Student> students){
         studentBag.addAll(students);
     }
 
     /**
-     *
-     * @param n
-     * @return
+     * Extracts n random students from studentBag, removing them from it
+     * @param n Number of students that is required to extract from studentBag
+     * @return List of n random students from studentBag, or all the students in studentBag if studentBag.size() is less than n
      */
-    public List<Student> extractStudent(int n) {
+    public List<Student> extractStudents(int n) {
         int randomIndex;
-        List<Student> result = new ArrayList<>(Math.min(n, studentBag.size()));
+        List<Student> students = new ArrayList<>(Math.min(n, studentBag.size()));
         if (n >= studentBag.size()) {
             lastTurn = true;
         }
         for (int i = 0; i < Math.min(n, studentBag.size()); ++i) {
             randomIndex = new Random().nextInt(studentBag.size());
-            result.add(studentBag.get(randomIndex));
+            students.add(studentBag.get(randomIndex));
             studentBag.remove(studentBag.get(randomIndex));
         }
-        return result;
+        return students;
     }
 
     /**
-     *
-     * @param color
-     * @return
-     * @throws IllegalMoveException
+     * Removes the professor of the given color on the board and returns it
+     * @param color PawnColor of the professor
+     * @return The professor of the given color
+     * @throws IllegalMoveException When the professor of the given color is already taken by a player
      */
     public Professor removeProfessor(PawnColor color) throws IllegalMoveException {
         for(int i = 0; i < professors.size(); ++i) {
@@ -299,9 +298,9 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param color
-     * @return
+     * Searches for the player with the professor of the given color
+     * @param color PawnColor of the professor
+     * @return The player with the professor of the given color, or null if there isn't a player with the professor of the given color
      */
     public Player whoHasProfessor(PawnColor color){
         for (Player player : playerOrder) {
@@ -313,30 +312,34 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param playerName
-     * @param color
-     * @param n
-     * @throws IllegalMoveException
+     * Moves n students of the given color from the entrance to the player tables
+     * @param playerName The username of a player
+     * @param color PawnColor of the students
+     * @param n Number of students of the given color
+     * @throws IllegalMoveException When n is negative
      */
     public void playerMoveStudents(String playerName, PawnColor color, int n) throws IllegalMoveException {
         if (n < 0) {
-            throw new IllegalArgumentException("n must be non negative");
+            throw new IllegalArgumentException("Students numbers must be positive");
         }
         for(int i = 0; i < n; ++i) {
+            //Adds the students from the entrance to the table
             getPlayerFromName(playerName).getSchool().addStudentFromEntranceToTable(color);
+
+            //Checks if the students of the table are 3, 6 or 9 (only if the match is expert)
             if(expert) {
                 checkNumberStudents(playerName, color);
             }
+            //Checks the number of students of that color and determinate the owner of the professor
             checkProfessors(playerName, color);
         }
     }
 
     /**
-     *
-     * @param playerName
-     * @param color
-     * @throws IllegalMoveException
+     * Checks the table count of the given color and if is 3, 6, or 9 adds a coin to the player coin reserve
+     * @param playerName The username of a player
+     * @param color PawnColor of the table
+     * @throws IllegalMoveException When there aren't any players with the given name
      */
     public void checkNumberStudents(String playerName, PawnColor color) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
@@ -347,34 +350,47 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param playerName
-     * @param color
-     * @throws IllegalMoveException
+     * Checks the table count of the given color of all the players
+     * and gives the professor to the player with the most students in the table of that color.
+     * In case of a draw the professor remains to the original player
+     * @param playerName The username of a player
+     * @param color PawnColor of the professor
+     * @throws IllegalMoveException When there aren't any players with the given name
      */
     public void checkProfessors(String playerName, PawnColor color) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
-        if(!player.getSchool().isColoredProfessor(color)){
-            if(whoHasProfessor(color) == null) {
+
+        //Checks if the player already has that color professor
+        if (!player.getSchool().isColoredProfessor(color)) {
+
+            //Checks if no player has that color professor
+            if (whoHasProfessor(color) == null) {
                 player.getSchool().addProfessor(removeProfessor(color));
-            } else if(player.getSchool().getTableCount(color) == whoHasProfessor(color).getSchool().getTableCount(color) && drawAllowed) {
-                player.getSchool().addProfessor(whoHasProfessor(color).getSchool().removeProfessor(color));
-            }else if(player.getSchool().getTableCount(color) > whoHasProfessor(color).getSchool().getTableCount(color)) {
+
+                //Checks if the player has the same amount of students of that color as the current owner of the professor
+                //and the draw are allowed or if the player has the most amount of student of that color
+            } else if ((player.getSchool().getTableCount(color) == whoHasProfessor(color).getSchool().getTableCount(color) && drawAllowed)
+                    || (player.getSchool().getTableCount(color) > whoHasProfessor(color).getSchool().getTableCount(color))) {
                 player.getSchool().addProfessor(whoHasProfessor(color).getSchool().removeProfessor(color));
             }
         }
     }
 
     /**
-     *
-     * @param index
-     * @param noMotherNatureMoves
-     * @throws IllegalMoveException
+     * Checks the influence of all the players of a certain island and manages the towers on that island
+     * @param index Index of an island
+     * @param noMotherNatureMoves True if mother nature won't move, false otherwise
+     * @throws IllegalMoveException If the player with the most influence of the island isn't part of any team
      */
     public void islandInfluence(int index, boolean noMotherNatureMoves) throws IllegalMoveException {
         boolean draw = false;
         int max = -1, pos = 0;
+
+        //Checks if there aren't any no entries on that island
         if(islands.get(index).getNoEntry() == 0) {
+
+            //Finds the max influence on the island, the position of that player and
+            // if there are more players with the same max influence
             for (int i = 0; i < playerOrder.size(); ++i) {
                 if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) > max) {
                     max = islands.get(index).getInfluence(playerOrder.get(i), influencePolicy);
@@ -384,9 +400,11 @@ public class Match extends Observable<UpdateViewMessage> {
                     draw = true;
                 }
             }
-            if (!draw && max > 0 && (islands.get(index).getTowers().size() == 0 || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
+
+            if (!draw && max > 0 && (islands.get(index).getTowers().isEmpty() ||
+                    !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
                 if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
-                    if (islands.get(index).getTowers().size() == 0 && getTeamFromPlayer(playerOrder.get(pos)).getTowers().size() == 1) {
+                    if (islands.get(index).getTowers().isEmpty() && getTeamFromPlayer(playerOrder.get(pos)).getTowers().size() == 1) {
                         gameFinished = true;
                     } else {
                         List<Tower> t = islands.get(index).removeAllTowers();
@@ -403,7 +421,10 @@ public class Match extends Observable<UpdateViewMessage> {
                 }
             }
         }else {
+            //Removes 1 no entry from the island
             islands.get(index).removeNoEntry();
+
+            //Adds 1 no entry to the Character5
             for (Character character : characters) {
                 if (character instanceof Character5) {
                     ((Character5) character).addNoEntry();
@@ -413,33 +434,35 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param index
-     * @param noMotherNatureMoves
+     * Checks the 2 adjacent islands of an island and unifies them if they have the same tower color
+     * @param index Index of an island
+     * @param noMotherNatureMoves True if mother nature won't move, false otherwise
      */
     public void checkIslands(int index, boolean noMotherNatureMoves) {
-        if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() && islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
+        if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() &&
+                islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
             uniteIslands(Math.min(index, islandIndex(index + 1)), Math.max(index, islandIndex(index + 1)), noMotherNatureMoves);
         }
-        if (!islands.get(islandIndex(index - 1)).getTowers().isEmpty() && islands.get(islandIndex(index - 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
+        if (!islands.get(islandIndex(index - 1)).getTowers().isEmpty() &&
+                islands.get(islandIndex(index - 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
             uniteIslands(Math.min(index, islandIndex(index - 1)), Math.max(index, islandIndex(index - 1)), noMotherNatureMoves);
         }
     }
 
     /**
-     *
-     * @param idx
-     * @return
+     * Formats an index of an island in module islands.size()
+     * @param idx Index of an island
+     * @return The index of the island in module islands.size()
      */
     public int islandIndex(int idx) {
         return ((idx % islands.size()) < 0) ? (idx % islands.size()) + islands.size() : idx % islands.size();
     }
 
     /**
-     *
-     * @param min
-     * @param max
-     * @param noMotherNatureMoves
+     * Unifies 2 islands with indexes min and max
+     * @param min Min between the 2 indexes
+     * @param max Max between the 2 indexes
+     * @param noMotherNatureMoves True if mother nature won't move, false otherwise
      */
     public void uniteIslands(int min, int max, boolean noMotherNatureMoves) {
         islands.get(min).addStudents(islands.get(max).getStudents());
@@ -455,24 +478,25 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
+     * Adds 3 students to all the clouds (for a 2 or 4 players match)
      */
     public void populateClouds() {
         for (Cloud c : clouds) {
-            c.addStudents(extractStudent(3));
+            c.addStudents(extractStudents(3));
         }
         updateView();
     }
 
     /**
-     *
-     * @param playerName
-     * @param cloudIndex
-     * @throws IllegalMoveException
+     * Moves all the students of a certain cloud to the player entrance
+     * @param playerName The username of a player
+     * @param cloudIndex Index of the selected cloud
+     * @throws IllegalMoveException When a cloud has been already chosen by another player this turn.
+     * When the given cloud index is less than 0 or more than the clouds number
      */
     public void moveStudentsFromCloud(String playerName, int cloudIndex) throws IllegalMoveException {
         if (cloudIndex >= 0 && cloudIndex < clouds.size()) {
-            if (clouds.get(cloudIndex).getStudents().size() == 0) {
+            if (clouds.get(cloudIndex).getStudents().isEmpty()) {
                 throw new IllegalMoveException("Cloud already chosen by another player this turn");
             } else {
                 getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
@@ -482,10 +506,10 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param playerName
-     * @param moves
-     * @throws IllegalMoveException
+     * Moves mother nature by a certain amount of moves
+     * @param playerName The username of a player
+     * @param moves Moves that the player wants to make with mother nature
+     * @throws IllegalMoveException When the given moves are less than 1 or more than the value of the assistant played by the player
      */
     public void moveMotherNature(String playerName, int moves) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
@@ -497,50 +521,50 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @return
+     * isExpert()
+     * @return True if the match is expert, false otherwise
      */
     public boolean isExpert() {
         return expert;
     }
 
     /**
-     *
-     * @return
+     * getCoins()
+     * @return The number of coins available on the board
      */
     public int getCoins() {
         return coinsReserve;
     }
 
     /**
-     *
-     * @param drawAllowed
+     * setDrawAllowed()
+     * @param drawAllowed True if the Character2 ability is been played this turn, false otherwise
      */
     public void setDrawAllowed(boolean drawAllowed) {
         this.drawAllowed = drawAllowed;
     }
 
     /**
-     *
-     * @return
+     * getDrawAllowed()
+     * @return True if the Character2 ability is been played this turn, false otherwise
      */
     public boolean getDrawAllowed() {
         return drawAllowed;
     }
 
     /**
-     *
-     * @return
+     * getInfluencePolicy()
+     * @return The policies for counting influence
      */
     public InfluenceCalculationPolicy getInfluencePolicy() {
         return influencePolicy;
     }
 
     /**
-     *
-     * @param cl
-     * @return
-     * @throws IllegalMoveException
+     * Gets the character of a certain class
+     * @param cl Class of a character
+     * @return The character of the given class
+     * @throws IllegalMoveException When there aren't any characters of the given class
      */
     public Character getCharacterFromType(Class<? extends Character> cl) throws IllegalMoveException {
         for (Character character : characters) {
@@ -552,7 +576,7 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
+     * Resets all characters abilities
      */
     public void resetAbility(){
         drawAllowed = false;
@@ -565,16 +589,16 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param color
-     * @return
+     * Gets the number of towers with a certain color that are on all islands
+     * @param color TowerColor of a team
+     * @return The number of towers with the given color that are on all islands
      */
     public int getTowersByColor(TowerColor color) {
         return (int) islands.stream().flatMap(island -> island.getTowers().stream()).filter(t -> t.getColor() == color).count();
     }
 
     /**
-     * Get the winning team
+     * Gets the winning team
      * @return The winning team, or null in case of a draw
      */
     public Team getWinningTeam() {
@@ -605,31 +629,28 @@ public class Match extends Observable<UpdateViewMessage> {
                 teamsWithMaxProfessors.add(t);
             }
         }
-        if (teamsWithMaxProfessors.size() == 1) {
-            return teamsWithMaxProfessors.get(0);
-        }
-        return null;
+        return teamsWithMaxProfessors.size() == 1 ? teamsWithMaxProfessors.get(0) : null;
     }
 
     /**
-     *
-     * @return
+     * isGameFinished()
+     * @return True if the game is finished, false otherwise
      */
     public boolean isGameFinished() {
         return gameFinished;
     }
 
     /**
-     *
-     * @return
+     * isLastTurn()
+     * @return True if it's the last turn of the game, false otherwise
      */
     public boolean isLastTurn() {
         return lastTurn;
     }
 
     /**
-     *
-     * @param currentPlayer
+     * Sets the current player in the turn
+     * @param currentPlayer Name of the player that will become the current player
      */
     public void setCurrentPlayer(String currentPlayer) {
         this.currentPlayer = currentPlayer;
@@ -637,10 +658,12 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param playerName
-     * @param value
-     * @throws IllegalMoveException
+     * Let's uses an assistant to a player if available
+     * @param playerName The username of a player
+     * @param value Value of the assistant that the player wants to use
+     * @throws IllegalMoveException When the given assistant value is less than 1 or more than 10.
+     * When the player with the given name doesn't have an assistant with the given value.
+     * When an assistant with the given value has already been played this turn and the player with the given name has other options
      */
     public void useAssistant(String playerName, int value) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
@@ -673,16 +696,16 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
-     * @param playerName
-     * @param islandsStudents
-     * @param tableStudents
-     * @throws IllegalMoveException
+     * Moves 3 students from a player entrance to an island and/or to his tables
+     * @param playerName The username of a player
+     * @param islandsStudents Students that the player wants to move from his entrance to an island
+     * @param tableStudents Students that the player wants to move from his entrance to his tables
+     * @throws IllegalMoveException When the player wants to move a different amount of students than 3.
+     * When an island index doesn't exist
      */
     public void moveStudentsToIslandsAndTable(String playerName, Map<Integer, Map<PawnColor, Integer>> islandsStudents, Map<PawnColor, Integer> tableStudents) throws IllegalMoveException {
         //Check that the player has moved exactly three students
-        if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(Map.Entry::getValue).sum() +
-                tableStudents.values().stream().mapToInt(Integer::intValue).sum() != 3) {
+        if (islandsStudents.values().stream().flatMap(m -> m.entrySet().stream()).mapToInt(Map.Entry::getValue).sum() + tableStudents.values().stream().mapToInt(Integer::intValue).sum() != 3) {
             throw new IllegalMoveException("You have to move exactly three students from the entrance");
         }
         //Check that all island indexes are valid
@@ -707,7 +730,7 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     *
+     * Updates the status of the match
      */
     public void updateView() {
         notifyObservers(new UpdateViewMessage(

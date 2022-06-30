@@ -19,7 +19,7 @@ public class Character8Test extends TestCase {
         player1.addCoin();
 
         player1.getSchool().addProfessor(new Professor(PawnColor.RED));
-        match.getIslands().get(0).addStudents(match.extractStudent(5));
+        match.getIslands().get(0).addStudents(match.extractStudents(5));
 
         InfluenceCalculationPolicy calculationPolicy = new InfluenceCalculationPolicy();
         int influence = match.getIslands().get(0).getInfluence(player1, calculationPolicy);

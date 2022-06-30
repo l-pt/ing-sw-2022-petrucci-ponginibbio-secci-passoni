@@ -22,7 +22,7 @@ public class Character11 extends StudentCharacter implements ColorCharacter {
         player.getSchool().addStudentsToTable(removeStudentsByColor(color, 1));
         match.checkNumberStudents(player.getName(), color);
         match.checkProfessors(playerName, color);
-        addStudents(match.extractStudent(1));
+        addStudents(match.extractStudents(1));
         player.removeCoins(cost);
         incrementCost();
         match.updateView();

@@ -20,15 +20,15 @@ public abstract class Client {
 
     /**
      * getName()
-     * @return the username of the client
+     * @return The username of the client
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Send a message to the server
-     * @param msg is the message to send
+     * Sends a message to the server
+     * @param msg The message to send
      * @throws IOException
      */
     public void sendMessage(Message msg) throws IOException {
@@ -40,8 +40,8 @@ public abstract class Client {
     }
 
     /**
-     * Receive a message from the server
-     * @return the message sent by the server
+     * Receives a message from the server
+     * @return The message sent by the server
      * @throws JsonSyntaxException
      * @throws IOException
      */
@@ -51,7 +51,7 @@ public abstract class Client {
     }
 
     /**
-     * Receive a message from the server
+     * Receives a message from the server
      * @param messageClass
      * @param <T>
      * @return
@@ -65,7 +65,7 @@ public abstract class Client {
     public abstract void run() throws IOException;
 
     /**
-     * Free all resources and call System.exit() to close the program
+     * Frees all resources and call System.exit() to close the program
      */
     public void closeProgram() {
         try {

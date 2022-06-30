@@ -16,7 +16,7 @@ public class ViewCLI extends View<ClientCLI> {
 
     /**
      * ViewCLI()
-     * @param client to link to the view
+     * @param client To link to the view
      */
     public ViewCLI(ClientCLI client) {
         this.client = client;
@@ -24,7 +24,7 @@ public class ViewCLI extends View<ClientCLI> {
 
     /**
      * isWindows()
-     * @return true if the OS type is Windows
+     * @return True if the OS type is Windows
      */
     public boolean isWindows() {
         return (OS.contains("win"));
@@ -32,7 +32,7 @@ public class ViewCLI extends View<ClientCLI> {
 
     /**
      * isUnix()
-     * @return true if the OS type is Unix
+     * @return True if the OS type is Unix
      */
     public boolean isUnix() {
         return (OS.contains("nix") || OS.contains("nux") || OS.contains("aix"));
@@ -40,14 +40,14 @@ public class ViewCLI extends View<ClientCLI> {
 
     /**
      * isMac()
-     * @return true if the OS type is Mac
+     * @return True if the OS type is Mac
      */
     public boolean isMac() {
         return (OS.contains("mac"));
     }
 
     /**
-     * Clear the screen
+     * Clears the screen
      */
     public void clearScreen(){
         try{
@@ -65,7 +65,7 @@ public class ViewCLI extends View<ClientCLI> {
 
     /**
      * printToScreen()
-     * @param output is the string to print on screen
+     * @param output The string to print on screen
      */
     public void printToScreen(String output){
         try{
@@ -77,7 +77,7 @@ public class ViewCLI extends View<ClientCLI> {
     }
 
     /**
-     * Print the name of the game
+     * Prints the name of the game
      */
     public void printTitle() {
         clearScreen();
@@ -103,7 +103,7 @@ public class ViewCLI extends View<ClientCLI> {
     }
 
     /**
-     * Print the description of the game elements
+     * Prints the description of the game elements
      */
     public void printDescription() {
         clearScreen();
@@ -127,7 +127,7 @@ public class ViewCLI extends View<ClientCLI> {
     }
 
     /**
-     * Print on screen
+     * Prints on screen
      */
     @Override
     public void print() {

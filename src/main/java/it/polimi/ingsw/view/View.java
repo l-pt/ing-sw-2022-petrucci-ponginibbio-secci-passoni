@@ -23,8 +23,8 @@ public abstract class View<T extends Client> {
     protected String currentPlayer;
 
     /**
-     * Update the view attributes and print on screen
-     * @param message contains the updated model elements
+     * Updates the view attributes and print on screen
+     * @param message Contains the updated model elements
      */
     public void handleUpdateView(UpdateViewMessage message) {
         teams = message.getTeams();
@@ -46,14 +46,14 @@ public abstract class View<T extends Client> {
     }
 
     /**
-     * Print on screen
+     * Prints on screen
      */
     public abstract void print();
 
     /**
      * getPlayerFromName()
-     * @param name is the username of the player
-     * @return the player with this username
+     * @param name The username of the player
+     * @return The player with this username
      */
     public Player getPlayerFromName(String name){
         for (Player player : playersOrder) {
@@ -65,7 +65,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getClient()
-     * @return the client linked to the view
+     * @return The client linked to the view
      */
     public T getClient() {
         return client;
@@ -73,7 +73,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getTeams()
-     * @return the list of the game teams
+     * @return The list of the game teams
      */
     public List<Team> getTeams() {
         return teams;
@@ -81,7 +81,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getAssistants()
-     * @return the list of the assistants
+     * @return The list of the assistants
      */
     public List<Assistant> getAssistants() {
         return assistants;
@@ -89,7 +89,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getIslands()
-     * @return the list of the islands
+     * @return The list of the islands
      */
     public List<Island> getIslands() {
         return islands;
@@ -97,7 +97,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getPlayersOrder()
-     * @return the list of the players in order of play
+     * @return The list of the players in order of play
      */
     public List<Player> getPlayersOrder() {
         return playersOrder;
@@ -105,7 +105,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getPosMotherNature()
-     * @return the position of mother nature
+     * @return The position of mother nature
      */
     public int getPosMotherNature() {
         return posMotherNature;
@@ -113,7 +113,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getClouds()
-     * @return the list of the clouds
+     * @return The list of the clouds
      */
     public List<Cloud> getClouds() {
         return clouds;
@@ -121,7 +121,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getProfessors()
-     * @return the list of the professors
+     * @return The list of the professors
      */
     public List<Professor> getProfessors() {
         return professors;
@@ -129,7 +129,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getCoinReserve()
-     * @return the number of coins in the coin reserve
+     * @return The number of coins in the coin reserve
      */
     public int getCoinReserve() {
         return coinReserve;
@@ -137,7 +137,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getCharacters()
-     * @return the list of characters
+     * @return The list of characters
      */
     public List<Character> getCharacters() {
         return characters;
@@ -145,7 +145,7 @@ public abstract class View<T extends Client> {
 
     /**
      * isExpert()
-     * @return true if it is an expert mode game
+     * @return True if it is an expert mode game
      */
     public boolean isExpert() {
         return expert;
@@ -153,7 +153,7 @@ public abstract class View<T extends Client> {
 
     /**
      * getCurrentPlayer()
-     * @return the username of the player who is playing
+     * @return The username of the player who is playing
      */
     public String getCurrentPlayer() {
         return currentPlayer;

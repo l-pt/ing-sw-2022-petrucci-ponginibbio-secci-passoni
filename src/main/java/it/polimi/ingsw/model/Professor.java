@@ -7,6 +7,10 @@ public class Professor {
         this.color = color;
     }
 
+    /**
+     * getColor()
+     * @return The color of the professor
+     */
     public PawnColor getColor() {
         return color;
     }

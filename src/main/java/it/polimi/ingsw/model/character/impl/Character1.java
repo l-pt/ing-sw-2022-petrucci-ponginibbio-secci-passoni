@@ -22,7 +22,7 @@ public class Character1 extends StudentCharacter {
         }
         List<Student> students = removeStudentsByColor(color, 1);
         match.getIslands().get(island).addStudents(students);
-        addStudents(match.extractStudent(1));
+        addStudents(match.extractStudents(1));
         player.removeCoins(cost);
         incrementCost();
         match.updateView();

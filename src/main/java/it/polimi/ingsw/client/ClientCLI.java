@@ -65,7 +65,7 @@ public class ClientCLI extends Client{
     /**
      * Process the received message
      * @param msg
-     * @return boolean true if the match has started, false otherwise
+     * @return True if the match has started, false otherwise
      * @throws IOException
      */
     public boolean handleLobbyMessage(Message msg) throws IOException {
@@ -208,11 +208,11 @@ public class ClientCLI extends Client{
             case END_GAME -> {
                 Team winner = ((EndGameMessage) msg).getWinner();
                 if (winner == null) {
-                    System.out.println("Game over (draw).");
+                    System.out.println("Game over (draw).\n");
                 } else if (view.getPlayersOrder().size() == 4) {
-                    System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(Player -> getName().toUpperCase()).toList()));
+                    System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(Player -> getName().toUpperCase()).toList()) + "\n");
                 } else {
-                    System.out.println("Game over. Winner: " + winner.getPlayers().get(0).getName().toUpperCase());
+                    System.out.println("Game over. Winner: " + winner.getPlayers().get(0).getName().toUpperCase() + "\n");
                 }
             }
             case UPDATE_VIEW -> view.handleUpdateView((UpdateViewMessage) msg);
@@ -221,9 +221,9 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Check if the conditions for using the characters apply
+     * Checks if the conditions for using the characters apply
      * @param index
-     * @return true if the conditions are verified
+     * @return True if the conditions are verified
      */
     public boolean checkCharacters(int index){
         if (view.getCharacters().get(index).getId() == 9) {
@@ -240,7 +240,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Ask the client whether to activate the effect of some character
+     * Asks the client whether to activate the effect of some character
      * @throws IOException
      */
     public void handleCharacter() throws IOException {
@@ -295,7 +295,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Ask the client how to use the character effect
+     * Asks the client how to use the character effect
      * @param characterId
      * @throws IOException
      */
@@ -484,7 +484,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Close scanner and call super.closeProgram()
+     * Closes scanner and call super.closeProgram()
      */
     public void closeProgram() {
         stdin.close();
@@ -492,7 +492,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Read an int from stdin
+     * Reads an int from stdin
      * @param prompt
      * @return
      */
@@ -501,7 +501,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Read an int from stdin until it satisfies predicate
+     * Reads an int from stdin until it satisfies predicate
      * @param prompt
      * @param predicate
      * @param error

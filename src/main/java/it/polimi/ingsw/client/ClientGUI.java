@@ -55,7 +55,7 @@ public class ClientGUI extends Client {
     private Thread socketWorkerThread;
 
     /**
-     * Get the main program frame
+     * Gets the main program frame
      * @return The main program frame
      */
     public JFrame getFrame() {
@@ -63,7 +63,7 @@ public class ClientGUI extends Client {
     }
 
     /**
-     * Send a message to the server on another thread.
+     * Sends a message to the server on another thread.
      * If the message cannot be sent due to a network error, stop the game and display an error.
      * @param msg The message to send to the server
      */
@@ -163,7 +163,7 @@ public class ClientGUI extends Client {
         //We have received a server message, check its Type to answer appropriately
         switch (msg.getMessageId()) {
             case ERROR -> {
-                errorLabel.setText("Server error: " + ((ErrorMessage) msg).getError());
+                errorLabel.setText(((ErrorMessage) msg).getError());
                 frame.revalidate();
                 frame.repaint();
             }
@@ -454,7 +454,7 @@ public class ClientGUI extends Client {
     }
 
     /**
-     * Ask the player the parameters required to play the character with the given id
+     * Asks the player the parameters required to play the character with the given id
      * @param characterId The character ID (0-12)
      */
     private void askCharacterParameters(int characterId) {
@@ -469,7 +469,7 @@ public class ClientGUI extends Client {
     }
 
     /**
-     * Ask the player the parameters required to play the given character
+     * Asks the player the parameters required to play the given character
      */
     private void askCharacterParameters(Character c) {
         JLabel titleLbl = new JLabel();

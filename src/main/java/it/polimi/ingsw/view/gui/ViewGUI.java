@@ -1,9 +1,9 @@
 package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.client.ClientGUI;
-import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
+import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.component.*;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ public abstract class ViewGUI extends View<ClientGUI> {
     private ImageProvider imageProvider;
 
     /**
-     * The main panel of the frame that contains all the view elements (player boards, clouds, islands, etc)
+     * The main panel of the frame that contains all the view elements (player boards, clouds, islands, etc.)
      */
     protected JPanel mainPanel;
     /**
@@ -58,9 +58,7 @@ public abstract class ViewGUI extends View<ClientGUI> {
             case 4 -> {
                 return new FourPlayersViewGUI(client);
             }
-            default -> {
-                throw new IllegalArgumentException();
-            }
+            default -> throw new IllegalArgumentException();
         }
     }
 

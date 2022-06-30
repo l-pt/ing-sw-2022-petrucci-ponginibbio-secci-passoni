@@ -17,7 +17,7 @@ public abstract class StudentCharacter extends Character {
     }
 
     public void setup(Match match) {
-        addStudents(match.extractStudent(getInitialStudentsNumber()));
+        addStudents(match.extractStudents(getInitialStudentsNumber()));
     }
 
     /**

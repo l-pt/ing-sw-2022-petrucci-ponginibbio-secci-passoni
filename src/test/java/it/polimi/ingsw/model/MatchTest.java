@@ -133,7 +133,7 @@ public class MatchTest extends TestCase {
         }
         int oldBagSize = match.getStudentBag().size();
 
-        List<Student> extracted = match.extractStudent(10);
+        List<Student> extracted = match.extractStudents(10);
 
         Assertions.assertEquals(Math.min(10, oldBagSize), extracted.size());
 
@@ -198,7 +198,7 @@ public class MatchTest extends TestCase {
 
         match.playerMoveStudents(player1.getName(), color, 1);
         Exception e = assertThrows(IllegalArgumentException.class, () -> match.playerMoveStudents(player1.getName(), PawnColor.RED, -1));
-        Assertions.assertEquals("n must be non negative", e.getMessage());
+        Assertions.assertEquals("Students numbers must be positive", e.getMessage());
 
 
         Assertions.assertEquals(1, player1.getSchool().getTableCount(color));
@@ -455,7 +455,7 @@ public class MatchTest extends TestCase {
         Assertions.assertEquals("A team with tower color GRAY does not exist", e.getMessage());
 
         e = assertThrows(IllegalMoveException.class, () -> match.getTeamFromPlayer(new Player("test3", TowerColor.GRAY, Wizard.PINK)));
-        Assertions.assertEquals("Player is not in a team", e.getMessage());
+        Assertions.assertEquals("test3 is not in a team", e.getMessage());
 
         e = assertThrows(IllegalMoveException.class, () -> match.getPlayerFromName("abc"));
         Assertions.assertEquals("Invalid Name", e.getMessage());
@@ -475,7 +475,7 @@ public class MatchTest extends TestCase {
         Team team2 = new Team(List.of(player2), TowerColor.BLACK);
         Match match = new Match(List.of(team1, team2), List.of(player1, player2), true);
 
-        match.extractStudent(match.getStudentBag().size() + 1);
+        match.extractStudents(match.getStudentBag().size() + 1);
         Assertions.assertTrue(match.isLastTurn());
     }
 

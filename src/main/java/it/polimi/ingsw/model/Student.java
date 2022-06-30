@@ -1,9 +1,5 @@
 package it.polimi.ingsw.model;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 public class Student {
     private final PawnColor color;
 
@@ -11,6 +7,10 @@ public class Student {
         this.color = color;
     }
 
+    /**
+     * getColor()
+     * @return The color of the student
+     */
     public PawnColor getColor() {
         return color;
     }

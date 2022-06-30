@@ -15,26 +15,37 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-
-    /** ExecutorService for Thread Management */
+    /**
+     * ExecutorService for Thread Management
+     */
     private ExecutorService executor = Executors.newFixedThreadPool(64); //define executor for Controller commands onto Model
 
-    /** ServerSocketThread for Port Listening*/
+    /**
+     * ServerSocketThread for Port Listening
+     */
     private ServerSocketThread serverSocketThread; //listens on TCP for new connections
 
-    /** Client Connections Management */
+    /**
+     * Client Connections Management
+     */
     private List<Connection> connections = new ArrayList<>(); //all active connections to the server
     private List<Connection> waitingConnections = new ArrayList<>(); //all connections waiting in the lobby
     private Connection firstConnection;
 
-    /** Message Reception Management */
+    /**
+     * Message Reception Management
+     */
     private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>(); //creates queue for incoming "to be handled" messages
 
-    /** Match & Controller Management */
+    /**
+     * Match & Controller Management
+     */
     private MatchParameters matchParameters; //implemented locally in this Server.java class; contains (numberOfPlayers, isExpertMode)
     private Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
 
-    /** Eryantis Server */
+    /**
+     * Eryantis Server
+     */
     public Server(int port) throws IOException{
         serverSocketThread = new ServerSocketThread(port);
         executor.submit(serverSocketThread);
@@ -93,7 +104,6 @@ public class Server {
      * @throws IllegalMoveException when there is no client with given name
      */
     public Connection getConnectionFromName(String name) throws IllegalMoveException {
-
         for(Connection c : connections){
             if (c.getName().equals(name))
                 return c;
@@ -180,7 +190,7 @@ public class Server {
     /**
      * nameUsed()
      * @param name
-     * @return true if there is a connected player with the same name,
+     * @return true if there is a connected player with the same name, false otherwise
      */
     public synchronized boolean nameUsed(String name) {
         for (Connection connection : connections) {

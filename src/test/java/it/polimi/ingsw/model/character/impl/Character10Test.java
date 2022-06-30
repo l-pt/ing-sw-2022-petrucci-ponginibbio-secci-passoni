@@ -89,7 +89,7 @@ public class Character10Test extends TestCase {
         entranceToDiningRoom.put(entranceColor, 1);
 
         //Get the color of a student that we can extract from the dining room
-        player1.getSchool().addStudentsToTable(match.extractStudent(1));
+        player1.getSchool().addStudentsToTable(match.extractStudents(1));
         PawnColor diningRoomColor = null;
         for (PawnColor c : PawnColor.values()) {
             if (player1.getSchool().getTableCount(c) > 0) {

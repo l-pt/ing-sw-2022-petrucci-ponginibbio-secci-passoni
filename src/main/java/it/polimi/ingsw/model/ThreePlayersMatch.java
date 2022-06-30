@@ -8,9 +8,12 @@ public class ThreePlayersMatch extends Match {
         super(teams, playerOrder, expert);
 
         for (Player player : playerOrder)
-            player.getSchool().addStudentsToEntrance(extractStudent(2));
+            player.getSchool().addStudentsToEntrance(extractStudents(2));
     }
 
+    /**
+     * Adds towers to all the teams (for a 3 players match)
+     */
     @Override
     public void setupTowers(){
         for (Team team : teams)
@@ -18,10 +21,13 @@ public class ThreePlayersMatch extends Match {
                 team.addTower(new Tower(team.getTowerColor()));
     }
 
+    /**
+     * Adds 4 students to all the clouds (for a 3 players match)
+     */
     @Override
     public void populateClouds() {
         for (Cloud c : clouds)
             if (!studentBag.isEmpty())
-                c.addStudents(extractStudent(4));
+                c.addStudents(extractStudents(4));
     }
 }
