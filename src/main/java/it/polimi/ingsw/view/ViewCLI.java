@@ -229,7 +229,7 @@ public class ViewCLI extends View<ClientCLI> {
             moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
             formatter.format(moveCursor);
             for (Character character : characters) {
-                formatter.format("%1$d°CHARACTER -> %2$s\n", character.getId(), character.getDescription());
+                formatter.format("%1$d°CHARACTER -> %2$s\n", character.getId() + 1, character.getDescription());
             }
         }
 
