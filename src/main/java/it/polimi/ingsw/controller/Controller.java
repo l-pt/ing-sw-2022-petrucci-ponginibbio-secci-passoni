@@ -12,6 +12,9 @@ import it.polimi.ingsw.server.protocol.message.character.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controller Class
+ */
 public class Controller {
     private Match match;
     private Server server;
