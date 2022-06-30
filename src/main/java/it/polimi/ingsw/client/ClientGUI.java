@@ -416,49 +416,53 @@ public class ClientGUI extends Client {
      * ask for the required parameters to make the move.
      */
     private void handleCharacter() {
-        Player player = view.getPlayerFromName(name);
-        int coins = player.getCoins();
-        List<Character> usableCharacters = new ArrayList<>(view.getCharacters().stream().filter(c -> coins >= c.getCost()).toList());
-        int tableTotalStudents = player.getSchool().getTables().values().stream().mapToInt(List::size).sum();
-        if (tableTotalStudents == 0) {
-            //If the table is empty, we can't play Character10, so remove it from usableCharacters
-            usableCharacters.removeIf(c -> c instanceof Character10);
-        } else if (tableTotalStudents == 10 * PawnColor.values().length) {
-            //If the table is full, we can't play Character11
-            usableCharacters.removeIf(c -> c instanceof Character11);
-        }
-        //Remove Character10 from the list if it is not possible to make a legal move
-        Set<PawnColor> fullTableColors = Arrays.stream(PawnColor.values()).filter(color -> player.getSchool().getTableCount(color) == 10).collect(Collectors.toSet());
-        if (!fullTableColors.isEmpty() && fullTableColors.containsAll(player.getSchool().getEntrance().stream().map(Student::getColor).toList())) {
-            usableCharacters.removeIf(c -> c instanceof Character10);
-        }
-        if (view.isExpert() && !usableCharacters.isEmpty()) {
-            JLabel titleLbl = new JLabel("Choose a character");
-            titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-            view.getBottomPanel().add(titleLbl);
+        if (view.isExpert()) {
+            Player player = view.getPlayerFromName(name);
+            int coins = player.getCoins();
+            List<Character> usableCharacters = new ArrayList<>(view.getCharacters().stream().filter(c -> coins >= c.getCost()).toList());
+            int tableTotalStudents = player.getSchool().getTables().values().stream().mapToInt(List::size).sum();
+            if (tableTotalStudents == 0) {
+                //If the table is empty, we can't play Character10, so remove it from usableCharacters
+                usableCharacters.removeIf(c -> c instanceof Character10);
+            } else if (tableTotalStudents == 10 * PawnColor.values().length) {
+                //If the table is full, we can't play Character11
+                usableCharacters.removeIf(c -> c instanceof Character11);
+            }
+            //Remove Character10 from the list if it is not possible to make a legal move
+            Set<PawnColor> fullTableColors = Arrays.stream(PawnColor.values()).filter(color -> player.getSchool().getTableCount(color) == 10).collect(Collectors.toSet());
+            if (!fullTableColors.isEmpty() && fullTableColors.containsAll(player.getSchool().getEntrance().stream().map(Student::getColor).toList())) {
+                usableCharacters.removeIf(c -> c instanceof Character10);
+            }
+            if (view.isExpert() && !usableCharacters.isEmpty()) {
+                JLabel titleLbl = new JLabel("Choose a character");
+                titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+                view.getBottomPanel().add(titleLbl);
 
-            JPanel charPanel = new JPanel();
-            charPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(usableCharacters);
-            charPanel.add(characterSelectorPanel);
+                JPanel charPanel = new JPanel();
+                charPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                CharacterSelectorPanel characterSelectorPanel = new CharacterSelectorPanel(usableCharacters);
+                charPanel.add(characterSelectorPanel);
 
-            JButton confirm = new JButton("Confirm");
-            confirm.addActionListener(actionEvent -> {
-                view.getBottomPanel().removeAll();
-                errorLabel.setText("");
+                JButton confirm = new JButton("Confirm");
+                confirm.addActionListener(actionEvent -> {
+                    view.getBottomPanel().removeAll();
+                    errorLabel.setText("");
+                    frame.revalidate();
+                    frame.repaint();
+                    int sel = characterSelectorPanel.getSelection();
+                    if (sel == CharacterSelectorPanel.SELECTION_NONE) {
+                        sendMessageAsync(new UseNoCharacterMessage());
+                    } else {
+                        askCharacterParameters(usableCharacters.get(sel));
+                    }
+                });
+                charPanel.add(confirm);
+                view.getBottomPanel().add(charPanel);
                 frame.revalidate();
                 frame.repaint();
-                int sel = characterSelectorPanel.getSelection();
-                if (sel == CharacterSelectorPanel.SELECTION_NONE) {
-                    sendMessageAsync(new UseNoCharacterMessage());
-                } else {
-                    askCharacterParameters(usableCharacters.get(sel));
-                }
-            });
-            charPanel.add(confirm);
-            view.getBottomPanel().add(charPanel);
-            frame.revalidate();
-            frame.repaint();
+            } else {
+                sendMessageAsync(new UseNoCharacterMessage());
+            }
         } else {
             sendMessageAsync(new UseNoCharacterMessage());
         }
