@@ -209,9 +209,9 @@ public class ClientCLI extends Client{
                 if (winner == null) {
                     System.out.println("Game over (draw).");
                 } else if (view.getPlayersOrder().size() == 4) {
-                    System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(Player::getName).toList()));
+                    System.out.println("Game over. Winners: " + String.join(", ", winner.getPlayers().stream().map(Player -> getName().toUpperCase()).toList()));
                 } else {
-                    System.out.println("Game over. Winner: " + winner.getPlayers().get(0));
+                    System.out.println("Game over. Winner: " + winner.getPlayers().get(0).getName().toUpperCase());
                 }
             }
             case UPDATE_VIEW -> view.handleUpdateView((UpdateViewMessage) msg);

@@ -323,31 +323,31 @@ public class ViewCLI extends View<ClientCLI> {
                     for (Student student : player.getSchool().getTables().get(pawncolor)) {
                         if (pawncolor.equals(PawnColor.RED)) {
                             if (counter == 3 || counter == 6 || counter == 9) {
-                                formatter.format("\u001b[101;91m S\u001b[0m");
+                                formatter.format("\u001b[1;91m $\u001b[0m");
                             } else {
                                 formatter.format("\u001b[1;91m S\u001b[0m");
                             }
                         } else if (pawncolor.equals(PawnColor.YELLOW)) {
                             if (counter == 3 || counter == 6 || counter == 9) {
-                                formatter.format("\u001b[103;93m S\u001b[0m");
+                                formatter.format("\u001b[1;93m $\u001b[0m");
                             } else {
                                 formatter.format("\u001b[1;93m S\u001b[0m");
                             }
                         } else if (pawncolor.equals(PawnColor.GREEN)) {
                             if (counter == 3 || counter == 6 || counter == 9) {
-                                formatter.format("\u001b[102;92m S\u001b[0m");
+                                formatter.format("\u001b[1;92m $\u001b[0m");
                             } else {
                                 formatter.format("\u001b[1;92m S\u001b[0m");
                             }
                         } else if (pawncolor.equals(PawnColor.BLUE)) {
                             if (counter == 3 || counter == 6 || counter == 9) {
-                                formatter.format("\u001b[104;94m S\u001b[0m");
+                                formatter.format("\u001b[1;94m $\u001b[0m");
                             } else {
                                 formatter.format("\u001b[1;94m S\u001b[0m");
                             }
                         } else {
                             if (counter == 3 || counter == 6 || counter == 9) {
-                                formatter.format("\u001b[105;95m S\u001b[0m");
+                                formatter.format("\u001b[1;95m $\u001b[0m");
                             } else {
                                 formatter.format("\u001b[1;95m S\u001b[0m");
                             }
@@ -376,7 +376,11 @@ public class ViewCLI extends View<ClientCLI> {
                 if (playersOrder.size() != 4) {
                     ++curRow;
                     moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
-                    formatter.format(moveCursor + "\u001b[97m" + player.getName().toUpperCase() + "'S TOWERS ->\u001b[0m");
+                    if (player.getName().equals(client.getName())) {
+                        formatter.format(moveCursor + "\u001b[97mYOUR TOWERS ->\u001b[0m");
+                    } else {
+                        formatter.format(moveCursor + "\u001b[97m" + player.getName().toUpperCase() + "'S TOWERS ->\u001b[0m");
+                    }
                     for (Tower tower : team.getTowers()) {
                         if (tower.getColor().equals(TowerColor.BLACK)) {
                             formatter.format("\u001b[1;90m █\u001b[0m");
