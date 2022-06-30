@@ -23,7 +23,7 @@ public class StudentSelectorByColor extends JPanel {
         }
         for (Map.Entry<PawnColor, Integer> entry : studentsMap.entrySet()) {
             JPanel entryPanel = new JPanel();
-            entryPanel.add(new JLabel(entry.getKey().name() + " Students: "));
+            entryPanel.add(new JLabel(entry.getKey().name() + ": "));
             JComboBox<Integer> comboBox = new JComboBox<>();
             for (int i = 0, j = Math.min(entry.getValue(), max); i <= j; ++i) {
                 comboBox.addItem(i);

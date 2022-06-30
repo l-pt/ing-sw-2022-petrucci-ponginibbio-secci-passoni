@@ -252,6 +252,7 @@ public class ClientGUI extends Client {
                 view.handleUpdateView((UpdateViewMessage) msg);
             }
             case ASK_ASSISTANT -> {
+                view.getBottomPanel().removeAll();
                 JLabel titleLbl = new JLabel("Choose an assistant");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -276,6 +277,7 @@ public class ClientGUI extends Client {
             }
             case ASK_ENTRANCE_STUDENT -> {
                 Player player = view.getPlayerFromName(name);
+                view.getBottomPanel().removeAll();
 
                 JLabel titleLbl = new JLabel("Move 3 entrance students");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -327,6 +329,7 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_MOTHER_NATURE -> {
+                view.getBottomPanel().removeAll();
                 JLabel titleLbl = new JLabel("Move mother nature");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -354,6 +357,7 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_CLOUD -> {
+                view.getBottomPanel().removeAll();
                 JLabel titleLbl = new JLabel("Choose a cloud");
                 titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
                 view.getBottomPanel().add(titleLbl);
@@ -380,6 +384,7 @@ public class ClientGUI extends Client {
                 frame.repaint();
             }
             case ASK_CHARACTER -> {
+                view.getBottomPanel().removeAll();
                 AskCharacterMessage characterMessage = (AskCharacterMessage) msg;
                 if (characterMessage.getCharacterId() == -1) {
                     handleCharacter();
@@ -388,12 +393,18 @@ public class ClientGUI extends Client {
                 }
             }
             case END_GAME -> {
+                view.getBottomPanel().removeAll();
                 EndGameMessage endGameMessage = (EndGameMessage) msg;
                 String message;
                 if (endGameMessage.getWinner() == null) {
                     message = "Game over (draw)";
                 } else {
-                    message = "Game over. Winners: " + String.join(", ", endGameMessage.getWinner().getPlayers().stream().map(Player::getName).toArray(String[]::new));
+                    String[] winners = endGameMessage.getWinner().getPlayers().stream().map(Player::getName).toArray(String[]::new);
+                    if (winners.length == 1) {
+                        message = "Game over. Winner: " + winners[0];
+                    } else {
+                        message = "Game over. Winners: " + String.join(", ", winners);
+                    }
                 }
                 finalMessage(message);
             }
@@ -529,9 +540,9 @@ public class ClientGUI extends Client {
 
                 JPanel selPanel = new JPanel(null);
                 selPanel.setLayout(new BoxLayout(selPanel, BoxLayout.Y_AXIS));
-                StudentSelectorByColor entranceSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getEntrance(), 3, "Entrance: ");
+                StudentSelectorByColor entranceSel = new StudentSelectorByColor(view.getPlayerFromName(name).getSchool().getEntrance(), 3, "Entrance Students: ");
                 selPanel.add(entranceSel);
-                StudentSelectorByColor characterSel = new StudentSelectorByColor(c7.getStudents(), 3, "Character: ");
+                StudentSelectorByColor characterSel = new StudentSelectorByColor(c7.getStudents(), 3, "Character Students: ");
                 selPanel.add(characterSel);
 
                 JButton confirm = new JButton("Confirm");
@@ -556,8 +567,8 @@ public class ClientGUI extends Client {
                         sendMessageAsync(new UseCharacterStudentMapMessage(c.getId(), entranceToCardMap, cardToEntranceMap));
                     }
                 });
-                selPanel.add(confirm);
                 paramsPanel.add(selPanel);
+                paramsPanel.add(confirm);
             }
             case 8,11 -> {
                 titleLbl.setText("Choose a student color");
@@ -579,9 +590,9 @@ public class ClientGUI extends Client {
 
                 JPanel selPanel = new JPanel(null);
                 selPanel.setLayout(new BoxLayout(selPanel, BoxLayout.Y_AXIS));
-                StudentSelectorByColor entranceSel = new StudentSelectorByColor(player.getSchool().getEntrance(), 2, "Entrance: ");
+                StudentSelectorByColor entranceSel = new StudentSelectorByColor(player.getSchool().getEntrance(), 2, "Entrance Students: ");
                 selPanel.add(entranceSel);
-                StudentSelectorByColor tableSel = new StudentSelectorByColor(player.getSchool().getTables().values().stream().flatMap(Collection::stream).toList(), 2, "Table: ");
+                StudentSelectorByColor tableSel = new StudentSelectorByColor(player.getSchool().getTables().values().stream().flatMap(Collection::stream).toList(), 2, "Table Students: ");
                 selPanel.add(tableSel);
 
                 JButton confirm = new JButton("Confirm");
@@ -632,8 +643,8 @@ public class ClientGUI extends Client {
                         }
                     }
                 });
-                selPanel.add(confirm);
                 paramsPanel.add(selPanel);
+                paramsPanel.add(confirm);
             }
             case 10 -> {
                 Player player = view.getPlayerFromName(name);

@@ -107,8 +107,18 @@ public abstract class ViewGUI extends View<ClientGUI> {
         drawCloudsAndProfessors();
         drawExpertMode();
         drawAssistants();
+        printWaitingFor();
         client.getFrame().revalidate();
         client.getFrame().repaint();
+    }
+
+    private void printWaitingFor() {
+        if (!client.getName().equals(currentPlayer)) {
+            JLabel lbl = new JLabel("Waiting for " + currentPlayer);
+            lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+            bottomPanel.removeAll();
+            bottomPanel.add(lbl);
+        }
     }
 
     /**
@@ -250,10 +260,15 @@ public abstract class ViewGUI extends View<ClientGUI> {
      */
     private void drawAssistants() {
         assistantsPanel.removeAll();
+        int nAssistants = 0;
         for (Assistant assistant : assistants) {
             JLabel lbl = new JLabel(" ", new DynamicIcon(imageProvider.getAssistant(assistant)), SwingConstants.TRAILING);
             lbl.setToolTipText("<html>Value: " + assistant.getValue() + "<br>Moves: " + assistant.getMoves() + "</html>");
             assistantsPanel.add(lbl);
+            ++nAssistants;
+        }
+        for (int i = nAssistants; i < 10; ++i) {
+            assistantsPanel.add(new JLabel(""));
         }
     }
 
