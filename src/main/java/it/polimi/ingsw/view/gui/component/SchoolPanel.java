@@ -17,61 +17,133 @@ public class SchoolPanel extends JPanel {
     private ImageProvider imageProvider;
 
     public SchoolPanel(Player player, List<Tower> towers, ImageProvider imageProvider) {
-        super(new GridLayout(rows, columns));
+        super(new GridBagLayout());
         this.imageProvider = imageProvider;
 
         Map<PawnColor, List<Integer>> studentsPosMap = Map.of(
-                PawnColor.GREEN, List.of(169, 171, 174, 177, 179, 182, 185, 187, 190, 193),
-                PawnColor.RED, List.of(328, 330, 333, 336, 338, 341, 344, 346, 349, 352),
-                PawnColor.YELLOW, List.of(487, 489, 492, 495, 497, 500, 503, 505, 508, 511),
-                PawnColor.PINK, List.of(646, 648, 651, 654, 656, 659, 662, 664, 667, 670),
-                PawnColor.BLUE, List.of(805, 807, 810, 813, 815, 818, 821, 823, 826, 829)
+                PawnColor.GREEN, List.of(43, 45, 47, 49, 51, 53, 55, 57, 59, 61),
+                PawnColor.RED, List.of(85, 87, 89, 91, 93, 95, 97, 99, 101, 103),
+                PawnColor.YELLOW, List.of(127, 129, 131, 133, 135, 137, 139, 141, 143, 145),
+                PawnColor.PINK, List.of(169, 171, 173, 175, 177, 179, 181, 183, 185, 187),
+                PawnColor.BLUE, List.of(211, 213, 215, 217, 219, 221, 223, 225, 227, 229)
         );
         Map<PawnColor, Integer> profPosMap = Map.of(
-                PawnColor.GREEN, 198,
-                PawnColor.RED, 357,
-                PawnColor.YELLOW, 516,
-                PawnColor.PINK, 675,
-                PawnColor.BLUE, 834
+                PawnColor.GREEN, 7,
+                PawnColor.RED, 13,
+                PawnColor.YELLOW, 19,
+                PawnColor.PINK, 25,
+                PawnColor.BLUE, 31
         );
-        int[] entrancePos = new int[]{372, 375, 478, 481, 584, 587, 690, 693, 796, 799};
-        int[] towersPos = new int[]{469, 473, 575, 579, 681, 685, 787, 791};
+        int[] entrancePos = new int[]{51, 53, 41, 43, 31, 33, 21, 23, 11, 13};
+        int[] towersPos = new int[]{25, 27, 29, 41, 43, 45, 58, 60};
 
-        JLabel[] grid = new JLabel[rows * columns];
+        //Entrance area from x=0 to x=534
+        //Tables to x=2286
+        //Professors to x=2600
+        //Towers to x=3352
 
+        //Entrance
+        JPanel entrancePanel = new JPanel(new GridLayout(12, 5));
+        entrancePanel.setOpaque(false);
+        entrancePanel.setPreferredSize(new Dimension(16, 1));
+        JLabel[] entranceGrid = new JLabel[12 * 5];
         int i = 0;
         for (Student student : player.getSchool().getEntrance()) {
-            grid[entrancePos[i++]] = new JLabel(new DynamicIcon(imageProvider.getStudent(student.getColor())));
+            entranceGrid[entrancePos[i++]] = new JLabel(new DynamicIcon(imageProvider.getStudent(student.getColor())));
         }
-
-        i = 0;
-        for (Tower tower : towers) {
-            grid[towersPos[i++]] = new JLabel(new DynamicIcon(imageProvider.getTower(tower.getColor())));
+        for (i = 0; i < entranceGrid.length; ++i) {
+            if (entranceGrid[i] == null) {
+                entranceGrid[i] = new JLabel();
+            }
         }
-
-        for (Professor professor : player.getSchool().getProfessors()) {
-            JLabel profLabel = new JLabel(new DynamicIcon(imageProvider.getProfessor(professor.getColor())));
-            profLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            grid[profPosMap.get(professor.getColor())] = profLabel;
+        for (JLabel lbl : entranceGrid) {
+            entrancePanel.add(lbl);
         }
+        add(entrancePanel, new GridBagConstraints(
+                0, 0,
+                1, 1,
+                534D / 3352D, 1.0D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
+        //Tables
+        JPanel tablesPanel = new JPanel(new GridLayout(13, 21));
+        tablesPanel.setOpaque(false);
+        tablesPanel.setPreferredSize(new Dimension(52, 1));
+        JLabel[] tablesGrid = new JLabel[13 * 21];
         for (Map.Entry<PawnColor, List<Student>> entry : player.getSchool().getTables().entrySet()) {
             i = 0;
             for (Student student : entry.getValue()) {
-                JLabel studentLabel = new JLabel(new DynamicIcon(imageProvider.getStudent(entry.getKey())));
+                JLabel studentLabel = new JLabel(new DynamicIcon(imageProvider.getStudent(student.getColor())));
                 studentLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                grid[studentsPosMap.get(entry.getKey()).get(i++)] = studentLabel;
+                tablesGrid[studentsPosMap.get(entry.getKey()).get(i++)] = studentLabel;
             }
         }
+        for (i = 0; i < tablesGrid.length; ++i) {
+            if (tablesGrid[i] == null) {
+                tablesGrid[i] = new JLabel();
+            }
+        }
+        for (JLabel lbl : tablesGrid) {
+            tablesPanel.add(lbl);
+        }
+        add(tablesPanel, new GridBagConstraints(
+                1, 0,
+                1, 1,
+                (2286D - 534D) / 3352D, 1.0D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
 
-        for (i = 0; i < grid.length; ++i) {
-            if (grid[i] == null) {
-                grid[i] = new JLabel();
+        //Professors
+        JPanel profPanel = new JPanel(new GridLayout(13, 3));
+        profPanel.setOpaque(false);
+        profPanel.setPreferredSize(new Dimension(9, 1));
+        JLabel[] profGrid = new JLabel[13 * 3];
+        for (Professor professor : player.getSchool().getProfessors()) {
+            profGrid[profPosMap.get(professor.getColor())] = new JLabel(new DynamicIcon(imageProvider.getProfessor(professor.getColor())));
+        }
+        for (i = 0; i < profGrid.length; ++i) {
+            if (profGrid[i] == null) {
+                profGrid[i] = new JLabel();
             }
         }
-        for (JLabel lbl : grid) {
-            add(lbl);
+        for (JLabel lbl : profGrid) {
+            profPanel.add(lbl);
         }
+        add(profPanel, new GridBagConstraints(
+                2, 0,
+                1, 1,
+                (2600D - 2286D) / 3352D, 1.0D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
+
+        //Towers
+        JPanel towersPanel = new JPanel(new GridLayout(10, 8));
+        towersPanel.setOpaque(false);
+        towersPanel.setPreferredSize(new Dimension(22, 1));
+        JLabel[] towerGrid = new JLabel[10 * 8];
+        i = 0;
+        for (Tower tower : towers) {
+            towerGrid[towersPos[i++]] = new JLabel(new DynamicIcon(imageProvider.getTower(tower.getColor())));
+        }
+        for (i = 0; i < towerGrid.length; ++i) {
+            if (towerGrid[i] == null) {
+                towerGrid[i] = new JLabel();
+            }
+        }
+        for (JLabel lbl : towerGrid) {
+            towersPanel.add(lbl);
+        }
+        add(towersPanel, new GridBagConstraints(
+                3, 0,
+                1, 1,
+                (3352D - 2600D) / 3352D, 1.0D,
+                GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0
+        ));
     }
 
     @Override
