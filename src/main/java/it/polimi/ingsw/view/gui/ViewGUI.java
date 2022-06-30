@@ -217,16 +217,30 @@ public abstract class ViewGUI extends View<ClientGUI> {
     }
 
     /**
+     * @see ViewGUI#drawPlayer(JPanel, Player, List, String)
+     */
+    protected void drawPlayer(JPanel playerPanel, Player player, List<Tower> towers) {
+        drawPlayer(playerPanel, player, towers, null);
+    }
+
+    /**
      * Draw the school, coins, assistant number, last played assistant (if applicable) of the provided player and towers
      * on the given panel
      * @param playerPanel The panel where player information is drawn
      * @param player A player object
      * @param towers A list of towers to draw onto the tower space of the school
+     * @param team The team of the player (nullable) to be displayed in the panel title
      */
-    protected void drawPlayer(JPanel playerPanel, Player player, List<Tower> towers) {
+    protected void drawPlayer(JPanel playerPanel, Player player, List<Tower> towers, String team) {
         playerPanel.removeAll();
         if (playerPanel.getBorder() == null) {
-            playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), player.getName(), TitledBorder.CENTER, TitledBorder.CENTER));
+            String title;
+            if (team != null) {
+                title = player.getName() + " (" + team + ")";
+            } else {
+                title = player.getName();
+            }
+            playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), title, TitledBorder.CENTER, TitledBorder.CENTER));
         }
 
         JPanel playerInfoPanel = new JPanel(new FlowLayout());
@@ -268,7 +282,7 @@ public abstract class ViewGUI extends View<ClientGUI> {
             ++nAssistants;
         }
         for (int i = nAssistants; i < 10; ++i) {
-            assistantsPanel.add(new JLabel(""));
+            assistantsPanel.add(new JLabel());
         }
     }
 

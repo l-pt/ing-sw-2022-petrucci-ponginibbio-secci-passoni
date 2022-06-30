@@ -38,7 +38,7 @@ public class IslandPanel extends JPanel {
         pieces.addAll(island.getStudents());
         pieces.addAll(island.getTowers());
         int pieceIndex = 0;
-        rows: for (int i = 2; i < DIM - 2; ++i) {
+        rows: for (int i = 2; i <= DIM - 2; ++i) {
             for (int j = 2; j <= DIM - 2; ++j) {
                 if (pieceIndex >= pieces.size() && !motherNature) {
                     break rows;

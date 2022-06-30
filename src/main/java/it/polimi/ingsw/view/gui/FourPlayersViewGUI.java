@@ -162,10 +162,10 @@ public class FourPlayersViewGUI extends ViewGUI {
 
         Player opponent2 = getPlayerFromName(opponents.get(1));
 
-        drawPlayer(playerPanel, me, myTeam.getTowers());
-        drawPlayer(teamMatePanel, teamMate, Collections.emptyList());
-        drawPlayer(opponent1Panel, opponent1, opponentTeam.getTowers());
-        drawPlayer(opponent2Panel, opponent2, Collections.emptyList());
+        drawPlayer(playerPanel, me, myTeam.getTowers(), "You");
+        drawPlayer(teamMatePanel, teamMate, Collections.emptyList(), "Team Mate");
+        drawPlayer(opponent1Panel, opponent1, opponentTeam.getTowers(), "Opponent Team");
+        drawPlayer(opponent2Panel, opponent2, Collections.emptyList(), "Opponent Team");
         client.getFrame().revalidate();
         client.getFrame().repaint();
     }

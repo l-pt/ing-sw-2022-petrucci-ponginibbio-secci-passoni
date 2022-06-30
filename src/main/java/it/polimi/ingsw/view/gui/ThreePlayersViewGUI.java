@@ -33,17 +33,17 @@ public class ThreePlayersViewGUI extends ViewGUI {
 
         islandsPanel = new JPanel(new GridLayout(5, 3));
         islandsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.BLACK), "Islands", TitledBorder.CENTER, TitledBorder.CENTER));
-        islandsPanel.setPreferredSize(new Dimension(35, 1));
+        islandsPanel.setPreferredSize(new Dimension(40, 1));
         mainPanel.add(islandsPanel, new GridBagConstraints(
                 0, 0,
                 1, 1,
-                0.35D, 1D,
+                0.40D, 1D,
                 GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0
         ));
 
         JPanel boardsPanel = new JPanel(new GridBagLayout());
-        boardsPanel.setPreferredSize(new Dimension(40, 1));
+        boardsPanel.setPreferredSize(new Dimension(30, 1));
         playerPanel = new JPanel(new BorderLayout());
         playerPanel.setPreferredSize(new Dimension(1, 33));
         boardsPanel.add(playerPanel, new GridBagConstraints(
@@ -74,17 +74,17 @@ public class ThreePlayersViewGUI extends ViewGUI {
         mainPanel.add(boardsPanel, new GridBagConstraints(
                 1, 0,
                 1, 1,
-                0.40D, 1D,
+                0.30D, 1D,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0
         ));
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
-        rightPanel.setPreferredSize(new Dimension(25, 1));
+        rightPanel.setPreferredSize(new Dimension(30, 1));
         mainPanel.add(rightPanel, new GridBagConstraints(
                 2, 0,
                 1, 1,
-                0.25D, 1D,
+                0.30D, 1D,
                 GridBagConstraints.LINE_END, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0
         ));
