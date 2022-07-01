@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Island {
-    private List<Student> students;
-    private List<Tower> towers;
+    private final List<Student> students;
+    private final List<Tower> towers;
     private int noEntry;
 
     public Island() {

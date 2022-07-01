@@ -24,10 +24,17 @@ public class Character9 extends Character implements ColorCharacter {
      */
     public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
+
+        //Checks the coins of the player
         checkCost(player);
+
+        //Sets the excluded student color
         match.getInfluencePolicy().setExcludedColor(color);
+
         player.removeCoins(cost);
         incrementCost();
+
+        //Updates the state of game for the view
         match.updateView();
     }
 }

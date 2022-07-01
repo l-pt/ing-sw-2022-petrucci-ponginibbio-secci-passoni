@@ -28,6 +28,7 @@ public class Character3 extends Character implements IslandCharacter {
         if (island < 0 || island >= match.getIslands().size()) {
             throw new IllegalMoveException("Island must be between 1 and " + match.getIslands().size());
         }
+
         Player player = match.getPlayerFromName(playerName);
 
         //Checks the coins of the player

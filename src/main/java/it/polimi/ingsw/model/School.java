@@ -3,9 +3,9 @@ package it.polimi.ingsw.model;
 import java.util.*;
 
 public class School {
-    private List<Student> entrance;
-    private List<Professor> professors;
-    private Map<PawnColor, List<Student>> tables;
+    private final List<Student> entrance;
+    private final List<Professor> professors;
+    private final Map<PawnColor, List<Student>> tables;
 
     public School() {
         entrance = new ArrayList<>();

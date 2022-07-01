@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Observable<T> {
-    private Set<Observer<T>> observers = new HashSet<>();
+    private final Set<Observer<T>> observers = new HashSet<>();
 
     /**
      * Adds an observer to the set of observers

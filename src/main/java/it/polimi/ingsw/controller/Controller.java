@@ -19,26 +19,21 @@ public class Controller {
 
     /**
      * Controller object controls the Match
-     * A controller is associated to a match and server
+     * A controller is associated to a match
      * The controller keeps track of usedCharacter, lastMassage, nextMessage for the given match.
      */
-    private Match match;
-    private Server server;
+    private final Match match;
     private boolean usedCharacter = false;
     private boolean lastMessage = false;
-    private Map<String, Message> nextMessage = new HashMap<>();
+    private final Map<String, Message> nextMessage = new HashMap<>();
 
     /**
      * Constructor for Controller object takes in a Server and List<String> connectionNames
-     * @param server Assigned Eryantis server
-     * @param connectionsNames List of names connected to this.match
+     * @param server Assigned server
+     * @param connectionsNames List of names connected to this match
      * @throws IllegalMoveException If the number of players selected is not valid
      */
     public Controller(Server server, List<String> connectionsNames) throws IllegalMoveException {
-
-        //sets this server to the passed arg
-        this.server = server;
-
         //gets list of players from arg
         List<Player> players = new ArrayList<>(server.getMatchParameters().getPlayerNumber());
         List<Team> teams = new ArrayList<>(server.getMatchParameters().getPlayerNumber() == 4 ? 2 : server.getMatchParameters().getPlayerNumber());

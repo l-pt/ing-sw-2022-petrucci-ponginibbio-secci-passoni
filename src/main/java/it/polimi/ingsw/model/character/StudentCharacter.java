@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class StudentCharacter extends Character {
-    private List<Student> students;
+    private final List<Student> students;
 
     public StudentCharacter(int id, int cost, String description) {
         super(id, cost, description);
@@ -29,7 +29,7 @@ public abstract class StudentCharacter extends Character {
      * @param color PawnColor of the students
      * @param n number of students
      * @return N students of the given color
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException When there aren't enough students of the given color on the character
      */
     public List<Student> removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException {
         List<Student> result = new ArrayList<>(n);

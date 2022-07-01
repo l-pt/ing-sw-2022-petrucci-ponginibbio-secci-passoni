@@ -26,11 +26,18 @@ public class Character12 extends Character implements ColorCharacter {
      */
     public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
+
+        //Checks the coins of the player
         checkCost(player);
+
+        //Removes 3 student of the chosen color from every player dining room
         for (Player p : match.getPlayersOrder())
             match.addStudents(p.getSchool().removeStudentsByColor(color, Math.min(3, p.getSchool().getTableCount(color))));
+
         player.removeCoins(cost);
         incrementCost();
+
+        //Updates the state of game for the view
         match.updateView();
     }
 }

@@ -33,17 +33,18 @@ public class Character5 extends Character implements IslandCharacter {
         if (island < 0 || island >= match.getIslands().size()) {
             throw new IllegalMoveException("Island must be between 1 and " + match.getIslands().size());
         }
+
         Player player = match.getPlayerFromName(playerName);
 
         //Checks the coins of the player
         checkCost(player);
 
-        //
+        //Checks the number of no entry on the character
         if (noEntry <= 0) {
             throw new IllegalMoveException("No Entry tiles absent");
         }
 
-        //
+        //Adds 1 no entry to the chosen island
         match.getIslands().get(island).addNoEntry(1);
         --noEntry;
 

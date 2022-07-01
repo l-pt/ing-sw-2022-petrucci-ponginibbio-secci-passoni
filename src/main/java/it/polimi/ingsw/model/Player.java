@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private String name;
-    private School school;
-    private TowerColor towerColor;
-    private List<Assistant> assistants;
+    private final String name;
+    private final School school;
+    private final TowerColor towerColor;
+    private final List<Assistant> assistants;
     private Assistant currentAssistant;
     private Assistant discardPile;
     private int coins;
     private int additionalInfluence;
     private int additionalMoves;
-    private Wizard wizard;
+    private final Wizard wizard;
 
     public Player(String name, TowerColor towerColor, Wizard wizard) {
         this.name = name;

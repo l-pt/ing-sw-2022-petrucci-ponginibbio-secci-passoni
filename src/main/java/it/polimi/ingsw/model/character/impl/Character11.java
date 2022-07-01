@@ -25,16 +25,25 @@ public class Character11 extends StudentCharacter implements ColorCharacter {
      */
     public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
+
+        //Checks the coins of the player
         checkCost(player);
+
+        //Checks the number of students on the character
         if (getStudentsColorCount(color) == 0) {
             throw new IllegalMoveException("There are no students with color " + color.name() + " on this character");
         }
+
+        //Adds a student from the character to the player dining room
         player.getSchool().addStudentsToTable(removeStudentsByColor(color, 1));
         match.checkNumberStudents(playerName, color);
         match.checkProfessors(playerName, color);
         addStudents(match.extractStudents(1));
+
         player.removeCoins(cost);
         incrementCost();
+
+        //Updates the state of game for the view
         match.updateView();
     }
 

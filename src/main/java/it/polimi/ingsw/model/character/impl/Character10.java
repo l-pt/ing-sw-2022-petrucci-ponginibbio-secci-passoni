@@ -27,14 +27,22 @@ public class Character10 extends Character implements StudentMapCharacter {
      * When there aren't enough students with the right colors in the entrance of the given player
      */
     public void use(Match match, String playerName, Map<PawnColor, Integer> entranceStudentsMap, Map<PawnColor, Integer> diningRoomStudentsMap) throws IllegalMoveException {
+        //Checks the sizes of entranceStudentsMap and diningRoomStudentsMap
         if (entranceStudentsMap.size() < 1 || entranceStudentsMap.size() > 2 || diningRoomStudentsMap.size() < 1 || diningRoomStudentsMap.size() > 2) {
             throw new IllegalMoveException("Invalid student number");
         }
+
+        //Checks if the sizes of entranceStudentsMap and diningRoomStudentsMap are the same
         if (entranceStudentsMap.values().stream().mapToInt(Integer::intValue).sum() != diningRoomStudentsMap.values().stream().mapToInt(Integer::intValue).sum()) {
             throw new IllegalMoveException("Different map sizes");
         }
+
         Player player = match.getPlayerFromName(playerName);
+
+        //Checks the coins of the player
         checkCost(player);
+
+        //Extracts the students from the player dining room
         List<Student> diningRoomStudents = new ArrayList<>();
         for (Map.Entry<PawnColor, Integer> entry : diningRoomStudentsMap.entrySet()) {
             if (player.getSchool().getTableCount(entry.getKey()) < entry.getValue()) {
@@ -42,6 +50,8 @@ public class Character10 extends Character implements StudentMapCharacter {
             }
             diningRoomStudents.addAll(player.getSchool().removeStudentsByColor(entry.getKey(), entry.getValue()));
         }
+
+        //Extracts the students from the player entrance
         List<Student> entranceStudents = new ArrayList<>();
         for (Map.Entry<PawnColor, Integer> entry : entranceStudentsMap.entrySet()) {
             if (player.getSchool().getEntranceCount(entry.getKey()) < entry.getValue()) {
@@ -50,10 +60,15 @@ public class Character10 extends Character implements StudentMapCharacter {
             List<Student> extracted = player.getSchool().removeEntranceStudentsByColor(entry.getKey(), entry.getValue());
             entranceStudents.addAll(extracted);
         }
+
+        //Adds students in the entrance and in the dining room
         player.getSchool().addStudentsToEntrance(diningRoomStudents);
         player.getSchool().addStudentsToTable(entranceStudents);
+
         player.removeCoins(cost);
         incrementCost();
+
+        //Updates the state of game for the view
         match.updateView();
     }
 }

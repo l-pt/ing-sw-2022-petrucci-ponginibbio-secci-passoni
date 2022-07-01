@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Team {
-    private List<Player> players;
-    private List<Tower> towers;
-    private TowerColor towerColor;
+    private final List<Player> players;
+    private final List<Tower> towers;
+    private final TowerColor towerColor;
 
     public Team(List<Player> players, TowerColor towerColor) {
         this.players = players;

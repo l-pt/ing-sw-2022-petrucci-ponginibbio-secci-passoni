@@ -20,10 +20,17 @@ public class Character6 extends Character implements NoParametersCharacter {
      */
     public void use(Match match, String playerName) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
+
+        //Checks the coins of the player
         checkCost(player);
+
+        //Sets count towers to false
         match.getInfluencePolicy().setCountTowers(false);
+
         player.removeCoins(cost);
         incrementCost();
+
+        //Updates the state of game for the view
         match.updateView();
     }
 }

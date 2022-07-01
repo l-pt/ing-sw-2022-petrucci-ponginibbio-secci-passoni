@@ -11,18 +11,18 @@ import java.util.*;
 
 public class Match extends Observable<UpdateViewMessage> {
     protected List<Team> teams;
-    private List<Player> playerOrder;
+    private final List<Player> playerOrder;
     private int posMotherNature;
-    private List<Island> islands;
+    private final List<Island> islands;
     protected List<Cloud> clouds;
     protected List<Student> studentBag;
-    private List<Professor> professors;
+    private final List<Professor> professors;
     private boolean lastTurn;
-    private boolean expert;
+    private final boolean expert;
     private int coinsReserve;
     private List<Character> characters;
     private boolean drawAllowed;
-    private InfluenceCalculationPolicy influencePolicy;
+    private final InfluenceCalculationPolicy influencePolicy;
     private boolean gameFinished;
     private String currentPlayer;
 
@@ -390,7 +390,7 @@ public class Match extends Observable<UpdateViewMessage> {
         if(islands.get(index).getNoEntry() == 0) {
 
             //Finds the max influence on the island, the position of that player and
-            // if there are more players with the same max influence
+            //if there are more players with the same max influence
             for (int i = 0; i < playerOrder.size(); ++i) {
                 if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) > max) {
                     max = islands.get(index).getInfluence(playerOrder.get(i), influencePolicy);

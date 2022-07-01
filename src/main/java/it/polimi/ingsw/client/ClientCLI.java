@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.function.IntPredicate;
 
 public class ClientCLI extends Client{
-    private Scanner stdin;
+    private final Scanner stdin;
     private ViewCLI view;
 
     public ClientCLI(String ip, int port) throws IOException {
@@ -32,10 +32,11 @@ public class ClientCLI extends Client{
         out = new DataOutputStream(socket.getOutputStream());
     }
 
-    @Override
     /**
      * Main client loop that processes all messages received
+     * @throws IOException
      */
+    @Override
     public void run() throws IOException {
         try {
             lobby();
@@ -49,6 +50,7 @@ public class ClientCLI extends Client{
     /**
      * Loop executed when the client is inside the lobby
      * Client waits for server questions about username, max player number and expert mode
+     * @throws IOException
      */
     public void lobby() throws IOException {
         Message msg;

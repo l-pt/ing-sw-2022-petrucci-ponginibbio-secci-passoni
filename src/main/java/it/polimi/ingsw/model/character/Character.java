@@ -5,9 +5,9 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.character.impl.*;
 
 public abstract class Character {
-    private int id;
+    private final int id;
     protected int cost;
-    private String description;
+    private final String description;
     private boolean coin;
 
     public Character(int id, int cost, String description) {
@@ -72,7 +72,7 @@ public abstract class Character {
 
     /**
      * Gets a character from his id
-     * @param characterId Id of a character
+     * @param characterId ID of a character
      * @return The character with the given id
      * @throws IllegalMoveException When the given id is smaller than 0 or bigger than 11
      */

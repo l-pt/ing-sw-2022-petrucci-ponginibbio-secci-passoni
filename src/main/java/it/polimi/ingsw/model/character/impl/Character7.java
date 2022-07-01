@@ -29,14 +29,22 @@ public class Character7 extends StudentCharacter implements StudentMapCharacter 
      * When there aren't enough students with the right colors in the entrance of the given player.
      */
     public void use(Match match, String playerName, Map<PawnColor, Integer> studentsInMap, Map<PawnColor, Integer> studentsOutMap) throws IllegalMoveException {
+        //Checks the sizes of studentInMap and studentUotMap
         if (studentsInMap.size() < 1 || studentsInMap.size() > 3 || studentsOutMap.size() < 1 || studentsOutMap.size() > 3) {
             throw new IllegalMoveException("Invalid student number");
         }
+
+        //Checks if the sizes of studentInMap and studentUotMap are the same
         if (studentsInMap.values().stream().mapToInt(Integer::intValue).sum() != studentsOutMap.values().stream().mapToInt(Integer::intValue).sum()) {
             throw new IllegalMoveException("Different map sizes");
         }
+
         Player player = match.getPlayerFromName(playerName);
+
+        //Checks the coins of the player
         checkCost(player);
+
+        //Extracts the students from the character
         List<Student> studentsOut = new ArrayList<>();
         for (Map.Entry<PawnColor, Integer> entry : studentsOutMap.entrySet()) {
             if (getStudentsColorCount(entry.getKey()) < entry.getValue()) {
@@ -45,6 +53,8 @@ public class Character7 extends StudentCharacter implements StudentMapCharacter 
             List<Student> extracted = removeStudentsByColor(entry.getKey(), entry.getValue());
             studentsOut.addAll(extracted);
         }
+
+        //Extracts the students from the player entrance
         List<Student> studentsIn = new ArrayList<>();
         for (Map.Entry<PawnColor, Integer> entry : studentsInMap.entrySet()) {
             if (player.getSchool().getEntranceCount(entry.getKey()) < entry.getValue()) {
@@ -53,10 +63,15 @@ public class Character7 extends StudentCharacter implements StudentMapCharacter 
             List<Student> extracted = player.getSchool().removeEntranceStudentsByColor(entry.getKey(), entry.getValue());
             studentsIn.addAll(extracted);
         }
+
+        //Adds students in the entrance and on the character
         player.getSchool().addStudentsToEntrance(studentsOut);
         addStudents(studentsIn);
+
         player.removeCoins(cost);
         incrementCost();
+
+        //Updates the state of game for the view
         match.updateView();
     }
 

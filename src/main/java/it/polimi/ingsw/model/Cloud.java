@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cloud {
-    private List<Student> students;
+    private final List<Student> students;
 
     public Cloud() {
         students = new ArrayList<>();

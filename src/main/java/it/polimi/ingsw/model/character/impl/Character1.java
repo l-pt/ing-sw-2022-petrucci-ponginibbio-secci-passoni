@@ -28,6 +28,7 @@ public class Character1 extends StudentCharacter {
         if (island < 0 || island >= match.getIslands().size()) {
             throw new IllegalMoveException("Island number must be between 1 and " + match.getIslands().size());
         }
+
         Player player = match.getPlayerFromName(playerName);
 
         //Checks the coins of the player
