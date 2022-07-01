@@ -4,6 +4,9 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.server.protocol.Message;
 import it.polimi.ingsw.server.protocol.MessageId;
 
+/**
+ * Game Over: Message sent by the server
+ */
 public class EndGameMessage extends Message {
     private Team winner;
 

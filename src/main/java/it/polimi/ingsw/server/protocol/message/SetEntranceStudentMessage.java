@@ -6,6 +6,9 @@ import it.polimi.ingsw.server.protocol.MessageId;
 
 import java.util.Map;
 
+/**
+ * Message sent by client to update entrance student based on AskEntranceStudentMessage
+ */
 public class SetEntranceStudentMessage extends Message {
     Map<Integer, Map<PawnColor, Integer>> islandStudents;
     Map<PawnColor, Integer> tableStudents;

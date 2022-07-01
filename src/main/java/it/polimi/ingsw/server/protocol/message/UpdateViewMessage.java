@@ -7,6 +7,9 @@ import it.polimi.ingsw.server.protocol.MessageId;
 
 import java.util.List;
 
+/**
+ * UpdateViewMessage Class
+ */
 public class UpdateViewMessage extends Message {
     private List<Team> teams;
     private List<Island> islands;
@@ -19,6 +22,19 @@ public class UpdateViewMessage extends Message {
     private boolean expert;
     private String currentPlayer;
 
+    /**
+     * Constructor for UpdateViewMessage which carries all the information of the current state of a match from server to client.
+     * @param teams
+     * @param islands
+     * @param playersOrder
+     * @param posMotherNature
+     * @param clouds
+     * @param professors
+     * @param coinReserve
+     * @param characters
+     * @param expert
+     * @param currentPlayer
+     */
     public UpdateViewMessage(
         List<Team> teams,
         List<Island> islands,

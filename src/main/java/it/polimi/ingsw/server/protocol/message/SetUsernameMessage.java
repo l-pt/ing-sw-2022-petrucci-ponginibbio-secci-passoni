@@ -4,7 +4,7 @@ import it.polimi.ingsw.server.protocol.Message;
 import it.polimi.ingsw.server.protocol.MessageId;
 
 /**
- * Message sent by the client to tell its username
+ * Message sent by the client to state its username
  */
 public class SetUsernameMessage extends Message {
     private String username;

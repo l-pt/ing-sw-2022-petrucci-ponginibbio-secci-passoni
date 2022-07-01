@@ -3,6 +3,9 @@ package it.polimi.ingsw.server.protocol.message;
 import it.polimi.ingsw.server.protocol.Message;
 import it.polimi.ingsw.server.protocol.MessageId;
 
+/**
+ * Message sent by client to update mother nature based on AskMotherNatureMessage
+ */
 public class SetMotherNatureMessage extends Message {
     private int motherNatureMoves;
 
