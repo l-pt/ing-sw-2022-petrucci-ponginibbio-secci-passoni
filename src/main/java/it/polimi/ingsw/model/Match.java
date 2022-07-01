@@ -26,6 +26,12 @@ public class Match extends Observable<UpdateViewMessage> {
     private boolean gameFinished;
     private String currentPlayer;
 
+    /**
+     * Match Constructor creates a new Match object with the following parameters
+     * @param teams as a group of players (black, white, or grey)
+     * @param playerOrder input turn order of players
+     * @param expert boolean to decide if expert mode is on for the match
+     */
     public Match(List<Team> teams, List<Player> playerOrder, boolean expert) {
         //set match id, match difficulty, teams and player order
         this.expert = expert;
