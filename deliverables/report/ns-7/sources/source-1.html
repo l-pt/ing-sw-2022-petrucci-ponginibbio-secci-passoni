@@ -1,0 +1,345 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Connection</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.server</a>
+</div>
+
+<h1>Coverage Summary for Class: Connection (it.polimi.ingsw.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Connection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/76)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.server;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import com.google.gson.*;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.model.IllegalMoveException;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.model.observer.Observer;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.server.protocol.GsonSingleton;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.server.protocol.Message;
+<i class="no-highlight">8</i>&nbsp;import it.polimi.ingsw.server.protocol.message.*;
+<i class="no-highlight">9</i>&nbsp;
+<i class="no-highlight">10</i>&nbsp;import java.io.*;
+<i class="no-highlight">11</i>&nbsp;import java.net.Socket;
+<i class="no-highlight">12</i>&nbsp;
+<i class="no-highlight">13</i>&nbsp;/**
+<i class="no-highlight">14</i>&nbsp; * Connection Class
+<i class="no-highlight">15</i>&nbsp; * Implements: Runnable, Observer
+<i class="no-highlight">16</i>&nbsp; */
+<i class="no-highlight">17</i>&nbsp;public class Connection implements Runnable, Observer&lt;UpdateViewMessage&gt; {
+<i class="no-highlight">18</i>&nbsp;
+<i class="no-highlight">19</i>&nbsp;    /**
+<i class="no-highlight">20</i>&nbsp;     * Allocate memory for Socket and Server.
+<i class="no-highlight">21</i>&nbsp;     * Declare i/o stream variables.
+<i class="no-highlight">22</i>&nbsp;     */
+<i class="no-highlight">23</i>&nbsp;    private final Socket socket;
+<i class="no-highlight">24</i>&nbsp;    private final DataInputStream in;
+<i class="no-highlight">25</i>&nbsp;    private final DataOutputStream out;
+<i class="no-highlight">26</i>&nbsp;    private final Server server;
+<i class="no-highlight">27</i>&nbsp;
+<i class="no-highlight">28</i>&nbsp;    /**
+<i class="no-highlight">29</i>&nbsp;     * Personalize Connection: name, isActive, setParameters
+<i class="no-highlight">30</i>&nbsp;     */
+<i class="no-highlight">31</i>&nbsp;    private String name;
+<i class="no-highlight">32</i>&nbsp;    private boolean isActive;
+<i class="no-highlight">33</i>&nbsp;    private boolean setPlayersAndExpert;
+<i class="no-highlight">34</i>&nbsp;
+<i class="no-highlight">35</i>&nbsp;    /**
+<i class="no-highlight">36</i>&nbsp;     * Constructor requires socket and server as parameters for this Connection.
+<i class="no-highlight">37</i>&nbsp;     * Initializes new i/o streams as channel for data exchange through this Connection.
+<i class="no-highlight">38</i>&nbsp;     * Initializes isActive to true, setPlayersAndExpert to false.
+<i class="no-highlight">39</i>&nbsp;     * @param socket stored as this.socket
+<i class="no-highlight">40</i>&nbsp;     * @param server stored as this.server
+<i class="no-highlight">41</i>&nbsp;     * @throws IOException If there are failed or interrupted I/O operations
+<i class="no-highlight">42</i>&nbsp;     */
+<b class="nc"><i class="no-highlight">43</i>&nbsp;    public Connection(Socket socket, Server server) throws IOException {</b>
+<b class="nc"><i class="no-highlight">44</i>&nbsp;        this.socket = socket;</b>
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        this.server = server;</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;        in = new DataInputStream(socket.getInputStream());</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        out = new DataOutputStream(socket.getOutputStream());</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;        isActive = true;</b>
+<b class="nc"><i class="no-highlight">49</i>&nbsp;        setPlayersAndExpert = false;</b>
+<i class="no-highlight">50</i>&nbsp;    }
+<i class="no-highlight">51</i>&nbsp;
+<i class="no-highlight">52</i>&nbsp;    /**
+<i class="no-highlight">53</i>&nbsp;     * getName()
+<i class="no-highlight">54</i>&nbsp;     * @return player&#39;s name as String, or null if the name is yet to be entered
+<i class="no-highlight">55</i>&nbsp;     */
+<i class="no-highlight">56</i>&nbsp;    public synchronized String getName() {
+<b class="nc"><i class="no-highlight">57</i>&nbsp;        return name;</b>
+<i class="no-highlight">58</i>&nbsp;    }
+<i class="no-highlight">59</i>&nbsp;
+<i class="no-highlight">60</i>&nbsp;    /**
+<i class="no-highlight">61</i>&nbsp;     * isActive() returns the isActive status
+<i class="no-highlight">62</i>&nbsp;     * @return this.isActive
+<i class="no-highlight">63</i>&nbsp;     */
+<i class="no-highlight">64</i>&nbsp;    private synchronized boolean isActive(){
+<b class="nc"><i class="no-highlight">65</i>&nbsp;        return this.isActive;</b>
+<i class="no-highlight">66</i>&nbsp;    }
+<i class="no-highlight">67</i>&nbsp;
+<i class="no-highlight">68</i>&nbsp;    /**
+<i class="no-highlight">69</i>&nbsp;     * Takes Message msg as input, converts msg to a JSON object, then outputs the msg_json to the DataOutputStream this.out
+<i class="no-highlight">70</i>&nbsp;     * @param msg outgoing message
+<i class="no-highlight">71</i>&nbsp;     * @throws IOException If there are failed or interrupted I/O operations
+<i class="no-highlight">72</i>&nbsp;     */
+<i class="no-highlight">73</i>&nbsp;    public void sendMessage(Message msg) throws IOException {
+<b class="nc"><i class="no-highlight">74</i>&nbsp;        String msg_json = GsonSingleton.get().toJson(msg);</b>
+<b class="nc"><i class="no-highlight">75</i>&nbsp;        synchronized (out) {</b>
+<b class="nc"><i class="no-highlight">76</i>&nbsp;            out.writeUTF(msg_json);</b>
+<b class="nc"><i class="no-highlight">77</i>&nbsp;            out.flush();</b>
+<b class="nc"><i class="no-highlight">78</i>&nbsp;        }</b>
+<i class="no-highlight">79</i>&nbsp;    }
+<i class="no-highlight">80</i>&nbsp;
+<i class="no-highlight">81</i>&nbsp;    /**
+<i class="no-highlight">82</i>&nbsp;     * Reads data from DataInputStream this.in which is expected in JSON format.
+<i class="no-highlight">83</i>&nbsp;     * The method then converts the JSON into a java object, specifically a Message.class object.
+<i class="no-highlight">84</i>&nbsp;     * The Message object is then returned
+<i class="no-highlight">85</i>&nbsp;     * @return Message read from input stream
+<i class="no-highlight">86</i>&nbsp;     * @throws JsonSyntaxException If the message received contains json syntax errors
+<i class="no-highlight">87</i>&nbsp;     * @throws IOException If there are failed or interrupted I/O operations
+<i class="no-highlight">88</i>&nbsp;     */
+<i class="no-highlight">89</i>&nbsp;    private Message readMessage() throws JsonSyntaxException, IOException {
+<b class="nc"><i class="no-highlight">90</i>&nbsp;        String json = in.readUTF();</b>
+<b class="nc"><i class="no-highlight">91</i>&nbsp;        return GsonSingleton.get().fromJson(json, Message.class);</b>
+<i class="no-highlight">92</i>&nbsp;    }
+<i class="no-highlight">93</i>&nbsp;
+<i class="no-highlight">94</i>&nbsp;    /**
+<i class="no-highlight">95</i>&nbsp;     * Reads message of Class object, and casts it into a Message object.
+<i class="no-highlight">96</i>&nbsp;     * @param messageClass Used for casting
+<i class="no-highlight">97</i>&nbsp;     * @param &lt;T&gt; Extends Message
+<i class="no-highlight">98</i>&nbsp;     * @return The message after casting
+<i class="no-highlight">99</i>&nbsp;     * @throws JsonSyntaxException If the message received contains json syntax errors
+<i class="no-highlight">100</i>&nbsp;     * @throws IOException If there are failed or interrupted I/O operations
+<i class="no-highlight">101</i>&nbsp;     */
+<i class="no-highlight">102</i>&nbsp;    private &lt;T extends Message&gt; T readMessage(Class&lt;T&gt; messageClass) throws JsonSyntaxException, IOException {
+<b class="nc"><i class="no-highlight">103</i>&nbsp;        return messageClass.cast(readMessage());</b>
+<i class="no-highlight">104</i>&nbsp;    }
+<i class="no-highlight">105</i>&nbsp;
+<i class="no-highlight">106</i>&nbsp;    /**
+<i class="no-highlight">107</i>&nbsp;     * Closes connection by deactivating socket.
+<i class="no-highlight">108</i>&nbsp;     */
+<i class="no-highlight">109</i>&nbsp;    private void closeConnection(){
+<i class="no-highlight">110</i>&nbsp;        //attempt to close connection via socket object method
+<i class="no-highlight">111</i>&nbsp;        try{
+<b class="nc"><i class="no-highlight">112</i>&nbsp;            this.socket.close();</b>
+<i class="no-highlight">113</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">114</i>&nbsp;        catch(IOException e){</b>
+<b class="nc"><i class="no-highlight">115</i>&nbsp;            System.err.println(e.getMessage());</b>
+<b class="nc"><i class="no-highlight">116</i>&nbsp;        }</b>
+<i class="no-highlight">117</i>&nbsp;
+<i class="no-highlight">118</i>&nbsp;        //update active status
+<b class="nc"><i class="no-highlight">119</i>&nbsp;        this.isActive = false;</b>
+<i class="no-highlight">120</i>&nbsp;    }
+<i class="no-highlight">121</i>&nbsp;
+<i class="no-highlight">122</i>&nbsp;    /**
+<i class="no-highlight">123</i>&nbsp;     * Close the connection if there are no match parameters.
+<i class="no-highlight">124</i>&nbsp;     */
+<i class="no-highlight">125</i>&nbsp;    public synchronized void close(){
+<b class="nc"><i class="no-highlight">126</i>&nbsp;        if (setPlayersAndExpert) {</b>
+<b class="nc"><i class="no-highlight">127</i>&nbsp;            server.setMatchParameters(null);</b>
+<i class="no-highlight">128</i>&nbsp;        }
+<i class="no-highlight">129</i>&nbsp;        //close the connection
+<b class="nc"><i class="no-highlight">130</i>&nbsp;        closeConnection();</b>
+<i class="no-highlight">131</i>&nbsp;    }
+<i class="no-highlight">132</i>&nbsp;
+<i class="no-highlight">133</i>&nbsp;    /**
+<i class="no-highlight">134</i>&nbsp;     * Run() for Connection Class
+<i class="no-highlight">135</i>&nbsp;     */
+<i class="no-highlight">136</i>&nbsp;    @Override
+<i class="no-highlight">137</i>&nbsp;    public void run(){
+<i class="no-highlight">138</i>&nbsp;        try{
+<i class="no-highlight">139</i>&nbsp;
+<i class="no-highlight">140</i>&nbsp;            //ask player to enter username
+<b class="nc"><i class="no-highlight">141</i>&nbsp;            SetUsernameMessage usernameMessage = null;</b>
+<b class="nc"><i class="no-highlight">142</i>&nbsp;            while (usernameMessage == null) {</b>
+<b class="nc"><i class="no-highlight">143</i>&nbsp;                sendMessage(new AskUsernameMessage());</b>
+<i class="no-highlight">144</i>&nbsp;                try {
+<b class="nc"><i class="no-highlight">145</i>&nbsp;                    usernameMessage = readMessage(SetUsernameMessage.class);</b>
+<b class="nc"><i class="no-highlight">146</i>&nbsp;                    if (server.nameUsed(usernameMessage.getUsername())) {</b>
+<b class="nc"><i class="no-highlight">147</i>&nbsp;                        sendMessage(new ErrorMessage(&quot;Username already taken&quot;));</b>
+<b class="nc"><i class="no-highlight">148</i>&nbsp;                        usernameMessage = null;</b>
+<i class="no-highlight">149</i>&nbsp;                    }
+<b class="nc"><i class="no-highlight">150</i>&nbsp;                } catch (JsonSyntaxException e) {</b>
+<b class="nc"><i class="no-highlight">151</i>&nbsp;                    sendMessage(new ErrorMessage(&quot;Error reading username&quot;));</b>
+<b class="nc"><i class="no-highlight">152</i>&nbsp;                }</b>
+<i class="no-highlight">153</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">154</i>&nbsp;            name = usernameMessage.getUsername();</b>
+<i class="no-highlight">155</i>&nbsp;
+<i class="no-highlight">156</i>&nbsp;            //establish server and match parameters
+<b class="nc"><i class="no-highlight">157</i>&nbsp;            synchronized (server) {</b>
+<i class="no-highlight">158</i>&nbsp;
+<i class="no-highlight">159</i>&nbsp;                //if player is the first connected, he is match admin
+<b class="nc"><i class="no-highlight">160</i>&nbsp;                if (server.getFirstConnection() == this) {</b>
+<i class="no-highlight">161</i>&nbsp;
+<i class="no-highlight">162</i>&nbsp;                    //match admin sets number of players in the match
+<b class="nc"><i class="no-highlight">163</i>&nbsp;                    SetPlayerNumberMessage playerNumberMessage = null;</b>
+<b class="nc"><i class="no-highlight">164</i>&nbsp;                    while (playerNumberMessage == null) {</b>
+<b class="nc"><i class="no-highlight">165</i>&nbsp;                        sendMessage(new AskPlayerNumberMessage());</b>
+<i class="no-highlight">166</i>&nbsp;                        try {
+<b class="nc"><i class="no-highlight">167</i>&nbsp;                            playerNumberMessage = readMessage(SetPlayerNumberMessage.class);</b>
+<b class="nc"><i class="no-highlight">168</i>&nbsp;                            if (playerNumberMessage.getPlayersNumber() &lt; 2 || playerNumberMessage.getPlayersNumber() &gt; 4) {</b>
+<b class="nc"><i class="no-highlight">169</i>&nbsp;                                sendMessage(new ErrorMessage(&quot;The players number must be 2, 3 or 4&quot;));</b>
+<b class="nc"><i class="no-highlight">170</i>&nbsp;                                playerNumberMessage = null;</b>
+<i class="no-highlight">171</i>&nbsp;                            }
+<b class="nc"><i class="no-highlight">172</i>&nbsp;                        } catch (JsonSyntaxException e) {</b>
+<b class="nc"><i class="no-highlight">173</i>&nbsp;                            sendMessage(new ErrorMessage(&quot;Error reading player number&quot;));</b>
+<b class="nc"><i class="no-highlight">174</i>&nbsp;                        }</b>
+<i class="no-highlight">175</i>&nbsp;                    }
+<i class="no-highlight">176</i>&nbsp;
+<i class="no-highlight">177</i>&nbsp;                    //match admin decides to activate expert mode or not
+<b class="nc"><i class="no-highlight">178</i>&nbsp;                    SetExpertMessage expertMessage = null;</b>
+<b class="nc"><i class="no-highlight">179</i>&nbsp;                    while (expertMessage == null) {</b>
+<b class="nc"><i class="no-highlight">180</i>&nbsp;                        sendMessage(new AskExpertMessage());</b>
+<i class="no-highlight">181</i>&nbsp;                        try {
+<b class="nc"><i class="no-highlight">182</i>&nbsp;                            expertMessage = readMessage(SetExpertMessage.class);</b>
+<b class="nc"><i class="no-highlight">183</i>&nbsp;                        } catch (JsonSyntaxException e) {</b>
+<b class="nc"><i class="no-highlight">184</i>&nbsp;                            sendMessage(new ErrorMessage(&quot;Error reading expert message&quot;));</b>
+<b class="nc"><i class="no-highlight">185</i>&nbsp;                        }</b>
+<i class="no-highlight">186</i>&nbsp;                    }
+<b class="nc"><i class="no-highlight">187</i>&nbsp;                    server.setMatchParameters(playerNumberMessage.getPlayersNumber(), expertMessage.getExpert());</b>
+<b class="nc"><i class="no-highlight">188</i>&nbsp;                    setPlayersAndExpert = true;</b>
+<i class="no-highlight">189</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">190</i>&nbsp;            }</b>
+<i class="no-highlight">191</i>&nbsp;
+<i class="no-highlight">192</i>&nbsp;            //check if match is full
+<b class="nc"><i class="no-highlight">193</i>&nbsp;            if(server.getWaitingConnections().size() &gt;= server.getMatchParameters().getPlayerNumber()) {</b>
+<i class="no-highlight">194</i>&nbsp;
+<i class="no-highlight">195</i>&nbsp;                //check lobby
+<b class="nc"><i class="no-highlight">196</i>&nbsp;                server.checkWaitingConnections();</b>
+<i class="no-highlight">197</i>&nbsp;
+<i class="no-highlight">198</i>&nbsp;            }else {
+<i class="no-highlight">199</i>&nbsp;
+<i class="no-highlight">200</i>&nbsp;                //continue waiting for new connections
+<b class="nc"><i class="no-highlight">201</i>&nbsp;                sendMessage(new WaitingMessage(&quot;\nWaiting for other players to connect...\n&quot;));</b>
+<i class="no-highlight">202</i>&nbsp;            }
+<i class="no-highlight">203</i>&nbsp;
+<i class="no-highlight">204</i>&nbsp;            //to do loop for this connection
+<b class="nc"><i class="no-highlight">205</i>&nbsp;            while(this.isActive()){</b>
+<i class="no-highlight">206</i>&nbsp;
+<i class="no-highlight">207</i>&nbsp;                //wait for messages from the client
+<b class="nc"><i class="no-highlight">208</i>&nbsp;                Message read = readMessage();</b>
+<i class="no-highlight">209</i>&nbsp;
+<i class="no-highlight">210</i>&nbsp;                //when message arrives, notify server and forward messages
+<i class="no-highlight">211</i>&nbsp;                //server will queue incoming messages
+<b class="nc"><i class="no-highlight">212</i>&nbsp;                server.notifyMessage(this, read);</b>
+<b class="nc"><i class="no-highlight">213</i>&nbsp;            }</b>
+<i class="no-highlight">214</i>&nbsp;
+<i class="no-highlight">215</i>&nbsp;        //exceptions
+<b class="nc"><i class="no-highlight">216</i>&nbsp;        } catch (IllegalMoveException e) {</b>
+<b class="nc"><i class="no-highlight">217</i>&nbsp;            System.err.println(e.getMessage());</b>
+<b class="nc"><i class="no-highlight">218</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">219</i>&nbsp;            System.err.println(&quot;Connection lost&quot;);</b>
+<i class="no-highlight">220</i>&nbsp;        } finally {
+<i class="no-highlight">221</i>&nbsp;
+<i class="no-highlight">222</i>&nbsp;            //notify the server with a null message to signal that the connection is broken
+<b class="nc"><i class="no-highlight">223</i>&nbsp;            server.notifyMessage(this, null);</b>
+<b class="nc"><i class="no-highlight">224</i>&nbsp;        }</b>
+<i class="no-highlight">225</i>&nbsp;    }
+<i class="no-highlight">226</i>&nbsp;
+<i class="no-highlight">227</i>&nbsp;    /**
+<i class="no-highlight">228</i>&nbsp;     * When connection is lost, send a message to the player&#39;s interface
+<i class="no-highlight">229</i>&nbsp;     * @param msg The update message to send
+<i class="no-highlight">230</i>&nbsp;     */
+<i class="no-highlight">231</i>&nbsp;    @Override
+<i class="no-highlight">232</i>&nbsp;    public void notifyObserver(UpdateViewMessage msg) {
+<i class="no-highlight">233</i>&nbsp;        try {
+<b class="nc"><i class="no-highlight">234</i>&nbsp;            sendMessage(msg);</b>
+<b class="nc"><i class="no-highlight">235</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">236</i>&nbsp;            System.err.println(&quot;Connection lost&quot;);</b>
+<b class="nc"><i class="no-highlight">237</i>&nbsp;            server.notifyMessage(this, null);</b>
+<b class="nc"><i class="no-highlight">238</i>&nbsp;        }</b>
+<i class="no-highlight">239</i>&nbsp;    }
+<i class="no-highlight">240</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 16:57</div>
+</div>
+</body>
+</html>
