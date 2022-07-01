@@ -28,7 +28,7 @@ public class Controller {
     private final Map<String, Message> nextMessage = new HashMap<>();
 
     /**
-     * Constructor for Controller object takes in a Server and List<String> connectionNames
+     * Constructor for Controller object takes in a Server and List of player names
      * @param server Assigned server
      * @param connectionsNames List of names connected to this match
      * @throws IllegalMoveException If the number of players selected is not valid
@@ -119,7 +119,7 @@ public class Controller {
      *
      * @param name player name
      * @param message to push or pull information from the match server through controller
-     * @return Map<String, List<Message>> map of message requests queue from each player
+     * @return Map of message requests queue from each player
      */
     public Map<String, List<Message>> handleMessage(String name, Message message) {
         switch (message.getMessageId()) {
@@ -300,7 +300,7 @@ public class Controller {
      * Finalizes a players turn and updates the match accordingly on the server.
      * Updates turn to next player after sending match status update message.
      * @param name of player
-     * @return Map<String, List<Message>> map of player name to list of associated messages
+     * @return Map of player name to list of associated messages
      * @throws IllegalMoveException If there are not a player with the given name
      */
     public Map<String, List<Message>> endTurn(String name) throws IllegalMoveException {
