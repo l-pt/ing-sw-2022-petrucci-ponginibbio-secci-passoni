@@ -4,6 +4,9 @@ import it.polimi.ingsw.model.PawnColor;
 import it.polimi.ingsw.server.protocol.Message;
 import it.polimi.ingsw.server.protocol.MessageId;
 
+/**
+ * Message sent by the client in case a color character will be used
+ */
 public class UseCharacterColorMessage extends Message {
     private int characterId;
     private PawnColor color;

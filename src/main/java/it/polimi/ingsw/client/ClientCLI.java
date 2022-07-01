@@ -65,7 +65,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Process the received message
+     * Processes the received message
      * @param msg
      * @return True if the match has started, false otherwise
      * @throws IOException
@@ -133,7 +133,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Process the received message
+     * Processes the received message
      * @param msg
      * @throws IOException
      */
@@ -486,7 +486,7 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Closes scanner and call super.closeProgram()
+     * Closes scanner and calls super.closeProgram()
      */
     public void closeProgram() {
         stdin.close();

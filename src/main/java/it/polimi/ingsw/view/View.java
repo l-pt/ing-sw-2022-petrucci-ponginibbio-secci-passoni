@@ -23,7 +23,7 @@ public abstract class View<T extends Client> {
     protected String currentPlayer;
 
     /**
-     * Updates the view attributes and print on screen
+     * Updates the view attributes and prints on screen
      * @param message Contains the updated model elements
      */
     public void handleUpdateView(UpdateViewMessage message) {

@@ -6,6 +6,9 @@ import it.polimi.ingsw.server.protocol.MessageId;
 
 import java.util.Map;
 
+/**
+ * Message sent by the client in case a student-map character will be used
+ */
 public class UseCharacterStudentMapMessage extends Message {
     private int characterId;
     private Map<PawnColor, Integer> inMap;

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class ClientGUIApp {
     /**
-     *
+     * The main process of the client from graphic user interface
      * @param args
      */
     public static void main(String[] args){

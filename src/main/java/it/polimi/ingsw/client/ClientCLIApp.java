@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class ClientCLIApp {
     /**
-     *
+     * The main process of the client from command line interface
      * @param args
      */
     public static void main(String[] args){
@@ -41,9 +41,9 @@ public class ClientCLIApp {
     }
 
     /**
-     *
-     * @param ip
-     * @return
+     * Checks if the host IP address is available
+     * @param ip is the specified host
+     * @return true if no IP address for the host could be found
      */
     public static boolean checkIp(String ip){
         try {
@@ -55,9 +55,9 @@ public class ClientCLIApp {
     }
 
     /**
-     *
-     * @param port
-     * @return
+     * Checks if the port number is within the validity range
+     * @param port is the port number
+     * @return true if the port is available
      */
     public static boolean checkInteger(String port){
         try {
