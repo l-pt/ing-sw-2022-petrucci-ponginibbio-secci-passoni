@@ -17,15 +17,34 @@ import java.net.Socket;
 public class Connection implements Runnable, Observer<UpdateViewMessage> {
 
     /**
-     * Allocate memory for Socket and Server.
-     * Declare i/o stream variables.
+     * Allocate memory for Socket.
      */
     private final Socket socket;
-    private final DataInputStream in;
-    private final DataOutputStream out;
+    /**
+     * Allocate memory for Server.
+     */
     private final Server server;
+    /**
+     * Declare i/o stream variables: DataInputStream IN
+     */
+    private final DataInputStream in;
+    /**
+     * Declare i/o stream variables: DataOutputStream OUT
+     */
+    private final DataOutputStream out;
+    /**
+     * Associate a name to the Connection
+     */
     private String name;
+    /**
+     * Connection Status: isActive
+     * tracks whether the client and server link is live
+     */
     private boolean isActive;
+    /**
+     * Match Parameters:
+     * set by the admin player, shows if the match parameters have been set.
+     */
     private boolean setPlayersAndExpert;
 
     /**
