@@ -42,7 +42,7 @@ public abstract class Client {
     /**
      * Receives a message from the server
      * @return The message sent by the server
-     * @throws JsonSyntaxException
+     * @throws JsonSyntaxException If the message received contains json syntax errors
      * @throws IOException If there are failed or interrupted I/O operations
      */
     public Message readMessage() throws JsonSyntaxException, IOException {

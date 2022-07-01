@@ -93,9 +93,9 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
 
     /**
      * Reads message of Class object, and casts it into a Message object.
-     * @param messageClass
-     * @param <T>
-     * @return <T extends Message> T
+     * @param messageClass Used for casting
+     * @param <T> Extends Message
+     * @return The message after casting
      * @throws JsonSyntaxException If the message received contains json syntax errors
      * @throws IOException If there are failed or interrupted I/O operations
      */
