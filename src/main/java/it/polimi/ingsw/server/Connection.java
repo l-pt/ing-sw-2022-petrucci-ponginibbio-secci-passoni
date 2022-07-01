@@ -24,10 +24,6 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     private final DataInputStream in;
     private final DataOutputStream out;
     private final Server server;
-
-    /**
-     * Personalize Connection: name, isActive, setParameters
-     */
     private String name;
     private boolean isActive;
     private boolean setPlayersAndExpert;

@@ -13,15 +13,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Controller Class
+ * Controller object controls the Match
+ * A controller is associated to a match
+ * The controller keeps track of usedCharacter, lastMassage, nextMessage for the given match.
  */
 public class Controller {
 
-    /**
-     * Controller object controls the Match
-     * A controller is associated to a match
-     * The controller keeps track of usedCharacter, lastMassage, nextMessage for the given match.
-     */
     private final Match match;
     private boolean usedCharacter = false;
     private boolean lastMessage = false;
