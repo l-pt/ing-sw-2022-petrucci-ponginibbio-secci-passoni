@@ -17,18 +17,33 @@ public abstract class Character {
         coin = false;
     }
 
+    /**
+     * getId()
+     * @return The id of the character
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * getCost()
+     * @return The cost of activation of the character
+     */
     public int getCost() {
         return cost;
     }
 
+    /**
+     * getDescription()
+     * @return The description of the ability of the character
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Increments the cost of the character by 1 (can be increased only 1 time)
+     */
     public void incrementCost() {
         if(!coin) {
             coin = true;
@@ -36,16 +51,31 @@ public abstract class Character {
         }
     }
 
+    /**
+     * getCoin()
+     * @return True if the cost of the character has been increased, false otherwise
+     */
     public boolean getCoin() {
         return coin;
     }
 
+    /**
+     * Checks if a certain player has enough coins to play the character
+     * @param player Player
+     * @throws IllegalMoveException When the given player doesn't have enough coins to play the character
+     */
     public void checkCost(Player player) throws IllegalMoveException {
         if (player.getCoins() < cost) {
             throw new IllegalMoveException("You don't have enough coins to activate this character ability");
         }
     }
 
+    /**
+     * Gets a character from his id
+     * @param characterId Id of a character
+     * @return The character with the given id
+     * @throws IllegalMoveException When the given id is smaller than 0 or bigger than 11
+     */
     public static Class<? extends Character> getClassFromId(int characterId) throws IllegalMoveException {
         Class<? extends Character> characterClass;
         switch (characterId) {

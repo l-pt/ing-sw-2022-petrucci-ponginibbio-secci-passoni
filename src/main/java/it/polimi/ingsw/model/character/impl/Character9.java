@@ -13,6 +13,15 @@ public class Character9 extends Character implements ColorCharacter {
                 "that color adds no influence.");
     }
 
+    /**
+     * Uses the ability: "Choose a color of student; during the influence calculation this turn,
+     * that color adds no influence."
+     * @param match Match
+     * @param playerName The username of a player
+     * @param color PawnColor of a student
+     * @throws IllegalMoveException When there aren't any players with the given name.
+     * When the given player doesn't have enough coins to play the character
+     */
     public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
         checkCost(player);

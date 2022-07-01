@@ -202,7 +202,6 @@ public class Server {
      * @throws IllegalMoveException
      */
     public synchronized void checkWaitingConnections() throws IOException, IllegalMoveException {
-
         //get list of players in lobby with matchParameters
         List<Connection> connectedPlayers = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
 

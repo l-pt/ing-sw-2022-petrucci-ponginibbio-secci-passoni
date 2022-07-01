@@ -16,8 +16,9 @@ public class Team {
     }
 
     /**
-     * @return Boolean true if there is a player in the team with the same
-     * name, false otherwise
+     * Searches for a team in which there is a certain player
+     * @param player Player
+     * @return True if there is a player in the team with the same name, false otherwise
      */
     public boolean isTeamMember(Player player) {
         for (Player p : players) {

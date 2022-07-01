@@ -51,17 +51,9 @@ public abstract class Client {
     }
 
     /**
-     * Receives a message from the server
-     * @param messageClass
-     * @param <T>
-     * @return
-     * @throws JsonSyntaxException
+     *
      * @throws IOException
      */
-    public <T extends Message> T readMessage(Class<T> messageClass) throws JsonSyntaxException, IOException {
-        return messageClass.cast(readMessage());
-    }
-
     public abstract void run() throws IOException;
 
     /**
