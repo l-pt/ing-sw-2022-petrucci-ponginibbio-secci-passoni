@@ -29,7 +29,7 @@ public abstract class Client {
     /**
      * Sends a message to the server
      * @param msg The message to send
-     * @throws IOException If there are failed or interrupted I/O operations
+     * @throws IOException
      */
     public void sendMessage(Message msg) throws IOException {
         String json = GsonSingleton.get().toJson(msg);
@@ -42,8 +42,8 @@ public abstract class Client {
     /**
      * Receives a message from the server
      * @return The message sent by the server
-     * @throws JsonSyntaxException If there are json syntax errors in the message
-     * @throws IOException If there are failed or interrupted I/O operations
+     * @throws JsonSyntaxException
+     * @throws IOException
      */
     public Message readMessage() throws JsonSyntaxException, IOException {
         String json = in.readUTF();
@@ -51,7 +51,7 @@ public abstract class Client {
     }
 
     /**
-     * Main client loop that processes all messages received
+     *
      * @throws IOException
      */
     public abstract void run() throws IOException;

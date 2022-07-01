@@ -160,7 +160,7 @@ public class School {
      * @param color The student color
      * @param n The number of students to remove
      * @return The list of removed students
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException When there aren't enough students with the given color in the table
      */
     public List<Student> removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException{
         if (tables.get(color).size() < n) {

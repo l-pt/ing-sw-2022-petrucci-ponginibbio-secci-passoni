@@ -13,6 +13,16 @@ public class Character11 extends StudentCharacter implements ColorCharacter {
                 "Then, draw a new student from the bag and place it on this card.");
     }
 
+    /**
+     * Uses the ability: "Take 1 student from this card and place it in your dining room.
+     * Then, draw a new student from the bag and place it on this card."
+     * @param match Match
+     * @param playerName The username of a player
+     * @param color PawnColor of a student
+     * @throws IllegalMoveException When there aren't any players with the given name.
+     * When the given player doesn't have enough coins to play the character.
+     * When there aren't any student of the given color on the character
+     */
     public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
         checkCost(player);
@@ -20,7 +30,7 @@ public class Character11 extends StudentCharacter implements ColorCharacter {
             throw new IllegalMoveException("There are no students with color " + color.name() + " on this character");
         }
         player.getSchool().addStudentsToTable(removeStudentsByColor(color, 1));
-        match.checkNumberStudents(player.getName(), color);
+        match.checkNumberStudents(playerName, color);
         match.checkProfessors(playerName, color);
         addStudents(match.extractStudents(1));
         player.removeCoins(cost);
@@ -28,6 +38,10 @@ public class Character11 extends StudentCharacter implements ColorCharacter {
         match.updateView();
     }
 
+    /**
+     * Gets the initial student number on the character (4)
+     * @return The initial student number on the character (4)
+     */
     @Override
     public int getInitialStudentsNumber() {
         return 4;

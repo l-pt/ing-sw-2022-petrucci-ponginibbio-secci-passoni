@@ -13,6 +13,19 @@ public class Character10 extends Character implements StudentMapCharacter {
         super(9, 1, "You may exchange up to 2 students between your entrance and your dining room.");
     }
 
+    /**
+     * Uses the ability: "You may exchange up to 2 students between your entrance and your dining room."
+     * @param match Match
+     * @param playerName The username of a player
+     * @param entranceStudentsMap Map of students that are going from the tables of the given player to his entrance
+     * @param diningRoomStudentsMap Map of student that are going from the entrance of the given player to his tables
+     * @throws IllegalMoveException When the number of students in or out are smaller than 1 or bigger the 2.
+     * When the number of student in is different from the number of student out.
+     * When there aren't any players with the given name.
+     * When the given player doesn't have enough coins to play the character.
+     * When there aren't enough students with the right colors in the tables of the given player
+     * When there aren't enough students with the right colors in the entrance of the given player
+     */
     public void use(Match match, String playerName, Map<PawnColor, Integer> entranceStudentsMap, Map<PawnColor, Integer> diningRoomStudentsMap) throws IllegalMoveException {
         if (entranceStudentsMap.size() < 1 || entranceStudentsMap.size() > 2 || diningRoomStudentsMap.size() < 1 || diningRoomStudentsMap.size() > 2) {
             throw new IllegalMoveException("Invalid student number");

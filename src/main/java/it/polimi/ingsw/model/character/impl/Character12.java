@@ -14,6 +14,16 @@ public class Character12 extends Character implements ColorCharacter {
                 "has fewer than 3 students of that type, return as many students as they have.");
     }
 
+    /**
+     * Uses the ability: "Choose a type of student: every player (including yourself) must return 3 students of that type
+     * from their dining room to the bag.
+     * If any player has fewer than 3 students of that type, return as many students as they have."
+     * @param match Match
+     * @param playerName The username of a player
+     * @param color PawnColor of a student
+     * @throws IllegalMoveException When there aren't any players with the given name.
+     * When the given player doesn't have enough coins to play the character
+     */
     public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
         checkCost(player);

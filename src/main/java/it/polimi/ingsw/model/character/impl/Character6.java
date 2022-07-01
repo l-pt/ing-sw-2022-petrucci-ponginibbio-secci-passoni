@@ -11,6 +11,13 @@ public class Character6 extends Character implements NoParametersCharacter {
         super(5, 3, "When resolving a conquering on an island, towers do not count towards influence.");
     }
 
+    /**
+     * Uses the ability: "When resolving a conquering on an island, towers do not count towards influence."
+     * @param match Match
+     * @param playerName The username of a player
+     * @throws IllegalMoveException When there aren't any players with the given name.
+     * When the given player doesn't have enough coins to play the character
+     */
     public void use(Match match, String playerName) throws IllegalMoveException {
         Player player = match.getPlayerFromName(playerName);
         checkCost(player);

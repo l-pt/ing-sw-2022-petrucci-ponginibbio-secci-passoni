@@ -202,7 +202,6 @@ public class Server {
      * @throws IllegalMoveException If the number of players selected is not valid, so the controller cannot be instantiated
      */
     public synchronized void checkWaitingConnections() throws IOException, IllegalMoveException {
-
         //get list of players in lobby with matchParameters
         List<Connection> connectedPlayers = waitingConnections.stream().filter(c -> c.getName() != null).limit(matchParameters.getPlayerNumber()).toList();
 
