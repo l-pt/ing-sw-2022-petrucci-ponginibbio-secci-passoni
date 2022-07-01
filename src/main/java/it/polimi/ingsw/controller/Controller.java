@@ -30,9 +30,9 @@ public class Controller {
 
     /**
      * Constructor for Controller object takes in a Server and List<String> connectionNames
-     * @param server assigned Eryantis server
-     * @param connectionsNames list of names connected to this.match
-     * @throws IllegalMoveException
+     * @param server Assigned Eryantis server
+     * @param connectionsNames List of names connected to this.match
+     * @throws IllegalMoveException If the number of players selected is not valid
      */
     public Controller(Server server, List<String> connectionsNames) throws IllegalMoveException {
 
@@ -306,7 +306,7 @@ public class Controller {
      * Updates turn to next player after sending match status update message.
      * @param name of player
      * @return Map<String, List<Message>> map of player name to list of associated messages
-     * @throws IllegalMoveException
+     * @throws IllegalMoveException If there are not a player with the given name
      */
     public Map<String, List<Message>> endTurn(String name) throws IllegalMoveException {
         int pos = match.getPosFromName(name);

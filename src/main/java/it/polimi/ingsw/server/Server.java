@@ -133,7 +133,7 @@ public class Server {
 
     /**
      * Adds newConnection to the server's connections and waitingConnection lists.
-     * @param newConnection
+     * @param newConnection The new connection
      */
     public synchronized void registerConnection(Connection newConnection){
         connections.add(newConnection);
@@ -147,7 +147,7 @@ public class Server {
 
     /**
      * Closes connection and removed it from the server's connections and waitingConnection lists.
-     * @param connection
+     * @param connection The connection to deregister
      */
     public synchronized void deregisterConnection(Connection connection){
         connection.close();
@@ -198,8 +198,8 @@ public class Server {
      * This function starts a new match, if there are enough players in the lobby.
      * It is called from Connection.run() (another thread) when a client has provided all
      * the required information (name, (max players, expert mode))
-     * @throws IOException
-     * @throws IllegalMoveException
+     * @throws IOException If there are failed or interrupted I/O operations
+     * @throws IllegalMoveException If the number of players selected is not valid, so the controller cannot be instantiated
      */
     public synchronized void checkWaitingConnections() throws IOException, IllegalMoveException {
 
@@ -254,8 +254,8 @@ public class Server {
 
     /**
      * Main server loop that processes all messages in the messageQueue
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws InterruptedException If the thread is interrupted during the activity
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void run() throws InterruptedException, IOException {
 
@@ -289,7 +289,7 @@ public class Server {
      * Forwards the given message to all connections in the match controller. Note: if message is END_GAME, then all Connections associated to match controller are deregistered.
      * @param connection client connection
      * @param message message from given client
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void handleClientMessage(Connection connection, Message message) throws IOException {
 
@@ -345,6 +345,9 @@ public class Server {
         }
 
         @Override
+        /**
+         * Main loop that handles connection requests
+         */
         public void run() {
 
             //server status update to console
@@ -383,10 +386,17 @@ public class Server {
             }
         }
 
+        /**
+         * isActive()
+         * @return True if the server is active
+         */
         public synchronized boolean isActive() {
             return active;
         }
 
+        /**
+         * Sets the server as inactive
+         */
         public synchronized void close() {
             active = false;
         }
@@ -406,10 +416,18 @@ public class Server {
             this.message = message;
         }
 
+        /**
+         * getConnection()
+         * @return The linked connection
+         */
         public Connection getConnection() {
             return connection;
         }
 
+        /**
+         * getMessage()
+         * @return The linked message
+         */
         public Message getMessage() {
             return message;
         }
@@ -428,10 +446,18 @@ public class Server {
             this.expert = expert;
         }
 
+        /**
+         * getPlayerNumber()
+         * @return The number of players
+         */
         public int getPlayerNumber() {
             return playerNumber;
         }
 
+        /**
+         * isExpert()
+         * @return True if the expert mode is active
+         */
         public boolean isExpert() {
             return expert;
         }

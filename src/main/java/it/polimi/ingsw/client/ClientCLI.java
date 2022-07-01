@@ -33,6 +33,9 @@ public class ClientCLI extends Client{
     }
 
     @Override
+    /**
+     * Main client loop that processes all messages received
+     */
     public void run() throws IOException {
         try {
             lobby();
@@ -65,10 +68,10 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Processes the received message
-     * @param msg
+     * Processes the lobby message received
+     * @param msg The lobby message received
      * @return True if the match has started, false otherwise
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public boolean handleLobbyMessage(Message msg) throws IOException {
         //We have received a server message, check its Type to answer appropriately
@@ -111,7 +114,7 @@ public class ClientCLI extends Client{
     /**
      * Loop executed when the match has started
      * Client waits for server questions about game moves
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void game() throws IOException {
         boolean running = true;
@@ -133,9 +136,9 @@ public class ClientCLI extends Client{
     }
 
     /**
-     * Processes the received message
-     * @param msg
-     * @throws IOException
+     * Processes the game message received
+     * @param msg The game message received
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void handleGameMessage(Message msg) throws IOException {
         switch (msg.getMessageId()) {
@@ -224,7 +227,7 @@ public class ClientCLI extends Client{
 
     /**
      * Checks if the conditions for using the characters apply
-     * @param index
+     * @param index The character index in the character list
      * @return True if the conditions are verified
      */
     public boolean checkCharacters(int index){
@@ -243,7 +246,7 @@ public class ClientCLI extends Client{
 
     /**
      * Asks the client whether to activate the effect of some character
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void handleCharacter() throws IOException {
         if(view.isExpert() && ((view.getPlayerFromName(this.name).getCoins() >= view.getCharacters().get(0).getCost() && checkCharacters(0)) ||
@@ -298,8 +301,8 @@ public class ClientCLI extends Client{
 
     /**
      * Asks the client how to use the character effect
-     * @param characterId
-     * @throws IOException
+     * @param characterId The id of the character to use
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void askCharacterParameters(int characterId) throws IOException {
         Character c = null;
@@ -495,8 +498,8 @@ public class ClientCLI extends Client{
 
     /**
      * Reads an int from stdin
-     * @param prompt
-     * @return
+     * @param prompt The string to print on screen
+     * @return The integer value represented by the argument received through the scanner in decimal
      */
     private int readInt(String prompt) {
         return readInt(prompt, n -> true, "");
@@ -504,10 +507,10 @@ public class ClientCLI extends Client{
 
     /**
      * Reads an int from stdin until it satisfies predicate
-     * @param prompt
-     * @param predicate
-     * @param error
-     * @return
+     * @param prompt The string to print on screen
+     * @param predicate The predicate to satisfy
+     * @param error The error string
+     * @return The integer value represented by the argument received through the scanner in decimal
      */
     private int readInt(String prompt, IntPredicate predicate, String error) {
         while (true) {
