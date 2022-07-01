@@ -19,32 +19,49 @@ import java.util.concurrent.Executors;
  */
 public class Server {
     /**
-     * ExecutorService for Thread Management
+     * ExecutorService for Thread Management:
+     * define executor for Controller commands onto Model
      */
-    private final ExecutorService executor = Executors.newFixedThreadPool(64); //define executor for Controller commands onto Model
+    private final ExecutorService executor = Executors.newFixedThreadPool(64);
 
     /**
-     * ServerSocketThread for Port Listening
+     * ServerSocketThread for Port Listening:
+     * listens on TCP for new connections
      */
-    private final ServerSocketThread serverSocketThread; //listens on TCP for new connections
+    private final ServerSocketThread serverSocketThread;
 
     /**
-     * Client Connections Management
+     * Client Connections Management:
+     * list of all active connections to the server
      */
-    private final List<Connection> connections = new ArrayList<>(); //all active connections to the server
-    private final List<Connection> waitingConnections = new ArrayList<>(); //all connections waiting in the lobby
+    private final List<Connection> connections = new ArrayList<>();
+    /**
+     * Client Connections Management:
+     * list of all connections waiting in the lobby
+     */
+    private final List<Connection> waitingConnections = new ArrayList<>();
+    /**
+     * Admin:
+     * firstConnection to Server
+     */
     private Connection firstConnection;
 
     /**
-     * Message Reception Management
+     * Message Reception Management:
+     * creates queue for incoming "to be handled" messages
      */
-    private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>(); //creates queue for incoming "to be handled" messages
+    private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>();
 
     /**
-     * Match and Controller Management
+     * Match Management:
+     * parameters implemented locally in this Server.java class; contains (numberOfPlayers, isExpertMode)
      */
-    private MatchParameters matchParameters; //implemented locally in this Server.java class; contains (numberOfPlayers, isExpertMode)
-    private final Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
+    private MatchParameters matchParameters;
+    /**
+     * Controller Management:
+     * maps live connections to its associated controller
+     */
+    private final Map<Connection, Controller> connectionControllerMap = new HashMap<>();
 
     /**
      * Eryantis Server
