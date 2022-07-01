@@ -7,6 +7,10 @@ package it.polimi.ingsw.server.protocol;
 public abstract class Message {
     private MessageId messageId;
 
+    /**
+     * Contructor for abstract Message class
+     * @param messageId
+     */
     public Message(MessageId messageId) {
         this.messageId = messageId;
     }

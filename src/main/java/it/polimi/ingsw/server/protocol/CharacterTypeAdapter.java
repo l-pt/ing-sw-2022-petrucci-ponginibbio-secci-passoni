@@ -6,7 +6,19 @@ import it.polimi.ingsw.model.character.Character;
 
 import java.lang.reflect.Type;
 
+/**
+ * CharacterTypeAdapter Class
+ */
 public class CharacterTypeAdapter implements JsonDeserializer<Character>, JsonSerializer<Character> {
+
+    /**
+     * Deserializes data that is received in JSON format and casts into our Character.java object.
+     * @param jsonElement input data
+     * @param type casting type
+     * @param jsonDeserializationContext
+     * @return Character
+     * @throws JsonParseException when input data is not formatted properly as JSON
+     */
     @Override
     public Character deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject obj = jsonElement.getAsJsonObject();

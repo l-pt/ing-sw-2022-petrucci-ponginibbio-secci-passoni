@@ -13,6 +13,15 @@ import java.lang.reflect.Type;
  * https://www.javadoc.io/static/com.google.code.gson/gson/2.9.0/com.google.gson/com/google/gson/JsonDeserializer.html
  */
 public class MessageTypeAdapter implements JsonDeserializer<Message> {
+
+    /**
+     * Casts data formatted as JSON into a Message object
+     * @param jsonElement input data must be in JSON format
+     * @param type java type to cast our JSON data into
+     * @param jsonDeserializationContext jdc: explained in javadocs link
+     * @return Message.java object
+     * @throws JsonParseException
+     */
     @Override
     public Message deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject obj = jsonElement.getAsJsonObject();

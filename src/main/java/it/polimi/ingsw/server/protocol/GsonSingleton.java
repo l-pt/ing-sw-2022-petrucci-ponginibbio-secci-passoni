@@ -4,12 +4,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.character.Character;
 
+/**
+ * GsonSingleton Class
+ */
 public final class GsonSingleton {
     private static Gson gson = null;
 
     private GsonSingleton() {
     }
 
+    /**
+     * Builds Gson object from Message and MessageAdapter objects.
+     * @return Gson object
+     */
     public static Gson get() {
         if (gson == null) {
             gson = new GsonBuilder()

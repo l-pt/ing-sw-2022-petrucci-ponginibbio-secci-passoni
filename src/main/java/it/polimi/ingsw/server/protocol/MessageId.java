@@ -4,7 +4,7 @@ import it.polimi.ingsw.server.protocol.message.*;
 import it.polimi.ingsw.server.protocol.message.character.*;
 
 /**
- * An enum that contains all message ids and classes
+ * An ENUM that contains all message ids and classes
  */
 public enum MessageId {
     ERROR(ErrorMessage.class),
@@ -36,10 +36,18 @@ public enum MessageId {
 
     private Class<? extends Message> messageClass;
 
+    /**
+     * Contructor that takes in messageClass to generate unique MessageId
+     * @param messageClass java metatype for Message
+     */
     MessageId(Class<? extends Message> messageClass) {
         this.messageClass = messageClass;
     }
 
+    /**
+     * Getter for this MessageId.messageClass
+     * @return this.messageClass
+     */
     public Class<? extends Message> getMessageClass() {
         return messageClass;
     }
