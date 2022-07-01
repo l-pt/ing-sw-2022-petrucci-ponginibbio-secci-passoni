@@ -15,7 +15,7 @@ Il progetto consiste nell'implementazione del gioco da tavolo [ERIANTYS](http://
 ### UML
 I seguenti diagrammi delle classi rappresentano rispettivamente il diagramma UML riassuntivo e il diagramma UML di dettaglio che mostrano come è stato progettato il software:
 - [UML alto livello](deliverables/uml_high_level)
-- [UML basso livello]()
+- [UML basso livello](deliverables/uml_low_level)
 
 ### Peer review
 Review al progetto del gruppo 10:
@@ -27,7 +27,7 @@ Review del gruppo 55 al nostro pregetto:
 - [Peer review 2](peer_review/ReviewGC65_Connessione.pdf)
 
 ### JavaDoc
-La seguente documentazione include una descrizione delle classi e dei metodi utilizzati, può essere consultata al seguente indirizzo: [Javadoc]()
+La seguente documentazione include una descrizione delle classi e dei metodi utilizzati, può essere consultata al seguente indirizzo: [Javadoc](deliverables/javadoc)
 
 ### Test di unità
 I test di Junit puntano a massimizzare la coverage del model (99%) e del controller (100%). Al seguente link è possibile consultare il report della coverage dei test effettuati: [Report](deliverables/report)
