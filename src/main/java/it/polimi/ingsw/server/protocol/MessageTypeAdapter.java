@@ -20,7 +20,7 @@ public class MessageTypeAdapter implements JsonDeserializer<Message> {
      * @param type java type to cast our JSON data into
      * @param jsonDeserializationContext jdc: explained in javadocs link
      * @return Message.java object
-     * @throws JsonParseException
+     * @throws JsonParseException If there is a serious issue that occurs during parsing of a Json string
      */
     @Override
     public Message deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
