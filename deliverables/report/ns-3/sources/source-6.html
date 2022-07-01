@@ -1,0 +1,949 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Match</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Match (it.polimi.ingsw.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Match</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (43/43)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    99,3%
+  </span>
+  <span class="absValue">
+    (271/273)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.model;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.model.character.Character;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.model.character.StudentCharacter;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.model.character.impl.*;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.model.observer.Observable;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.server.protocol.message.UpdateViewMessage;
+<i class="no-highlight">8</i>&nbsp;
+<i class="no-highlight">9</i>&nbsp;import java.lang.reflect.InvocationTargetException;
+<i class="no-highlight">10</i>&nbsp;import java.util.*;
+<i class="no-highlight">11</i>&nbsp;
+<i class="no-highlight">12</i>&nbsp;public class Match extends Observable&lt;UpdateViewMessage&gt; {
+<i class="no-highlight">13</i>&nbsp;    protected List&lt;Team&gt; teams;
+<i class="no-highlight">14</i>&nbsp;    private final List&lt;Player&gt; playerOrder;
+<i class="no-highlight">15</i>&nbsp;    private int posMotherNature;
+<i class="no-highlight">16</i>&nbsp;    private final List&lt;Island&gt; islands;
+<i class="no-highlight">17</i>&nbsp;    protected List&lt;Cloud&gt; clouds;
+<i class="no-highlight">18</i>&nbsp;    protected List&lt;Student&gt; studentBag;
+<i class="no-highlight">19</i>&nbsp;    private final List&lt;Professor&gt; professors;
+<i class="no-highlight">20</i>&nbsp;    private boolean lastTurn;
+<i class="no-highlight">21</i>&nbsp;    private final boolean expert;
+<i class="no-highlight">22</i>&nbsp;    private int coinsReserve;
+<i class="no-highlight">23</i>&nbsp;    private List&lt;Character&gt; characters;
+<i class="no-highlight">24</i>&nbsp;    private boolean drawAllowed;
+<i class="no-highlight">25</i>&nbsp;    private final InfluenceCalculationPolicy influencePolicy;
+<i class="no-highlight">26</i>&nbsp;    private boolean gameFinished;
+<i class="no-highlight">27</i>&nbsp;    private String currentPlayer;
+<i class="no-highlight">28</i>&nbsp;
+<i class="no-highlight">29</i>&nbsp;    /**
+<i class="no-highlight">30</i>&nbsp;     * Match Constructor creates a new Match object with the following parameters
+<i class="no-highlight">31</i>&nbsp;     * @param teams as a group of players (black, white, or grey)
+<i class="no-highlight">32</i>&nbsp;     * @param playerOrder input turn order of players
+<i class="no-highlight">33</i>&nbsp;     * @param expert boolean to decide if expert mode is on for the match
+<i class="no-highlight">34</i>&nbsp;     */
+<b class="fc"><i class="no-highlight">35</i>&nbsp;    public Match(List&lt;Team&gt; teams, List&lt;Player&gt; playerOrder, boolean expert) {</b>
+<i class="no-highlight">36</i>&nbsp;        //set match id, match difficulty, teams and player order
+<b class="fc"><i class="no-highlight">37</i>&nbsp;        this.expert = expert;</b>
+<b class="fc"><i class="no-highlight">38</i>&nbsp;        this.teams = teams;</b>
+<b class="fc"><i class="no-highlight">39</i>&nbsp;        setupTowers();</b>
+<b class="fc"><i class="no-highlight">40</i>&nbsp;        this.playerOrder = playerOrder;</b>
+<i class="no-highlight">41</i>&nbsp;
+<i class="no-highlight">42</i>&nbsp;        //allocate memory for islands, studentBag, clouds, professors
+<b class="fc"><i class="no-highlight">43</i>&nbsp;        this.islands = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">44</i>&nbsp;        this.studentBag = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">45</i>&nbsp;        this.clouds = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">46</i>&nbsp;        this.professors = new ArrayList&lt;&gt;();</b>
+<i class="no-highlight">47</i>&nbsp;
+<i class="no-highlight">48</i>&nbsp;        //prepare bag for initialization of islands
+<i class="no-highlight">49</i>&nbsp;        //2 students of each color to be randomly placed on the islands corresponding to mother nature
+<b class="fc"><i class="no-highlight">50</i>&nbsp;        for (PawnColor color : PawnColor.values())</b>
+<b class="fc"><i class="no-highlight">51</i>&nbsp;            for (int i = 0; i &lt; 2; ++i)</b>
+<b class="fc"><i class="no-highlight">52</i>&nbsp;                studentBag.add(new Student(color));</b>
+<i class="no-highlight">53</i>&nbsp;
+<i class="no-highlight">54</i>&nbsp;        //randomly select an island index for mother nature
+<b class="fc"><i class="no-highlight">55</i>&nbsp;        posMotherNature = new Random().nextInt(12);</b>
+<b class="fc"><i class="no-highlight">56</i>&nbsp;        for (int i = 0; i &lt; 12; ++i) {</b>
+<b class="fc"><i class="no-highlight">57</i>&nbsp;            islands.add(new Island());</b>
+<i class="no-highlight">58</i>&nbsp;
+<i class="no-highlight">59</i>&nbsp;            //add random student to all islands except where mother nature is and directly across (+/- 6 positions)
+<b class="fc"><i class="no-highlight">60</i>&nbsp;            if(i != posMotherNature &amp;&amp; i != (posMotherNature + 6) % 12)</b>
+<b class="fc"><i class="no-highlight">61</i>&nbsp;                islands.get(i).addStudent(extractStudents(1).get(0));</b>
+<i class="no-highlight">62</i>&nbsp;        }
+<i class="no-highlight">63</i>&nbsp;
+<i class="no-highlight">64</i>&nbsp;        //fill the bag with the rest of the students
+<b class="fc"><i class="no-highlight">65</i>&nbsp;        for (PawnColor color : PawnColor.values())</b>
+<b class="fc"><i class="no-highlight">66</i>&nbsp;            for (int i = 0; i &lt; 24; ++i)</b>
+<b class="fc"><i class="no-highlight">67</i>&nbsp;                studentBag.add(new Student(color));</b>
+<i class="no-highlight">68</i>&nbsp;
+<b class="fc"><i class="no-highlight">69</i>&nbsp;        for (Player player : playerOrder)</b>
+<b class="fc"><i class="no-highlight">70</i>&nbsp;            player.getSchool().addStudentsToEntrance(extractStudents(7));</b>
+<i class="no-highlight">71</i>&nbsp;
+<i class="no-highlight">72</i>&nbsp;        //add a cloud for each player
+<b class="fc"><i class="no-highlight">73</i>&nbsp;        for (int i = 0; i &lt; playerOrder.size(); ++i)</b>
+<b class="fc"><i class="no-highlight">74</i>&nbsp;            clouds.add(new Cloud());</b>
+<i class="no-highlight">75</i>&nbsp;
+<b class="fc"><i class="no-highlight">76</i>&nbsp;        populateClouds();</b>
+<i class="no-highlight">77</i>&nbsp;
+<i class="no-highlight">78</i>&nbsp;        //create a professor for each color
+<b class="fc"><i class="no-highlight">79</i>&nbsp;        for (PawnColor color : PawnColor.values())</b>
+<b class="fc"><i class="no-highlight">80</i>&nbsp;            professors.add(new Professor(color));</b>
+<i class="no-highlight">81</i>&nbsp;
+<i class="no-highlight">82</i>&nbsp;        //at the init, it is not the last turn
+<b class="fc"><i class="no-highlight">83</i>&nbsp;        lastTurn = false;</b>
+<i class="no-highlight">84</i>&nbsp;
+<i class="no-highlight">85</i>&nbsp;        //specific parameters for expert mode
+<b class="fc"><i class="no-highlight">86</i>&nbsp;        if(expert) {</b>
+<b class="fc"><i class="no-highlight">87</i>&nbsp;            coinsReserve = 20 - playerOrder.size();</b>
+<i class="no-highlight">88</i>&nbsp;
+<i class="no-highlight">89</i>&nbsp;            //Add 1 coin to all players
+<b class="fc"><i class="no-highlight">90</i>&nbsp;            for (Player player : playerOrder) {</b>
+<b class="fc"><i class="no-highlight">91</i>&nbsp;                player.addCoin();</b>
+<b class="fc"><i class="no-highlight">92</i>&nbsp;            }</b>
+<i class="no-highlight">93</i>&nbsp;
+<i class="no-highlight">94</i>&nbsp;            //Extract 3 random characters
+<b class="fc"><i class="no-highlight">95</i>&nbsp;            List&lt;Class&lt;? extends Character&gt;&gt; allCharacters = new ArrayList&lt;&gt;(12);</b>
+<b class="fc"><i class="no-highlight">96</i>&nbsp;            allCharacters.add(Character1.class);</b>
+<b class="fc"><i class="no-highlight">97</i>&nbsp;            allCharacters.add(Character2.class);</b>
+<b class="fc"><i class="no-highlight">98</i>&nbsp;            allCharacters.add(Character3.class);</b>
+<b class="fc"><i class="no-highlight">99</i>&nbsp;            allCharacters.add(Character4.class);</b>
+<b class="fc"><i class="no-highlight">100</i>&nbsp;            allCharacters.add(Character5.class);</b>
+<b class="fc"><i class="no-highlight">101</i>&nbsp;            allCharacters.add(Character6.class);</b>
+<b class="fc"><i class="no-highlight">102</i>&nbsp;            allCharacters.add(Character7.class);</b>
+<b class="fc"><i class="no-highlight">103</i>&nbsp;            allCharacters.add(Character8.class);</b>
+<b class="fc"><i class="no-highlight">104</i>&nbsp;            allCharacters.add(Character9.class);</b>
+<b class="fc"><i class="no-highlight">105</i>&nbsp;            allCharacters.add(Character10.class);</b>
+<b class="fc"><i class="no-highlight">106</i>&nbsp;            allCharacters.add(Character11.class);</b>
+<b class="fc"><i class="no-highlight">107</i>&nbsp;            allCharacters.add(Character12.class);</b>
+<b class="fc"><i class="no-highlight">108</i>&nbsp;            characters = new ArrayList&lt;&gt;(3);</b>
+<b class="fc"><i class="no-highlight">109</i>&nbsp;            Random randomGenerator = new Random();</b>
+<b class="fc"><i class="no-highlight">110</i>&nbsp;            for (int i = 0; i &lt; 3; ++i) {</b>
+<b class="fc"><i class="no-highlight">111</i>&nbsp;                int randomIndex = randomGenerator.nextInt(allCharacters.size());</b>
+<i class="no-highlight">112</i>&nbsp;                try {
+<b class="fc"><i class="no-highlight">113</i>&nbsp;                    characters.add(allCharacters.remove(randomIndex).getDeclaredConstructor().newInstance());</b>
+<b class="nc"><i class="no-highlight">114</i>&nbsp;                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {</b>
+<b class="nc"><i class="no-highlight">115</i>&nbsp;                    throw new RuntimeException(&quot;Error instantiating character classes&quot;);</b>
+<b class="fc"><i class="no-highlight">116</i>&nbsp;                }</b>
+<i class="no-highlight">117</i>&nbsp;            }
+<i class="no-highlight">118</i>&nbsp;            //Setup characters
+<b class="fc"><i class="no-highlight">119</i>&nbsp;            for (Character character : characters) {</b>
+<b class="fc"><i class="no-highlight">120</i>&nbsp;                if (character instanceof StudentCharacter) {</b>
+<b class="fc"><i class="no-highlight">121</i>&nbsp;                    ((StudentCharacter) character).setup(this);</b>
+<i class="no-highlight">122</i>&nbsp;                }
+<b class="fc"><i class="no-highlight">123</i>&nbsp;            }</b>
+<b class="fc"><i class="no-highlight">124</i>&nbsp;        }else coinsReserve = 0;</b>
+<b class="fc"><i class="no-highlight">125</i>&nbsp;        drawAllowed = false;</b>
+<b class="fc"><i class="no-highlight">126</i>&nbsp;        influencePolicy = new InfluenceCalculationPolicy();</b>
+<b class="fc"><i class="no-highlight">127</i>&nbsp;        gameFinished = false;</b>
+<b class="fc"><i class="no-highlight">128</i>&nbsp;        currentPlayer = playerOrder.get(0).getName();</b>
+<i class="no-highlight">129</i>&nbsp;    }
+<i class="no-highlight">130</i>&nbsp;
+<i class="no-highlight">131</i>&nbsp;    /**
+<i class="no-highlight">132</i>&nbsp;     * Adds 8 towers to all the teams (for a 2 or 4 players match)
+<i class="no-highlight">133</i>&nbsp;     */
+<i class="no-highlight">134</i>&nbsp;    public void setupTowers(){
+<b class="fc"><i class="no-highlight">135</i>&nbsp;        for (Team team : teams) {</b>
+<b class="fc"><i class="no-highlight">136</i>&nbsp;            for (int i = 0; i &lt; 8; ++i) {</b>
+<b class="fc"><i class="no-highlight">137</i>&nbsp;                team.addTower(new Tower(team.getTowerColor()));</b>
+<i class="no-highlight">138</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">139</i>&nbsp;        }</b>
+<i class="no-highlight">140</i>&nbsp;    }
+<i class="no-highlight">141</i>&nbsp;
+<i class="no-highlight">142</i>&nbsp;    /**
+<i class="no-highlight">143</i>&nbsp;     * getTeams()
+<i class="no-highlight">144</i>&nbsp;     * @return The teams of the match
+<i class="no-highlight">145</i>&nbsp;     */
+<b class="fc"><i class="no-highlight">146</i>&nbsp;    public List&lt;Team&gt; getTeams() {return teams;}</b>
+<i class="no-highlight">147</i>&nbsp;
+<i class="no-highlight">148</i>&nbsp;    /**
+<i class="no-highlight">149</i>&nbsp;     * Searches for a team with a certain tower color
+<i class="no-highlight">150</i>&nbsp;     * @param color TowerColor of a team
+<i class="no-highlight">151</i>&nbsp;     * @return The team with the given tower color
+<i class="no-highlight">152</i>&nbsp;     * @throws IllegalMoveException When there isn&#39;t a team with the given tower color
+<i class="no-highlight">153</i>&nbsp;     */
+<i class="no-highlight">154</i>&nbsp;    public Team getTeamFromColor(TowerColor color) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">155</i>&nbsp;        for(Team team : teams) {</b>
+<b class="fc"><i class="no-highlight">156</i>&nbsp;            if (team.getTowers().get(0).getColor().equals(color)) {</b>
+<b class="fc"><i class="no-highlight">157</i>&nbsp;                return team;</b>
+<i class="no-highlight">158</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">159</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">160</i>&nbsp;        throw new IllegalMoveException(&quot;A team with tower color &quot; + color.name() + &quot; does not exist&quot;);</b>
+<i class="no-highlight">161</i>&nbsp;    }
+<i class="no-highlight">162</i>&nbsp;
+<i class="no-highlight">163</i>&nbsp;    /**
+<i class="no-highlight">164</i>&nbsp;     * Searches for a team which a certain player is part of
+<i class="no-highlight">165</i>&nbsp;     * @param player Player
+<i class="no-highlight">166</i>&nbsp;     * @return The team which the given player is part of
+<i class="no-highlight">167</i>&nbsp;     * @throws IllegalMoveException When the given player isn&#39;t part of any teams
+<i class="no-highlight">168</i>&nbsp;     */
+<i class="no-highlight">169</i>&nbsp;    public Team getTeamFromPlayer(Player player) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">170</i>&nbsp;        for (Team team : teams) {</b>
+<b class="fc"><i class="no-highlight">171</i>&nbsp;            for (Player p : team.getPlayers()) {</b>
+<b class="fc"><i class="no-highlight">172</i>&nbsp;                if (p.equals(player)) {</b>
+<b class="fc"><i class="no-highlight">173</i>&nbsp;                    return team;</b>
+<i class="no-highlight">174</i>&nbsp;                }
+<b class="fc"><i class="no-highlight">175</i>&nbsp;            }</b>
+<b class="fc"><i class="no-highlight">176</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">177</i>&nbsp;        throw new IllegalMoveException(player.getName() + &quot; is not in a team&quot;);</b>
+<i class="no-highlight">178</i>&nbsp;    }
+<i class="no-highlight">179</i>&nbsp;
+<i class="no-highlight">180</i>&nbsp;    /**
+<i class="no-highlight">181</i>&nbsp;     * Searches for a player with a certain name
+<i class="no-highlight">182</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">183</i>&nbsp;     * @return The player with the given name
+<i class="no-highlight">184</i>&nbsp;     * @throws IllegalMoveException When there aren&#39;t any players with the given name
+<i class="no-highlight">185</i>&nbsp;     */
+<i class="no-highlight">186</i>&nbsp;    public Player getPlayerFromName(String playerName) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">187</i>&nbsp;        for(Player player : playerOrder) {</b>
+<b class="fc"><i class="no-highlight">188</i>&nbsp;            if (player.getName().equals(playerName)) {</b>
+<b class="fc"><i class="no-highlight">189</i>&nbsp;                return player;</b>
+<i class="no-highlight">190</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">191</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">192</i>&nbsp;        throw new IllegalMoveException(&quot;Invalid Name&quot;);</b>
+<i class="no-highlight">193</i>&nbsp;    }
+<i class="no-highlight">194</i>&nbsp;
+<i class="no-highlight">195</i>&nbsp;    /**
+<i class="no-highlight">196</i>&nbsp;     * Searches for the position of a player with a certain name in the order of play for the current turn
+<i class="no-highlight">197</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">198</i>&nbsp;     * @return The position of a player with the given name in the order of play for the current turn
+<i class="no-highlight">199</i>&nbsp;     * @throws IllegalMoveException When there aren&#39;t any players with the given name
+<i class="no-highlight">200</i>&nbsp;     */
+<i class="no-highlight">201</i>&nbsp;    public int getPosFromName(String playerName) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">202</i>&nbsp;        for (int i = 0; i &lt; playerOrder.size(); ++i) {</b>
+<b class="fc"><i class="no-highlight">203</i>&nbsp;            if (playerOrder.get(i).getName().equals(playerName)) {</b>
+<b class="fc"><i class="no-highlight">204</i>&nbsp;                return i;</b>
+<i class="no-highlight">205</i>&nbsp;            }
+<i class="no-highlight">206</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">207</i>&nbsp;        throw new IllegalMoveException(&quot;Invalid Name&quot;);</b>
+<i class="no-highlight">208</i>&nbsp;    }
+<i class="no-highlight">209</i>&nbsp;
+<i class="no-highlight">210</i>&nbsp;    /**
+<i class="no-highlight">211</i>&nbsp;     * getPlayersOrder()
+<i class="no-highlight">212</i>&nbsp;     * @return The order of play for the current turn
+<i class="no-highlight">213</i>&nbsp;     */
+<i class="no-highlight">214</i>&nbsp;    public List&lt;Player&gt; getPlayersOrder() {
+<b class="fc"><i class="no-highlight">215</i>&nbsp;        return playerOrder;</b>
+<i class="no-highlight">216</i>&nbsp;    }
+<i class="no-highlight">217</i>&nbsp;
+<i class="no-highlight">218</i>&nbsp;    /**
+<i class="no-highlight">219</i>&nbsp;     * getPosMotherNature()
+<i class="no-highlight">220</i>&nbsp;     * @return The island number which mother nature is currently on
+<i class="no-highlight">221</i>&nbsp;     */
+<i class="no-highlight">222</i>&nbsp;    public int getPosMotherNature() {
+<b class="fc"><i class="no-highlight">223</i>&nbsp;        return posMotherNature;</b>
+<i class="no-highlight">224</i>&nbsp;    }
+<i class="no-highlight">225</i>&nbsp;
+<i class="no-highlight">226</i>&nbsp;    /**
+<i class="no-highlight">227</i>&nbsp;     * getCharacters()
+<i class="no-highlight">228</i>&nbsp;     * @return The 3 characters of the match
+<i class="no-highlight">229</i>&nbsp;     */
+<i class="no-highlight">230</i>&nbsp;    public List&lt;Character&gt; getCharacters() {
+<b class="fc"><i class="no-highlight">231</i>&nbsp;        return characters;</b>
+<i class="no-highlight">232</i>&nbsp;    }
+<i class="no-highlight">233</i>&nbsp;
+<i class="no-highlight">234</i>&nbsp;    /**
+<i class="no-highlight">235</i>&nbsp;     * getIslands()
+<i class="no-highlight">236</i>&nbsp;     * @return The islands of the match
+<i class="no-highlight">237</i>&nbsp;     */
+<i class="no-highlight">238</i>&nbsp;    public List&lt;Island&gt; getIslands() {
+<b class="fc"><i class="no-highlight">239</i>&nbsp;        return islands;</b>
+<i class="no-highlight">240</i>&nbsp;    }
+<i class="no-highlight">241</i>&nbsp;
+<i class="no-highlight">242</i>&nbsp;    /**
+<i class="no-highlight">243</i>&nbsp;     * getClouds()
+<i class="no-highlight">244</i>&nbsp;     * @return The clouds of the match
+<i class="no-highlight">245</i>&nbsp;     */
+<i class="no-highlight">246</i>&nbsp;    public List&lt;Cloud&gt; getClouds() {
+<b class="fc"><i class="no-highlight">247</i>&nbsp;        return clouds;</b>
+<i class="no-highlight">248</i>&nbsp;    }
+<i class="no-highlight">249</i>&nbsp;
+<i class="no-highlight">250</i>&nbsp;    /**
+<i class="no-highlight">251</i>&nbsp;     * getStudentBag()
+<i class="no-highlight">252</i>&nbsp;     * @return The students remaining in the student bag
+<i class="no-highlight">253</i>&nbsp;     */
+<b class="fc"><i class="no-highlight">254</i>&nbsp;    public List&lt;Student&gt; getStudentBag(){return studentBag;}</b>
+<i class="no-highlight">255</i>&nbsp;
+<i class="no-highlight">256</i>&nbsp;    /**
+<i class="no-highlight">257</i>&nbsp;     * getProfessors()
+<i class="no-highlight">258</i>&nbsp;     * @return The professors that aren&#39;t taken by any players
+<i class="no-highlight">259</i>&nbsp;     */
+<i class="no-highlight">260</i>&nbsp;    public List&lt;Professor&gt; getProfessors() {
+<b class="fc"><i class="no-highlight">261</i>&nbsp;        return professors;</b>
+<i class="no-highlight">262</i>&nbsp;    }
+<i class="no-highlight">263</i>&nbsp;
+<i class="no-highlight">264</i>&nbsp;    /**
+<i class="no-highlight">265</i>&nbsp;     * Adds the given students to studentBag
+<i class="no-highlight">266</i>&nbsp;     * @param students List of students
+<i class="no-highlight">267</i>&nbsp;     */
+<i class="no-highlight">268</i>&nbsp;    public void addStudents(List&lt;Student&gt; students){
+<b class="fc"><i class="no-highlight">269</i>&nbsp;        studentBag.addAll(students);</b>
+<i class="no-highlight">270</i>&nbsp;    }
+<i class="no-highlight">271</i>&nbsp;
+<i class="no-highlight">272</i>&nbsp;    /**
+<i class="no-highlight">273</i>&nbsp;     * Extracts n random students from studentBag, removing them from it
+<i class="no-highlight">274</i>&nbsp;     * @param n Number of students that is required to extract from studentBag
+<i class="no-highlight">275</i>&nbsp;     * @return List of n random students from studentBag, or all the students in studentBag if studentBag.size() is less than n
+<i class="no-highlight">276</i>&nbsp;     */
+<i class="no-highlight">277</i>&nbsp;    public List&lt;Student&gt; extractStudents(int n) {
+<i class="no-highlight">278</i>&nbsp;        int randomIndex;
+<b class="fc"><i class="no-highlight">279</i>&nbsp;        List&lt;Student&gt; students = new ArrayList&lt;&gt;(Math.min(n, studentBag.size()));</b>
+<b class="fc"><i class="no-highlight">280</i>&nbsp;        if (n &gt;= studentBag.size()) {</b>
+<b class="fc"><i class="no-highlight">281</i>&nbsp;            lastTurn = true;</b>
+<i class="no-highlight">282</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">283</i>&nbsp;        for (int i = 0; i &lt; Math.min(n, studentBag.size()); ++i) {</b>
+<b class="fc"><i class="no-highlight">284</i>&nbsp;            randomIndex = new Random().nextInt(studentBag.size());</b>
+<b class="fc"><i class="no-highlight">285</i>&nbsp;            students.add(studentBag.get(randomIndex));</b>
+<b class="fc"><i class="no-highlight">286</i>&nbsp;            studentBag.remove(studentBag.get(randomIndex));</b>
+<i class="no-highlight">287</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">288</i>&nbsp;        return students;</b>
+<i class="no-highlight">289</i>&nbsp;    }
+<i class="no-highlight">290</i>&nbsp;
+<i class="no-highlight">291</i>&nbsp;    /**
+<i class="no-highlight">292</i>&nbsp;     * Removes the professor of the given color on the board and returns it
+<i class="no-highlight">293</i>&nbsp;     * @param color PawnColor of the professor
+<i class="no-highlight">294</i>&nbsp;     * @return The professor of the given color
+<i class="no-highlight">295</i>&nbsp;     * @throws IllegalMoveException When the professor of the given color is already taken by a player
+<i class="no-highlight">296</i>&nbsp;     */
+<i class="no-highlight">297</i>&nbsp;    public Professor removeProfessor(PawnColor color) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">298</i>&nbsp;        for(int i = 0; i &lt; professors.size(); ++i) {</b>
+<b class="fc"><i class="no-highlight">299</i>&nbsp;            if (professors.get(i).getColor().equals(color)) {</b>
+<b class="fc"><i class="no-highlight">300</i>&nbsp;                return professors.remove(i);</b>
+<i class="no-highlight">301</i>&nbsp;            }
+<i class="no-highlight">302</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">303</i>&nbsp;        throw new IllegalMoveException(&quot;No professor of color &quot; + color.name() + &quot; on the table&quot;);</b>
+<i class="no-highlight">304</i>&nbsp;    }
+<i class="no-highlight">305</i>&nbsp;
+<i class="no-highlight">306</i>&nbsp;    /**
+<i class="no-highlight">307</i>&nbsp;     * Searches for the player with the professor of the given color
+<i class="no-highlight">308</i>&nbsp;     * @param color PawnColor of the professor
+<i class="no-highlight">309</i>&nbsp;     * @return The player with the professor of the given color, or null if there isn&#39;t a player with the professor of the given color
+<i class="no-highlight">310</i>&nbsp;     */
+<i class="no-highlight">311</i>&nbsp;    public Player whoHasProfessor(PawnColor color){
+<b class="fc"><i class="no-highlight">312</i>&nbsp;        for (Player player : playerOrder) {</b>
+<b class="fc"><i class="no-highlight">313</i>&nbsp;            if (player.getSchool().isColoredProfessor(color)) {</b>
+<b class="fc"><i class="no-highlight">314</i>&nbsp;                return player;</b>
+<i class="no-highlight">315</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">316</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">317</i>&nbsp;        return null;</b>
+<i class="no-highlight">318</i>&nbsp;    }
+<i class="no-highlight">319</i>&nbsp;
+<i class="no-highlight">320</i>&nbsp;    /**
+<i class="no-highlight">321</i>&nbsp;     * Moves n students of the given color from the entrance to the player tables
+<i class="no-highlight">322</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">323</i>&nbsp;     * @param color PawnColor of the students
+<i class="no-highlight">324</i>&nbsp;     * @param n Number of students of the given color
+<i class="no-highlight">325</i>&nbsp;     * @throws IllegalMoveException When n is negative
+<i class="no-highlight">326</i>&nbsp;     */
+<i class="no-highlight">327</i>&nbsp;    public void playerMoveStudents(String playerName, PawnColor color, int n) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">328</i>&nbsp;        if (n &lt; 0) {</b>
+<b class="fc"><i class="no-highlight">329</i>&nbsp;            throw new IllegalArgumentException(&quot;Students numbers must be positive&quot;);</b>
+<i class="no-highlight">330</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">331</i>&nbsp;        for(int i = 0; i &lt; n; ++i) {</b>
+<i class="no-highlight">332</i>&nbsp;            //Adds the students from the entrance to the table
+<b class="fc"><i class="no-highlight">333</i>&nbsp;            getPlayerFromName(playerName).getSchool().addStudentFromEntranceToTable(color);</b>
+<i class="no-highlight">334</i>&nbsp;
+<i class="no-highlight">335</i>&nbsp;            //Checks if the students of the table are 3, 6 or 9 (only if the match is expert)
+<b class="fc"><i class="no-highlight">336</i>&nbsp;            if(expert) {</b>
+<b class="fc"><i class="no-highlight">337</i>&nbsp;                checkNumberStudents(playerName, color);</b>
+<i class="no-highlight">338</i>&nbsp;            }
+<i class="no-highlight">339</i>&nbsp;            //Checks the number of students of that color and determinate the owner of the professor
+<b class="fc"><i class="no-highlight">340</i>&nbsp;            checkProfessors(playerName, color);</b>
+<i class="no-highlight">341</i>&nbsp;        }
+<i class="no-highlight">342</i>&nbsp;    }
+<i class="no-highlight">343</i>&nbsp;
+<i class="no-highlight">344</i>&nbsp;    /**
+<i class="no-highlight">345</i>&nbsp;     * Checks the table count of the given color and if is 3, 6, or 9 adds a coin to the player coin reserve
+<i class="no-highlight">346</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">347</i>&nbsp;     * @param color PawnColor of the table
+<i class="no-highlight">348</i>&nbsp;     * @throws IllegalMoveException When there aren&#39;t any players with the given name
+<i class="no-highlight">349</i>&nbsp;     */
+<i class="no-highlight">350</i>&nbsp;    public void checkNumberStudents(String playerName, PawnColor color) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">351</i>&nbsp;        Player player = getPlayerFromName(playerName);</b>
+<b class="fc"><i class="no-highlight">352</i>&nbsp;        if(player.getSchool().getTableCount(color) == 3 || player.getSchool().getTableCount(color) == 6 || player.getSchool().getTableCount(color) == 9) {</b>
+<b class="fc"><i class="no-highlight">353</i>&nbsp;            player.addCoin();</b>
+<b class="fc"><i class="no-highlight">354</i>&nbsp;            --coinsReserve;</b>
+<i class="no-highlight">355</i>&nbsp;        }
+<i class="no-highlight">356</i>&nbsp;    }
+<i class="no-highlight">357</i>&nbsp;
+<i class="no-highlight">358</i>&nbsp;    /**
+<i class="no-highlight">359</i>&nbsp;     * Checks the table count of the given color of all the players
+<i class="no-highlight">360</i>&nbsp;     * and gives the professor to the player with the most students in the table of that color.
+<i class="no-highlight">361</i>&nbsp;     * In case of a draw the professor remains to the original player
+<i class="no-highlight">362</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">363</i>&nbsp;     * @param color PawnColor of the professor
+<i class="no-highlight">364</i>&nbsp;     * @throws IllegalMoveException When there aren&#39;t any players with the given name
+<i class="no-highlight">365</i>&nbsp;     */
+<i class="no-highlight">366</i>&nbsp;    public void checkProfessors(String playerName, PawnColor color) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">367</i>&nbsp;        Player player = getPlayerFromName(playerName);</b>
+<i class="no-highlight">368</i>&nbsp;
+<i class="no-highlight">369</i>&nbsp;        //Checks if the player already has that color professor
+<b class="fc"><i class="no-highlight">370</i>&nbsp;        if (!player.getSchool().isColoredProfessor(color)) {</b>
+<i class="no-highlight">371</i>&nbsp;
+<i class="no-highlight">372</i>&nbsp;            //Checks if no player has that color professor
+<b class="fc"><i class="no-highlight">373</i>&nbsp;            if (whoHasProfessor(color) == null) {</b>
+<b class="fc"><i class="no-highlight">374</i>&nbsp;                player.getSchool().addProfessor(removeProfessor(color));</b>
+<i class="no-highlight">375</i>&nbsp;
+<i class="no-highlight">376</i>&nbsp;                //Checks if the player has the same amount of students of that color as the current owner of the professor
+<i class="no-highlight">377</i>&nbsp;                //and the draw are allowed or if the player has the most amount of student of that color
+<b class="fc"><i class="no-highlight">378</i>&nbsp;            } else if ((player.getSchool().getTableCount(color) == whoHasProfessor(color).getSchool().getTableCount(color) &amp;&amp; drawAllowed)</b>
+<b class="fc"><i class="no-highlight">379</i>&nbsp;                    || (player.getSchool().getTableCount(color) &gt; whoHasProfessor(color).getSchool().getTableCount(color))) {</b>
+<b class="fc"><i class="no-highlight">380</i>&nbsp;                player.getSchool().addProfessor(whoHasProfessor(color).getSchool().removeProfessor(color));</b>
+<i class="no-highlight">381</i>&nbsp;            }
+<i class="no-highlight">382</i>&nbsp;        }
+<i class="no-highlight">383</i>&nbsp;    }
+<i class="no-highlight">384</i>&nbsp;
+<i class="no-highlight">385</i>&nbsp;    /**
+<i class="no-highlight">386</i>&nbsp;     * Checks the influence of all the players of a certain island and manages the towers on that island
+<i class="no-highlight">387</i>&nbsp;     * @param index Index of an island
+<i class="no-highlight">388</i>&nbsp;     * @param noMotherNatureMoves True if mother nature won&#39;t move, false otherwise
+<i class="no-highlight">389</i>&nbsp;     * @throws IllegalMoveException If the player with the most influence of the island isn&#39;t part of any team
+<i class="no-highlight">390</i>&nbsp;     */
+<i class="no-highlight">391</i>&nbsp;    public void islandInfluence(int index, boolean noMotherNatureMoves) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">392</i>&nbsp;        boolean draw = false;</b>
+<b class="fc"><i class="no-highlight">393</i>&nbsp;        int max = -1, pos = 0;</b>
+<i class="no-highlight">394</i>&nbsp;
+<i class="no-highlight">395</i>&nbsp;        //Checks if there aren&#39;t any no entries on that island
+<b class="fc"><i class="no-highlight">396</i>&nbsp;        if(islands.get(index).getNoEntry() == 0) {</b>
+<i class="no-highlight">397</i>&nbsp;
+<i class="no-highlight">398</i>&nbsp;            //Finds the max influence on the island, the position of that player and
+<i class="no-highlight">399</i>&nbsp;            //if there are more players with the same max influence
+<b class="fc"><i class="no-highlight">400</i>&nbsp;            for (int i = 0; i &lt; playerOrder.size(); ++i) {</b>
+<b class="fc"><i class="no-highlight">401</i>&nbsp;                if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) &gt; max) {</b>
+<b class="fc"><i class="no-highlight">402</i>&nbsp;                    max = islands.get(index).getInfluence(playerOrder.get(i), influencePolicy);</b>
+<b class="fc"><i class="no-highlight">403</i>&nbsp;                    pos = i;</b>
+<b class="fc"><i class="no-highlight">404</i>&nbsp;                    draw = false;</b>
+<b class="fc"><i class="no-highlight">405</i>&nbsp;                } else if (islands.get(index).getInfluence(playerOrder.get(i), influencePolicy) == max) {</b>
+<b class="fc"><i class="no-highlight">406</i>&nbsp;                    draw = true;</b>
+<i class="no-highlight">407</i>&nbsp;                }
+<i class="no-highlight">408</i>&nbsp;            }
+<i class="no-highlight">409</i>&nbsp;
+<i class="no-highlight">410</i>&nbsp;            //confirm that
+<i class="no-highlight">411</i>&nbsp;            // 1) player wins the draw
+<i class="no-highlight">412</i>&nbsp;            // 2) player doesn&#39;t have tower at index
+<b class="fc"><i class="no-highlight">413</i>&nbsp;            if (!draw &amp;&amp; max &gt; 0 &amp;&amp; (islands.get(index).getTowers().isEmpty() || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {</b>
+<i class="no-highlight">414</i>&nbsp;
+<i class="no-highlight">415</i>&nbsp;                //if island has fewer towers than the team
+<b class="fc"><i class="no-highlight">416</i>&nbsp;                if(islands.get(index).getTowers().size() &lt; getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {</b>
+<i class="no-highlight">417</i>&nbsp;
+<i class="no-highlight">418</i>&nbsp;                    //if no towers on island AND team has one tower
+<b class="fc"><i class="no-highlight">419</i>&nbsp;                    if (islands.get(index).getTowers().isEmpty() &amp;&amp; getTeamFromPlayer(playerOrder.get(pos)).getTowers().size() == 1) {</b>
+<i class="no-highlight">420</i>&nbsp;
+<i class="no-highlight">421</i>&nbsp;                        //Game Over
+<b class="fc"><i class="no-highlight">422</i>&nbsp;                        gameFinished = true;</b>
+<i class="no-highlight">423</i>&nbsp;
+<i class="no-highlight">424</i>&nbsp;                    } else {
+<i class="no-highlight">425</i>&nbsp;
+<i class="no-highlight">426</i>&nbsp;                        //pop all towers from island to a temporary list t
+<b class="fc"><i class="no-highlight">427</i>&nbsp;                        List&lt;Tower&gt; t = islands.get(index).removeAllTowers();</b>
+<i class="no-highlight">428</i>&nbsp;
+<i class="no-highlight">429</i>&nbsp;                        //check if t wasn&#39;t empty
+<b class="fc"><i class="no-highlight">430</i>&nbsp;                        if (t.size() &gt; 0) {</b>
+<i class="no-highlight">431</i>&nbsp;
+<i class="no-highlight">432</i>&nbsp;                            //add colored tower to respective team
+<b class="fc"><i class="no-highlight">433</i>&nbsp;                            getTeamFromColor(t.get(0).getColor()).addTowers(t);</b>
+<i class="no-highlight">434</i>&nbsp;
+<i class="no-highlight">435</i>&nbsp;                            //add team towers to island, and remove old team towers from island
+<b class="fc"><i class="no-highlight">436</i>&nbsp;                            islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));</b>
+<i class="no-highlight">437</i>&nbsp;
+<i class="no-highlight">438</i>&nbsp;                        } else {
+<i class="no-highlight">439</i>&nbsp;
+<i class="no-highlight">440</i>&nbsp;                            //add team towers to island
+<b class="fc"><i class="no-highlight">441</i>&nbsp;                            islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(1));</b>
+<i class="no-highlight">442</i>&nbsp;                        }
+<i class="no-highlight">443</i>&nbsp;
+<i class="no-highlight">444</i>&nbsp;                        //check to see if adjacent islands should be merged
+<b class="fc"><i class="no-highlight">445</i>&nbsp;                        checkIslands(index, noMotherNatureMoves);</b>
+<b class="fc"><i class="no-highlight">446</i>&nbsp;                    }</b>
+<i class="no-highlight">447</i>&nbsp;                } else {
+<i class="no-highlight">448</i>&nbsp;
+<i class="no-highlight">449</i>&nbsp;                    //Game Over
+<b class="fc"><i class="no-highlight">450</i>&nbsp;                    gameFinished = true;</b>
+<i class="no-highlight">451</i>&nbsp;                }
+<i class="no-highlight">452</i>&nbsp;            }
+<i class="no-highlight">453</i>&nbsp;        }else {
+<i class="no-highlight">454</i>&nbsp;
+<i class="no-highlight">455</i>&nbsp;            //removes 1 no entry from the island
+<b class="fc"><i class="no-highlight">456</i>&nbsp;            islands.get(index).removeNoEntry();</b>
+<i class="no-highlight">457</i>&nbsp;
+<i class="no-highlight">458</i>&nbsp;            //add 1 no entry to the Character5
+<b class="fc"><i class="no-highlight">459</i>&nbsp;            for (Character character : characters) {</b>
+<b class="fc"><i class="no-highlight">460</i>&nbsp;                if (character instanceof Character5) {</b>
+<b class="fc"><i class="no-highlight">461</i>&nbsp;                    ((Character5) character).addNoEntry();</b>
+<i class="no-highlight">462</i>&nbsp;                }
+<b class="fc"><i class="no-highlight">463</i>&nbsp;            }</b>
+<i class="no-highlight">464</i>&nbsp;        }
+<i class="no-highlight">465</i>&nbsp;    }
+<i class="no-highlight">466</i>&nbsp;
+<i class="no-highlight">467</i>&nbsp;    /**
+<i class="no-highlight">468</i>&nbsp;     * Checks the 2 adjacent islands of an island and unifies them if they have the same tower color
+<i class="no-highlight">469</i>&nbsp;     * @param index Index of an island
+<i class="no-highlight">470</i>&nbsp;     * @param noMotherNatureMoves True if mother nature won&#39;t move, false otherwise
+<i class="no-highlight">471</i>&nbsp;     */
+<i class="no-highlight">472</i>&nbsp;    public void checkIslands(int index, boolean noMotherNatureMoves) {
+<i class="no-highlight">473</i>&nbsp;
+<i class="no-highlight">474</i>&nbsp;        //check if island adjacent to the right needs to be merged
+<b class="fc"><i class="no-highlight">475</i>&nbsp;        if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() &amp;&amp;</b>
+<b class="fc"><i class="no-highlight">476</i>&nbsp;                islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {</b>
+<i class="no-highlight">477</i>&nbsp;
+<i class="no-highlight">478</i>&nbsp;            //merge islands
+<b class="fc"><i class="no-highlight">479</i>&nbsp;            uniteIslands(Math.min(index, islandIndex(index + 1)), Math.max(index, islandIndex(index + 1)), noMotherNatureMoves);</b>
+<i class="no-highlight">480</i>&nbsp;        }
+<i class="no-highlight">481</i>&nbsp;        //check if island adjacent to the left needs to be merged
+<b class="fc"><i class="no-highlight">482</i>&nbsp;        if (!islands.get(islandIndex(index - 1)).getTowers().isEmpty() &amp;&amp;</b>
+<b class="fc"><i class="no-highlight">483</i>&nbsp;                islands.get(islandIndex(index - 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {</b>
+<i class="no-highlight">484</i>&nbsp;
+<i class="no-highlight">485</i>&nbsp;            //merge islands
+<b class="fc"><i class="no-highlight">486</i>&nbsp;            uniteIslands(Math.min(index, islandIndex(index - 1)), Math.max(index, islandIndex(index - 1)), noMotherNatureMoves);</b>
+<i class="no-highlight">487</i>&nbsp;        }
+<i class="no-highlight">488</i>&nbsp;    }
+<i class="no-highlight">489</i>&nbsp;
+<i class="no-highlight">490</i>&nbsp;    /**
+<i class="no-highlight">491</i>&nbsp;     * Formats an index of an island in module islands.size()
+<i class="no-highlight">492</i>&nbsp;     * @param idx Index of an island
+<i class="no-highlight">493</i>&nbsp;     * @return The index of the island in module islands.size()
+<i class="no-highlight">494</i>&nbsp;     */
+<i class="no-highlight">495</i>&nbsp;    public int islandIndex(int idx) {
+<b class="fc"><i class="no-highlight">496</i>&nbsp;        return ((idx % islands.size()) &lt; 0) ? (idx % islands.size()) + islands.size() : idx % islands.size();</b>
+<i class="no-highlight">497</i>&nbsp;    }
+<i class="no-highlight">498</i>&nbsp;
+<i class="no-highlight">499</i>&nbsp;    /**
+<i class="no-highlight">500</i>&nbsp;     * Unifies 2 islands with indexes min and max
+<i class="no-highlight">501</i>&nbsp;     * @param min Min between the 2 indexes
+<i class="no-highlight">502</i>&nbsp;     * @param max Max between the 2 indexes
+<i class="no-highlight">503</i>&nbsp;     * @param noMotherNatureMoves True if mother nature won&#39;t move, false otherwise
+<i class="no-highlight">504</i>&nbsp;     */
+<i class="no-highlight">505</i>&nbsp;    public void uniteIslands(int min, int max, boolean noMotherNatureMoves) {
+<i class="no-highlight">506</i>&nbsp;
+<i class="no-highlight">507</i>&nbsp;        //transfer all the data to one island: (min)
+<b class="fc"><i class="no-highlight">508</i>&nbsp;        islands.get(min).addStudents(islands.get(max).getStudents());</b>
+<b class="fc"><i class="no-highlight">509</i>&nbsp;        islands.get(min).addTowers(islands.get(max).getTowers());</b>
+<b class="fc"><i class="no-highlight">510</i>&nbsp;        islands.get(min).addNoEntry(islands.get(max).getNoEntry());</b>
+<i class="no-highlight">511</i>&nbsp;
+<i class="no-highlight">512</i>&nbsp;        //remove the island that doesn&#39;t hold all the data: (max)
+<b class="fc"><i class="no-highlight">513</i>&nbsp;        islands.remove(max);</b>
+<i class="no-highlight">514</i>&nbsp;
+<b class="fc"><i class="no-highlight">515</i>&nbsp;        if(!noMotherNatureMoves) {</b>
+<b class="fc"><i class="no-highlight">516</i>&nbsp;            posMotherNature = min;</b>
+<i class="no-highlight">517</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">518</i>&nbsp;        if (islands.size() &lt;= 3) {</b>
+<b class="fc"><i class="no-highlight">519</i>&nbsp;            gameFinished = true;</b>
+<i class="no-highlight">520</i>&nbsp;        }
+<i class="no-highlight">521</i>&nbsp;    }
+<i class="no-highlight">522</i>&nbsp;
+<i class="no-highlight">523</i>&nbsp;    /**
+<i class="no-highlight">524</i>&nbsp;     * Adds 3 students to all the clouds (for a 2 or 4 players match)
+<i class="no-highlight">525</i>&nbsp;     */
+<i class="no-highlight">526</i>&nbsp;    public void populateClouds() {
+<b class="fc"><i class="no-highlight">527</i>&nbsp;        for (Cloud c : clouds) {</b>
+<b class="fc"><i class="no-highlight">528</i>&nbsp;            c.addStudents(extractStudents(3));</b>
+<b class="fc"><i class="no-highlight">529</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">530</i>&nbsp;        updateView();</b>
+<i class="no-highlight">531</i>&nbsp;    }
+<i class="no-highlight">532</i>&nbsp;
+<i class="no-highlight">533</i>&nbsp;    /**
+<i class="no-highlight">534</i>&nbsp;     * Moves all the students of a certain cloud to the player entrance
+<i class="no-highlight">535</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">536</i>&nbsp;     * @param cloudIndex Index of the selected cloud
+<i class="no-highlight">537</i>&nbsp;     * @throws IllegalMoveException When a cloud has been already chosen by another player this turn.
+<i class="no-highlight">538</i>&nbsp;     * When the given cloud index is less than 0 or more than the clouds number
+<i class="no-highlight">539</i>&nbsp;     */
+<i class="no-highlight">540</i>&nbsp;    public void moveStudentsFromCloud(String playerName, int cloudIndex) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">541</i>&nbsp;        if (cloudIndex &gt;= 0 &amp;&amp; cloudIndex &lt; clouds.size()) {</b>
+<i class="no-highlight">542</i>&nbsp;
+<i class="no-highlight">543</i>&nbsp;            //if cloud has no students, it has already been selected
+<b class="fc"><i class="no-highlight">544</i>&nbsp;            if (clouds.get(cloudIndex).getStudents().isEmpty()) {</b>
+<b class="fc"><i class="no-highlight">545</i>&nbsp;                throw new IllegalMoveException(&quot;Cloud already chosen by another player this turn&quot;);</b>
+<i class="no-highlight">546</i>&nbsp;            } else {
+<i class="no-highlight">547</i>&nbsp;
+<i class="no-highlight">548</i>&nbsp;                //move students from selected cloud to students entrance
+<b class="fc"><i class="no-highlight">549</i>&nbsp;                getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());</b>
+<i class="no-highlight">550</i>&nbsp;
+<i class="no-highlight">551</i>&nbsp;                //update game view
+<b class="fc"><i class="no-highlight">552</i>&nbsp;                updateView();</b>
+<i class="no-highlight">553</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">554</i>&nbsp;        } else throw new IllegalMoveException(&quot;Island number must be between 1 and &quot; + getClouds().size()); //out of bounds</b>
+<i class="no-highlight">555</i>&nbsp;    }
+<i class="no-highlight">556</i>&nbsp;
+<i class="no-highlight">557</i>&nbsp;    /**
+<i class="no-highlight">558</i>&nbsp;     * Moves mother nature by a certain amount of moves
+<i class="no-highlight">559</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">560</i>&nbsp;     * @param moves Moves that the player wants to make with mother nature
+<i class="no-highlight">561</i>&nbsp;     * @throws IllegalMoveException When the given moves are less than 1 or more than the value of the assistant played by the player
+<i class="no-highlight">562</i>&nbsp;     */
+<i class="no-highlight">563</i>&nbsp;    public void moveMotherNature(String playerName, int moves) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">564</i>&nbsp;        Player player = getPlayerFromName(playerName);</b>
+<i class="no-highlight">565</i>&nbsp;
+<i class="no-highlight">566</i>&nbsp;        //check legality of mother nature move request
+<b class="fc"><i class="no-highlight">567</i>&nbsp;        if ((player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()) &gt;= moves &amp;&amp; moves &gt;= 1) {</b>
+<i class="no-highlight">568</i>&nbsp;
+<i class="no-highlight">569</i>&nbsp;            //move mother nature the requested number of islands (int moves)
+<b class="fc"><i class="no-highlight">570</i>&nbsp;            posMotherNature = (posMotherNature + moves) % islands.size();</b>
+<b class="fc"><i class="no-highlight">571</i>&nbsp;            islandInfluence(posMotherNature, false);</b>
+<i class="no-highlight">572</i>&nbsp;
+<i class="no-highlight">573</i>&nbsp;            //update game view
+<b class="fc"><i class="no-highlight">574</i>&nbsp;            updateView();</b>
+<b class="fc"><i class="no-highlight">575</i>&nbsp;        } else throw new IllegalMoveException(&quot;Mother nature moves must be between 1 and &quot; + (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()));</b>
+<i class="no-highlight">576</i>&nbsp;    }
+<i class="no-highlight">577</i>&nbsp;
+<i class="no-highlight">578</i>&nbsp;    /**
+<i class="no-highlight">579</i>&nbsp;     * isExpert()
+<i class="no-highlight">580</i>&nbsp;     * @return True if the match is expert, false otherwise
+<i class="no-highlight">581</i>&nbsp;     */
+<i class="no-highlight">582</i>&nbsp;    public boolean isExpert() {
+<b class="fc"><i class="no-highlight">583</i>&nbsp;        return expert;</b>
+<i class="no-highlight">584</i>&nbsp;    }
+<i class="no-highlight">585</i>&nbsp;
+<i class="no-highlight">586</i>&nbsp;    /**
+<i class="no-highlight">587</i>&nbsp;     * getCoins()
+<i class="no-highlight">588</i>&nbsp;     * @return The number of coins available on the board
+<i class="no-highlight">589</i>&nbsp;     */
+<i class="no-highlight">590</i>&nbsp;    public int getCoins() {
+<b class="fc"><i class="no-highlight">591</i>&nbsp;        return coinsReserve;</b>
+<i class="no-highlight">592</i>&nbsp;    }
+<i class="no-highlight">593</i>&nbsp;
+<i class="no-highlight">594</i>&nbsp;    /**
+<i class="no-highlight">595</i>&nbsp;     * setDrawAllowed()
+<i class="no-highlight">596</i>&nbsp;     * @param drawAllowed True if the Character2 ability is been played this turn, false otherwise
+<i class="no-highlight">597</i>&nbsp;     */
+<i class="no-highlight">598</i>&nbsp;    public void setDrawAllowed(boolean drawAllowed) {
+<b class="fc"><i class="no-highlight">599</i>&nbsp;        this.drawAllowed = drawAllowed;</b>
+<i class="no-highlight">600</i>&nbsp;    }
+<i class="no-highlight">601</i>&nbsp;
+<i class="no-highlight">602</i>&nbsp;    /**
+<i class="no-highlight">603</i>&nbsp;     * getDrawAllowed()
+<i class="no-highlight">604</i>&nbsp;     * @return True if the Character2 ability is been played this turn, false otherwise
+<i class="no-highlight">605</i>&nbsp;     */
+<i class="no-highlight">606</i>&nbsp;    public boolean getDrawAllowed() {
+<b class="fc"><i class="no-highlight">607</i>&nbsp;        return drawAllowed;</b>
+<i class="no-highlight">608</i>&nbsp;    }
+<i class="no-highlight">609</i>&nbsp;
+<i class="no-highlight">610</i>&nbsp;    /**
+<i class="no-highlight">611</i>&nbsp;     * getInfluencePolicy()
+<i class="no-highlight">612</i>&nbsp;     * @return The policies for counting influence
+<i class="no-highlight">613</i>&nbsp;     */
+<i class="no-highlight">614</i>&nbsp;    public InfluenceCalculationPolicy getInfluencePolicy() {
+<b class="fc"><i class="no-highlight">615</i>&nbsp;        return influencePolicy;</b>
+<i class="no-highlight">616</i>&nbsp;    }
+<i class="no-highlight">617</i>&nbsp;
+<i class="no-highlight">618</i>&nbsp;    /**
+<i class="no-highlight">619</i>&nbsp;     * Gets the character of a certain class
+<i class="no-highlight">620</i>&nbsp;     * @param cl Class of a character
+<i class="no-highlight">621</i>&nbsp;     * @return The character of the given class
+<i class="no-highlight">622</i>&nbsp;     * @throws IllegalMoveException When there aren&#39;t any characters of the given class
+<i class="no-highlight">623</i>&nbsp;     */
+<i class="no-highlight">624</i>&nbsp;    public Character getCharacterFromType(Class&lt;? extends Character&gt; cl) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">625</i>&nbsp;        for (Character character : characters) {</b>
+<b class="fc"><i class="no-highlight">626</i>&nbsp;            if (character.getClass().equals(cl)) {</b>
+<b class="fc"><i class="no-highlight">627</i>&nbsp;                return character;</b>
+<i class="no-highlight">628</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">629</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">630</i>&nbsp;        throw new IllegalMoveException(&quot;There are no characters with class &quot; + cl);</b>
+<i class="no-highlight">631</i>&nbsp;    }
+<i class="no-highlight">632</i>&nbsp;
+<i class="no-highlight">633</i>&nbsp;    /**
+<i class="no-highlight">634</i>&nbsp;     * Resets all characters abilities
+<i class="no-highlight">635</i>&nbsp;     */
+<i class="no-highlight">636</i>&nbsp;    public void resetAbility(){
+<b class="fc"><i class="no-highlight">637</i>&nbsp;        drawAllowed = false;</b>
+<b class="fc"><i class="no-highlight">638</i>&nbsp;        influencePolicy.setCountTowers(true);</b>
+<b class="fc"><i class="no-highlight">639</i>&nbsp;        influencePolicy.setExcludedColor(null);</b>
+<b class="fc"><i class="no-highlight">640</i>&nbsp;        for(Player player : playerOrder) {</b>
+<b class="fc"><i class="no-highlight">641</i>&nbsp;            player.setAdditionalInfluence(0);</b>
+<b class="fc"><i class="no-highlight">642</i>&nbsp;            player.setAdditionalMoves(0);</b>
+<b class="fc"><i class="no-highlight">643</i>&nbsp;        }</b>
+<i class="no-highlight">644</i>&nbsp;    }
+<i class="no-highlight">645</i>&nbsp;
+<i class="no-highlight">646</i>&nbsp;    /**
+<i class="no-highlight">647</i>&nbsp;     * Gets the number of towers with a certain color that are on all islands
+<i class="no-highlight">648</i>&nbsp;     * @param color TowerColor of a team
+<i class="no-highlight">649</i>&nbsp;     * @return The number of towers with the given color that are on all islands
+<i class="no-highlight">650</i>&nbsp;     */
+<i class="no-highlight">651</i>&nbsp;    public int getTowersByColor(TowerColor color) {
+<b class="fc"><i class="no-highlight">652</i>&nbsp;        return (int) islands.stream().flatMap(island -&gt; island.getTowers().stream()).filter(t -&gt; t.getColor() == color).count();</b>
+<i class="no-highlight">653</i>&nbsp;    }
+<i class="no-highlight">654</i>&nbsp;
+<i class="no-highlight">655</i>&nbsp;    /**
+<i class="no-highlight">656</i>&nbsp;     * Gets the winning team
+<i class="no-highlight">657</i>&nbsp;     * @return The winning team, or null in case of a draw
+<i class="no-highlight">658</i>&nbsp;     */
+<i class="no-highlight">659</i>&nbsp;    public Team getWinningTeam() {
+<i class="no-highlight">660</i>&nbsp;
+<i class="no-highlight">661</i>&nbsp;        //set maxTowers to undefined value: -1, and allocate memory to order teams by maxTowers
+<b class="fc"><i class="no-highlight">662</i>&nbsp;        int maxTowers = -1;</b>
+<b class="fc"><i class="no-highlight">663</i>&nbsp;        List&lt;Team&gt; teamsWithMaxTowers = new ArrayList&lt;&gt;(teams.size());</b>
+<i class="no-highlight">664</i>&nbsp;
+<i class="no-highlight">665</i>&nbsp;        //traverse teams
+<b class="fc"><i class="no-highlight">666</i>&nbsp;        for (Team t : teams) {</b>
+<i class="no-highlight">667</i>&nbsp;
+<i class="no-highlight">668</i>&nbsp;            //counter for towers associated to each team
+<b class="fc"><i class="no-highlight">669</i>&nbsp;            int teamTowers = getTowersByColor(t.getTowerColor());</b>
+<i class="no-highlight">670</i>&nbsp;
+<i class="no-highlight">671</i>&nbsp;            //sort teamsWithMaxTowers based on tower count
+<b class="fc"><i class="no-highlight">672</i>&nbsp;            if (teamTowers &gt; maxTowers) {</b>
+<b class="fc"><i class="no-highlight">673</i>&nbsp;                maxTowers = teamTowers;</b>
+<b class="fc"><i class="no-highlight">674</i>&nbsp;                teamsWithMaxTowers.clear();</b>
+<b class="fc"><i class="no-highlight">675</i>&nbsp;                teamsWithMaxTowers.add(t);</b>
+<b class="fc"><i class="no-highlight">676</i>&nbsp;            } else if (teamTowers == maxTowers) {</b>
+<b class="fc"><i class="no-highlight">677</i>&nbsp;                teamsWithMaxTowers.add(t);</b>
+<i class="no-highlight">678</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">679</i>&nbsp;        }</b>
+<i class="no-highlight">680</i>&nbsp;
+<i class="no-highlight">681</i>&nbsp;        //if only one team in teamsWithMaxTowers
+<b class="fc"><i class="no-highlight">682</i>&nbsp;        if (teamsWithMaxTowers.size() == 1) {</b>
+<b class="fc"><i class="no-highlight">683</i>&nbsp;            return teamsWithMaxTowers.get(0); //return that team</b>
+<i class="no-highlight">684</i>&nbsp;        }
+<i class="no-highlight">685</i>&nbsp;
+<i class="no-highlight">686</i>&nbsp;        //set maxProfessors to undefined value: -1, and allocate memory to order teams by maxProfessors
+<b class="fc"><i class="no-highlight">687</i>&nbsp;        int maxProfessors = -1;</b>
+<b class="fc"><i class="no-highlight">688</i>&nbsp;        List&lt;Team&gt; teamsWithMaxProfessors = new ArrayList&lt;&gt;(teams.size());</b>
+<i class="no-highlight">689</i>&nbsp;
+<i class="no-highlight">690</i>&nbsp;        //travers teams ordered by tower count! higher tower count goes first
+<b class="fc"><i class="no-highlight">691</i>&nbsp;        for (Team t : teamsWithMaxTowers) {</b>
+<i class="no-highlight">692</i>&nbsp;
+<i class="no-highlight">693</i>&nbsp;            //get professors associated to each team
+<b class="fc"><i class="no-highlight">694</i>&nbsp;            int teamProfessors = t.getPlayers().stream().mapToInt(p -&gt; p.getSchool().getProfessors().size()).sum();</b>
+<i class="no-highlight">695</i>&nbsp;
+<i class="no-highlight">696</i>&nbsp;            //find team with max professors
+<i class="no-highlight">697</i>&nbsp;            //check if current team has strictly more professors than the previous teams
+<i class="no-highlight">698</i>&nbsp;            //tie goes to the team with more maxTowers
+<b class="fc"><i class="no-highlight">699</i>&nbsp;            if (teamProfessors &gt; maxProfessors) {</b>
+<b class="fc"><i class="no-highlight">700</i>&nbsp;                maxProfessors = teamProfessors;</b>
+<b class="fc"><i class="no-highlight">701</i>&nbsp;                teamsWithMaxProfessors.clear();</b>
+<b class="fc"><i class="no-highlight">702</i>&nbsp;                teamsWithMaxProfessors.add(t);</b>
+<b class="fc"><i class="no-highlight">703</i>&nbsp;            } else if (teamProfessors == maxProfessors) {</b>
+<b class="fc"><i class="no-highlight">704</i>&nbsp;                teamsWithMaxProfessors.add(t);</b>
+<i class="no-highlight">705</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">706</i>&nbsp;        }</b>
+<i class="no-highlight">707</i>&nbsp;
+<i class="no-highlight">708</i>&nbsp;        //return team with max professor count
+<b class="fc"><i class="no-highlight">709</i>&nbsp;        return teamsWithMaxProfessors.size() == 1 ? teamsWithMaxProfessors.get(0) : null;</b>
+<i class="no-highlight">710</i>&nbsp;    }
+<i class="no-highlight">711</i>&nbsp;
+<i class="no-highlight">712</i>&nbsp;    /**
+<i class="no-highlight">713</i>&nbsp;     * isGameFinished()
+<i class="no-highlight">714</i>&nbsp;     * @return True if the game is finished, false otherwise
+<i class="no-highlight">715</i>&nbsp;     */
+<i class="no-highlight">716</i>&nbsp;    public boolean isGameFinished() {
+<b class="fc"><i class="no-highlight">717</i>&nbsp;        return gameFinished;</b>
+<i class="no-highlight">718</i>&nbsp;    }
+<i class="no-highlight">719</i>&nbsp;
+<i class="no-highlight">720</i>&nbsp;    /**
+<i class="no-highlight">721</i>&nbsp;     * isLastTurn()
+<i class="no-highlight">722</i>&nbsp;     * @return True if it&#39;s the last turn of the game, false otherwise
+<i class="no-highlight">723</i>&nbsp;     */
+<i class="no-highlight">724</i>&nbsp;    public boolean isLastTurn() {
+<b class="fc"><i class="no-highlight">725</i>&nbsp;        return lastTurn;</b>
+<i class="no-highlight">726</i>&nbsp;    }
+<i class="no-highlight">727</i>&nbsp;
+<i class="no-highlight">728</i>&nbsp;    /**
+<i class="no-highlight">729</i>&nbsp;     * Sets the current player in the turn
+<i class="no-highlight">730</i>&nbsp;     * @param currentPlayer Name of the player that will become the current player
+<i class="no-highlight">731</i>&nbsp;     */
+<i class="no-highlight">732</i>&nbsp;    public void setCurrentPlayer(String currentPlayer) {
+<b class="fc"><i class="no-highlight">733</i>&nbsp;        this.currentPlayer = currentPlayer;</b>
+<b class="fc"><i class="no-highlight">734</i>&nbsp;        updateView();</b>
+<i class="no-highlight">735</i>&nbsp;    }
+<i class="no-highlight">736</i>&nbsp;
+<i class="no-highlight">737</i>&nbsp;    /**
+<i class="no-highlight">738</i>&nbsp;     * Allows a player to use an assistant if available. Sets turn order of players via assistants played.
+<i class="no-highlight">739</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">740</i>&nbsp;     * @param value Value of the assistant that the player wants to use
+<i class="no-highlight">741</i>&nbsp;     * @throws IllegalMoveException When the given assistant value is less than 1 or more than 10.
+<i class="no-highlight">742</i>&nbsp;     * When the player with the given name doesn&#39;t have an assistant with the given value.
+<i class="no-highlight">743</i>&nbsp;     * When an assistant with the given value has already been played this turn and the player with the given name has other options
+<i class="no-highlight">744</i>&nbsp;     */
+<i class="no-highlight">745</i>&nbsp;    public void useAssistant(String playerName, int value) throws IllegalMoveException {
+<i class="no-highlight">746</i>&nbsp;
+<i class="no-highlight">747</i>&nbsp;        //get player data from name
+<b class="fc"><i class="no-highlight">748</i>&nbsp;        Player player = getPlayerFromName(playerName);</b>
+<b class="fc"><i class="no-highlight">749</i>&nbsp;        int playerPos = getPosFromName(playerName);</b>
+<i class="no-highlight">750</i>&nbsp;
+<i class="no-highlight">751</i>&nbsp;        //check if requested assistant index is inBounds
+<b class="fc"><i class="no-highlight">752</i>&nbsp;        if (value &lt; 1 || value &gt; 10) {</b>
+<b class="fc"><i class="no-highlight">753</i>&nbsp;            throw new IllegalMoveException(&quot;The value must be between 1 and 10&quot;);</b>
+<i class="no-highlight">754</i>&nbsp;        }
+<i class="no-highlight">755</i>&nbsp;
+<i class="no-highlight">756</i>&nbsp;        //check if player has an assistant with requested index
+<b class="fc"><i class="no-highlight">757</i>&nbsp;        if (player.getAssistantFromValue(value) == null) {</b>
+<b class="fc"><i class="no-highlight">758</i>&nbsp;            throw new IllegalMoveException(&quot;You don&#39;t have an assistant with value &quot; + value);</b>
+<i class="no-highlight">759</i>&nbsp;        }
+<i class="no-highlight">760</i>&nbsp;
+<i class="no-highlight">761</i>&nbsp;        //traverse all players
+<b class="fc"><i class="no-highlight">762</i>&nbsp;        for(int i = 0; i &lt; playerPos; ++i) {</b>
+<i class="no-highlight">763</i>&nbsp;
+<i class="no-highlight">764</i>&nbsp;            //see if player has played assistant
+<b class="fc"><i class="no-highlight">765</i>&nbsp;            if (playerOrder.get(i).getCurrentAssistant().getValue() == value) {</b>
+<i class="no-highlight">766</i>&nbsp;
+<i class="no-highlight">767</i>&nbsp;                //allocate space for assistants players
+<b class="fc"><i class="no-highlight">768</i>&nbsp;                List&lt;Assistant&gt; assistants = new ArrayList&lt;&gt;();</b>
+<i class="no-highlight">769</i>&nbsp;
+<i class="no-highlight">770</i>&nbsp;                //collect all played assistants
+<b class="fc"><i class="no-highlight">771</i>&nbsp;                for (int j = 0; j &lt; playerPos; ++j) {</b>
+<b class="fc"><i class="no-highlight">772</i>&nbsp;                    assistants.add(playerOrder.get(j).getCurrentAssistant());</b>
+<i class="no-highlight">773</i>&nbsp;                }
+<i class="no-highlight">774</i>&nbsp;
+<i class="no-highlight">775</i>&nbsp;                //check for duplicate assistants
+<b class="fc"><i class="no-highlight">776</i>&nbsp;                if (!assistants.containsAll(player.getAssistants())) {</b>
+<b class="fc"><i class="no-highlight">777</i>&nbsp;                    throw new IllegalMoveException(&quot;You can&#39;t use this assistant because another player already used it this turn&quot;);</b>
+<i class="no-highlight">778</i>&nbsp;                }
+<i class="no-highlight">779</i>&nbsp;                break;
+<i class="no-highlight">780</i>&nbsp;            }
+<i class="no-highlight">781</i>&nbsp;        }
+<i class="no-highlight">782</i>&nbsp;
+<i class="no-highlight">783</i>&nbsp;        //set turn order of players via assistants played
+<b class="fc"><i class="no-highlight">784</i>&nbsp;        getPlayerFromName(playerName).setCurrentAssistant(getPlayerFromName(playerName).getAssistantFromValue(value));</b>
+<b class="fc"><i class="no-highlight">785</i>&nbsp;        if(getPlayerFromName(playerName).getAssistants().isEmpty()) {</b>
+<b class="fc"><i class="no-highlight">786</i>&nbsp;            lastTurn = true;</b>
+<i class="no-highlight">787</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">788</i>&nbsp;        if(getPosFromName(playerName) == playerOrder.size() - 1) {</b>
+<b class="fc"><i class="no-highlight">789</i>&nbsp;            playerOrder.sort(Comparator.comparingInt((Player p) -&gt; p.getCurrentAssistant().getValue()));</b>
+<i class="no-highlight">790</i>&nbsp;        }
+<i class="no-highlight">791</i>&nbsp;    }
+<i class="no-highlight">792</i>&nbsp;
+<i class="no-highlight">793</i>&nbsp;    /**
+<i class="no-highlight">794</i>&nbsp;     * Moves 3 students from a player entrance to an island and/or to his tables
+<i class="no-highlight">795</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">796</i>&nbsp;     * @param islandsStudents Students that the player wants to move from his entrance to an island
+<i class="no-highlight">797</i>&nbsp;     * @param tableStudents Students that the player wants to move from his entrance to his tables
+<i class="no-highlight">798</i>&nbsp;     * @throws IllegalMoveException When the player wants to move a different amount of students than 3.
+<i class="no-highlight">799</i>&nbsp;     * When an island index doesn&#39;t exist
+<i class="no-highlight">800</i>&nbsp;     */
+<i class="no-highlight">801</i>&nbsp;    public void moveStudentsToIslandsAndTable(String playerName, Map&lt;Integer, Map&lt;PawnColor, Integer&gt;&gt; islandsStudents, Map&lt;PawnColor, Integer&gt; tableStudents) throws IllegalMoveException {
+<i class="no-highlight">802</i>&nbsp;        //Check that the player has moved exactly three students
+<b class="fc"><i class="no-highlight">803</i>&nbsp;        if (islandsStudents.values().stream().flatMap(m -&gt; m.entrySet().stream()).mapToInt(Map.Entry::getValue).sum() + tableStudents.values().stream().mapToInt(Integer::intValue).sum() != 3) {</b>
+<b class="fc"><i class="no-highlight">804</i>&nbsp;            throw new IllegalMoveException(&quot;You have to move exactly three students from the entrance&quot;);</b>
+<i class="no-highlight">805</i>&nbsp;        }
+<i class="no-highlight">806</i>&nbsp;        //Check that all island indexes are valid
+<b class="fc"><i class="no-highlight">807</i>&nbsp;        for (int island : islandsStudents.keySet()) {</b>
+<b class="fc"><i class="no-highlight">808</i>&nbsp;            if (island &lt; 0 || island &gt;= islands.size()) {</b>
+<b class="fc"><i class="no-highlight">809</i>&nbsp;                throw new IllegalMoveException(&quot;Island &quot; + island + &quot; does not exist&quot;);</b>
+<i class="no-highlight">810</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">811</i>&nbsp;        }</b>
+<i class="no-highlight">812</i>&nbsp;        //Move students from entrance to islands
+<b class="fc"><i class="no-highlight">813</i>&nbsp;        for (Map.Entry&lt;Integer, Map&lt;PawnColor, Integer&gt;&gt; entry : islandsStudents.entrySet()) {</b>
+<b class="fc"><i class="no-highlight">814</i>&nbsp;            int island = entry.getKey();</b>
+<b class="fc"><i class="no-highlight">815</i>&nbsp;            for (Map.Entry&lt;PawnColor, Integer&gt; islandEntry : entry.getValue().entrySet()) {</b>
+<b class="fc"><i class="no-highlight">816</i>&nbsp;                List&lt;Student&gt; extractedStudents = getPlayerFromName(playerName).getSchool().removeEntranceStudentsByColor(islandEntry.getKey(), islandEntry.getValue());</b>
+<b class="fc"><i class="no-highlight">817</i>&nbsp;                getIslands().get(island).addStudents(extractedStudents);</b>
+<b class="fc"><i class="no-highlight">818</i>&nbsp;            }</b>
+<b class="fc"><i class="no-highlight">819</i>&nbsp;        }</b>
+<i class="no-highlight">820</i>&nbsp;        //Move students from entrance to table
+<b class="fc"><i class="no-highlight">821</i>&nbsp;        for (Map.Entry&lt;PawnColor, Integer&gt; entry : tableStudents.entrySet()) {</b>
+<b class="fc"><i class="no-highlight">822</i>&nbsp;            playerMoveStudents(playerName, entry.getKey(), entry.getValue());</b>
+<b class="fc"><i class="no-highlight">823</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">824</i>&nbsp;        updateView();</b>
+<i class="no-highlight">825</i>&nbsp;    }
+<i class="no-highlight">826</i>&nbsp;
+<i class="no-highlight">827</i>&nbsp;    /**
+<i class="no-highlight">828</i>&nbsp;     * Updates the status of the match, and push updated match data to the View
+<i class="no-highlight">829</i>&nbsp;     */
+<i class="no-highlight">830</i>&nbsp;    public void updateView() {
+<b class="fc"><i class="no-highlight">831</i>&nbsp;        notifyObservers(new UpdateViewMessage(</b>
+<i class="no-highlight">832</i>&nbsp;            teams,
+<i class="no-highlight">833</i>&nbsp;            islands,
+<i class="no-highlight">834</i>&nbsp;            playerOrder,
+<i class="no-highlight">835</i>&nbsp;            posMotherNature,
+<i class="no-highlight">836</i>&nbsp;            clouds,
+<i class="no-highlight">837</i>&nbsp;            professors,
+<i class="no-highlight">838</i>&nbsp;            coinsReserve,
+<i class="no-highlight">839</i>&nbsp;            characters,
+<i class="no-highlight">840</i>&nbsp;            expert,
+<i class="no-highlight">841</i>&nbsp;            currentPlayer
+<i class="no-highlight">842</i>&nbsp;        ));
+<i class="no-highlight">843</i>&nbsp;    }
+<i class="no-highlight">844</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 17:55</div>
+</div>
+</body>
+</html>

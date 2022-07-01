@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CharacterSelectorPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.view.gui.component</a>
+</div>
+
+<h1>Coverage Summary for Class: CharacterSelectorPanel (it.polimi.ingsw.view.gui.component)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CharacterSelectorPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.view.gui.component;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.model.character.Character;
+<i class="no-highlight">4</i>&nbsp;
+<i class="no-highlight">5</i>&nbsp;import javax.swing.*;
+<i class="no-highlight">6</i>&nbsp;import java.util.HashMap;
+<i class="no-highlight">7</i>&nbsp;import java.util.List;
+<i class="no-highlight">8</i>&nbsp;import java.util.Map;
+<i class="no-highlight">9</i>&nbsp;
+<i class="no-highlight">10</i>&nbsp;/**
+<i class="no-highlight">11</i>&nbsp; * Panel used for selecting the character to play during the match. It also has an option to play no characters.
+<i class="no-highlight">12</i>&nbsp; */
+<i class="no-highlight">13</i>&nbsp;public class CharacterSelectorPanel extends JPanel {
+<i class="no-highlight">14</i>&nbsp;    public static final int SELECTION_NONE = -1;
+<i class="no-highlight">15</i>&nbsp;    /**
+<i class="no-highlight">16</i>&nbsp;     * Maps character number [1-12] to character index [0, characters.size())
+<i class="no-highlight">17</i>&nbsp;     */
+<b class="nc"><i class="no-highlight">18</i>&nbsp;    private final Map&lt;Integer, Integer&gt; characterMap = new HashMap&lt;&gt;(3);</b>
+<b class="nc"><i class="no-highlight">19</i>&nbsp;    private int selection = SELECTION_NONE;</b>
+<i class="no-highlight">20</i>&nbsp;
+<i class="no-highlight">21</i>&nbsp;    /**
+<i class="no-highlight">22</i>&nbsp;     * Constructor
+<i class="no-highlight">23</i>&nbsp;     * @param characters List of characters to select from
+<i class="no-highlight">24</i>&nbsp;     */
+<i class="no-highlight">25</i>&nbsp;    public CharacterSelectorPanel(List&lt;Character&gt; characters) {
+<b class="nc"><i class="no-highlight">26</i>&nbsp;        super();</b>
+<b class="nc"><i class="no-highlight">27</i>&nbsp;        JComboBox&lt;String&gt; comboBox = new JComboBox&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">28</i>&nbsp;        comboBox.addItem(&quot;Don&#39;t use any character&quot;);</b>
+<b class="nc"><i class="no-highlight">29</i>&nbsp;        for (int i = 0; i &lt; characters.size(); ++i) {</b>
+<b class="nc"><i class="no-highlight">30</i>&nbsp;            comboBox.addItem(&quot;Character &quot; + (characters.get(i).getId() + 1));</b>
+<b class="nc"><i class="no-highlight">31</i>&nbsp;            characterMap.put(characters.get(i).getId() + 1, i);</b>
+<i class="no-highlight">32</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">33</i>&nbsp;        comboBox.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i class="no-highlight">34</i>&nbsp;            String sel = (String) comboBox.getSelectedItem();</b>
+<b class="nc"><i class="no-highlight">35</i>&nbsp;            if (sel.equals(&quot;Don&#39;t use any character&quot;)) {</b>
+<b class="nc"><i class="no-highlight">36</i>&nbsp;                selection = SELECTION_NONE;</b>
+<i class="no-highlight">37</i>&nbsp;            } else {
+<b class="nc"><i class="no-highlight">38</i>&nbsp;                selection = characterMap.get(Integer.parseInt(sel.split(&quot; &quot;)[1]));</b>
+<i class="no-highlight">39</i>&nbsp;            }
+<i class="no-highlight">40</i>&nbsp;        });
+<b class="nc"><i class="no-highlight">41</i>&nbsp;        add(comboBox);</b>
+<i class="no-highlight">42</i>&nbsp;    }
+<i class="no-highlight">43</i>&nbsp;
+<i class="no-highlight">44</i>&nbsp;    /**
+<i class="no-highlight">45</i>&nbsp;     * @return {@link CharacterSelectorPanel#SELECTION_NONE} if &quot;Don&#39;t use any character&quot; was selected,
+<i class="no-highlight">46</i>&nbsp;     * otherwise the index of the selected character in the interval [0, characters.size()) is returned
+<i class="no-highlight">47</i>&nbsp;     */
+<i class="no-highlight">48</i>&nbsp;    public int getSelection() {
+<b class="nc"><i class="no-highlight">49</i>&nbsp;        return selection;</b>
+<i class="no-highlight">50</i>&nbsp;    }
+<i class="no-highlight">51</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 17:56</div>
+</div>
+</body>
+</html>

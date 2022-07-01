@@ -1,0 +1,189 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > IslandPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.view.gui.component</a>
+</div>
+
+<h1>Coverage Summary for Class: IslandPanel (it.polimi.ingsw.view.gui.component)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">IslandPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/32)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.view.gui.component;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.view.gui.ImageProvider;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.model.Island;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.model.Student;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.model.Tower;
+<i class="no-highlight">7</i>&nbsp;
+<i class="no-highlight">8</i>&nbsp;import javax.swing.*;
+<i class="no-highlight">9</i>&nbsp;import java.awt.*;
+<i class="no-highlight">10</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">11</i>&nbsp;import java.util.List;
+<i class="no-highlight">12</i>&nbsp;
+<i class="no-highlight">13</i>&nbsp;/**
+<i class="no-highlight">14</i>&nbsp; * Panel for drawing island cards and character, towers on them.
+<i class="no-highlight">15</i>&nbsp; */
+<i class="no-highlight">16</i>&nbsp;public class IslandPanel extends JPanel {
+<i class="no-highlight">17</i>&nbsp;    /**
+<i class="no-highlight">18</i>&nbsp;     * Size of the grid layout
+<i class="no-highlight">19</i>&nbsp;     */
+<i class="no-highlight">20</i>&nbsp;    private static final int DIM = 8;
+<i class="no-highlight">21</i>&nbsp;    private ImageProvider imageProvider;
+<i class="no-highlight">22</i>&nbsp;
+<i class="no-highlight">23</i>&nbsp;    /**
+<i class="no-highlight">24</i>&nbsp;     * Constructor
+<i class="no-highlight">25</i>&nbsp;     * @param island Island object
+<i class="no-highlight">26</i>&nbsp;     * @param motherNature Whether mother nature is on the island
+<i class="no-highlight">27</i>&nbsp;     * @param index Index of the island (used in the title)
+<i class="no-highlight">28</i>&nbsp;     * @param imageProvider Image objects provider
+<i class="no-highlight">29</i>&nbsp;     */
+<i class="no-highlight">30</i>&nbsp;    public IslandPanel(Island island, boolean motherNature, int index, ImageProvider imageProvider) {
+<b class="nc"><i class="no-highlight">31</i>&nbsp;        super(new GridLayout(DIM, DIM));</b>
+<b class="nc"><i class="no-highlight">32</i>&nbsp;        int islandSize = Math.max(island.getTowers().size(), 1);</b>
+<b class="nc"><i class="no-highlight">33</i>&nbsp;        this.imageProvider = imageProvider;</b>
+<b class="nc"><i class="no-highlight">34</i>&nbsp;        String title = &quot;Island &quot; + (index + 1);</b>
+<b class="nc"><i class="no-highlight">35</i>&nbsp;        if (islandSize &gt; 1) {</b>
+<b class="nc"><i class="no-highlight">36</i>&nbsp;            title = title + &quot; (x&quot; + islandSize + &quot;)&quot;;</b>
+<i class="no-highlight">37</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">38</i>&nbsp;        if (island.getNoEntry() &gt; 0) {</b>
+<b class="nc"><i class="no-highlight">39</i>&nbsp;            title = title + &quot; (&quot; + island.getNoEntry() + &quot; no entry)&quot;;</b>
+<i class="no-highlight">40</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">41</i>&nbsp;        setBorder(BorderFactory.createTitledBorder(title));</b>
+<b class="nc"><i class="no-highlight">42</i>&nbsp;        JLabel[] grid = new JLabel[DIM * DIM];</b>
+<b class="nc"><i class="no-highlight">43</i>&nbsp;        List&lt;Object&gt; pieces = new ArrayList&lt;&gt;(island.getStudents().size() + island.getTowers().size());</b>
+<b class="nc"><i class="no-highlight">44</i>&nbsp;        pieces.addAll(island.getStudents());</b>
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        pieces.addAll(island.getTowers());</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;        int pieceIndex = 0;</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        rows: for (int i = 2; i &lt;= DIM - 2; ++i) {</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;            for (int j = 2; j &lt;= DIM - 2; ++j) {</b>
+<b class="nc"><i class="no-highlight">49</i>&nbsp;                if (pieceIndex &gt;= pieces.size() &amp;&amp; !motherNature) {</b>
+<b class="nc"><i class="no-highlight">50</i>&nbsp;                    break rows;</b>
+<i class="no-highlight">51</i>&nbsp;                }
+<i class="no-highlight">52</i>&nbsp;                Image image;
+<b class="nc"><i class="no-highlight">53</i>&nbsp;                if (motherNature) {</b>
+<b class="nc"><i class="no-highlight">54</i>&nbsp;                    image = imageProvider.getMotherNature();</b>
+<b class="nc"><i class="no-highlight">55</i>&nbsp;                    motherNature = false;</b>
+<i class="no-highlight">56</i>&nbsp;                } else {
+<b class="nc"><i class="no-highlight">57</i>&nbsp;                    if (pieces.get(pieceIndex) instanceof Tower) {</b>
+<b class="nc"><i class="no-highlight">58</i>&nbsp;                        image = imageProvider.getTower(((Tower) pieces.get(pieceIndex++)).getColor());</b>
+<i class="no-highlight">59</i>&nbsp;                    } else {
+<b class="nc"><i class="no-highlight">60</i>&nbsp;                        image = imageProvider.getStudent(((Student) pieces.get(pieceIndex++)).getColor());</b>
+<i class="no-highlight">61</i>&nbsp;                    }
+<i class="no-highlight">62</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">63</i>&nbsp;                grid[i * DIM + j] = new JLabel(&quot; &quot;, new DynamicIcon(image), SwingConstants.TRAILING);</b>
+<i class="no-highlight">64</i>&nbsp;            }
+<i class="no-highlight">65</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">66</i>&nbsp;        for (int i = 0; i &lt; DIM * DIM; ++i) {</b>
+<b class="nc"><i class="no-highlight">67</i>&nbsp;            if (grid[i] == null) {</b>
+<b class="nc"><i class="no-highlight">68</i>&nbsp;                grid[i] = new JLabel();</b>
+<i class="no-highlight">69</i>&nbsp;            }
+<i class="no-highlight">70</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">71</i>&nbsp;        for (JLabel lbl : grid) {</b>
+<b class="nc"><i class="no-highlight">72</i>&nbsp;            add(lbl);</b>
+<i class="no-highlight">73</i>&nbsp;        }
+<i class="no-highlight">74</i>&nbsp;    }
+<i class="no-highlight">75</i>&nbsp;
+<i class="no-highlight">76</i>&nbsp;    /**
+<i class="no-highlight">77</i>&nbsp;     * @see JPanel#paintComponent(Graphics) 
+<i class="no-highlight">78</i>&nbsp;     */
+<i class="no-highlight">79</i>&nbsp;    @Override
+<i class="no-highlight">80</i>&nbsp;    public void paintComponent(Graphics g) {
+<b class="nc"><i class="no-highlight">81</i>&nbsp;        super.paintComponent(g);</b>
+<b class="nc"><i class="no-highlight">82</i>&nbsp;        g.drawImage(imageProvider.getIsland().getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);</b>
+<i class="no-highlight">83</i>&nbsp;    }
+<i class="no-highlight">84</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 17:56</div>
+</div>
+</body>
+</html>

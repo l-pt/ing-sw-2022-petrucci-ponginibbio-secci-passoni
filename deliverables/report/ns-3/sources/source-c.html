@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Team</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Team (it.polimi.ingsw.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Team</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.model;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">4</i>&nbsp;import java.util.Iterator;
+<i class="no-highlight">5</i>&nbsp;import java.util.List;
+<i class="no-highlight">6</i>&nbsp;
+<i class="no-highlight">7</i>&nbsp;public class Team {
+<i class="no-highlight">8</i>&nbsp;    private final List&lt;Player&gt; players;
+<i class="no-highlight">9</i>&nbsp;    private final List&lt;Tower&gt; towers;
+<i class="no-highlight">10</i>&nbsp;    private final TowerColor towerColor;
+<i class="no-highlight">11</i>&nbsp;
+<b class="fc"><i class="no-highlight">12</i>&nbsp;    public Team(List&lt;Player&gt; players, TowerColor towerColor) {</b>
+<b class="fc"><i class="no-highlight">13</i>&nbsp;        this.players = players;</b>
+<b class="fc"><i class="no-highlight">14</i>&nbsp;        towers = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">15</i>&nbsp;        this.towerColor = towerColor;</b>
+<i class="no-highlight">16</i>&nbsp;    }
+<i class="no-highlight">17</i>&nbsp;
+<i class="no-highlight">18</i>&nbsp;    /**
+<i class="no-highlight">19</i>&nbsp;     * Searches for a team in which there is a certain player
+<i class="no-highlight">20</i>&nbsp;     * @param player Player
+<i class="no-highlight">21</i>&nbsp;     * @return True if there is a player in the team with the same name, false otherwise
+<i class="no-highlight">22</i>&nbsp;     */
+<i class="no-highlight">23</i>&nbsp;    public boolean isTeamMember(Player player) {
+<b class="fc"><i class="no-highlight">24</i>&nbsp;        for (Player p : players) {</b>
+<b class="fc"><i class="no-highlight">25</i>&nbsp;            if (p.getName().equals(player.getName())) {</b>
+<b class="fc"><i class="no-highlight">26</i>&nbsp;                return true;</b>
+<i class="no-highlight">27</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">28</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">29</i>&nbsp;        return false;</b>
+<i class="no-highlight">30</i>&nbsp;    }
+<i class="no-highlight">31</i>&nbsp;
+<i class="no-highlight">32</i>&nbsp;    /**
+<i class="no-highlight">33</i>&nbsp;     * getPlayers()
+<i class="no-highlight">34</i>&nbsp;     * @return The list of the team players
+<i class="no-highlight">35</i>&nbsp;     */
+<i class="no-highlight">36</i>&nbsp;    public List&lt;Player&gt; getPlayers() {
+<b class="fc"><i class="no-highlight">37</i>&nbsp;        return players;</b>
+<i class="no-highlight">38</i>&nbsp;    }
+<i class="no-highlight">39</i>&nbsp;
+<i class="no-highlight">40</i>&nbsp;    /**
+<i class="no-highlight">41</i>&nbsp;     * getTowers()
+<i class="no-highlight">42</i>&nbsp;     * @return The list of the team&#39;s towers
+<i class="no-highlight">43</i>&nbsp;     */
+<i class="no-highlight">44</i>&nbsp;    public List&lt;Tower&gt; getTowers() {
+<b class="fc"><i class="no-highlight">45</i>&nbsp;        return towers;</b>
+<i class="no-highlight">46</i>&nbsp;    }
+<i class="no-highlight">47</i>&nbsp;
+<i class="no-highlight">48</i>&nbsp;    /**
+<i class="no-highlight">49</i>&nbsp;     * addTower()
+<i class="no-highlight">50</i>&nbsp;     * @param tower The tower to add
+<i class="no-highlight">51</i>&nbsp;     */
+<b class="fc"><i class="no-highlight">52</i>&nbsp;    public void addTower(Tower tower){towers.add(tower);}</b>
+<i class="no-highlight">53</i>&nbsp;
+<i class="no-highlight">54</i>&nbsp;    /**
+<i class="no-highlight">55</i>&nbsp;     * addTowers()
+<i class="no-highlight">56</i>&nbsp;     * @param towers The towers to add
+<i class="no-highlight">57</i>&nbsp;     */
+<i class="no-highlight">58</i>&nbsp;    public void addTowers(List&lt;Tower&gt; towers) {
+<b class="fc"><i class="no-highlight">59</i>&nbsp;        this.towers.addAll(towers);</b>
+<i class="no-highlight">60</i>&nbsp;    }
+<i class="no-highlight">61</i>&nbsp;
+<i class="no-highlight">62</i>&nbsp;    /**
+<i class="no-highlight">63</i>&nbsp;     * removeTowers()
+<i class="no-highlight">64</i>&nbsp;     * @param size The number of towers to remove
+<i class="no-highlight">65</i>&nbsp;     * @return The list of removed towers
+<i class="no-highlight">66</i>&nbsp;     * @throws IllegalArgumentException If the number of towers to remove exceeds the number of towers owned by the team
+<i class="no-highlight">67</i>&nbsp;     */
+<i class="no-highlight">68</i>&nbsp;    public List&lt;Tower&gt; removeTowers(int size) throws IllegalArgumentException {
+<b class="fc"><i class="no-highlight">69</i>&nbsp;        if (size &gt; towers.size()) {</b>
+<b class="fc"><i class="no-highlight">70</i>&nbsp;            throw new IllegalArgumentException(&quot;Team does not have enough towers&quot;);</b>
+<i class="no-highlight">71</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">72</i>&nbsp;        List&lt;Tower&gt; removed = new ArrayList&lt;&gt;(size);</b>
+<b class="fc"><i class="no-highlight">73</i>&nbsp;        Iterator&lt;Tower&gt; iterator = towers.iterator();</b>
+<b class="fc"><i class="no-highlight">74</i>&nbsp;        while (removed.size() &lt; size) {</b>
+<b class="fc"><i class="no-highlight">75</i>&nbsp;            removed.add(iterator.next());</b>
+<b class="fc"><i class="no-highlight">76</i>&nbsp;            iterator.remove();</b>
+<i class="no-highlight">77</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">78</i>&nbsp;        return removed;</b>
+<i class="no-highlight">79</i>&nbsp;    }
+<i class="no-highlight">80</i>&nbsp;
+<i class="no-highlight">81</i>&nbsp;    /**
+<i class="no-highlight">82</i>&nbsp;     * getTowerColor()
+<i class="no-highlight">83</i>&nbsp;     * @return The color of the team&#39;s towers
+<i class="no-highlight">84</i>&nbsp;     */
+<i class="no-highlight">85</i>&nbsp;    public TowerColor getTowerColor() {
+<b class="fc"><i class="no-highlight">86</i>&nbsp;        return towerColor;</b>
+<i class="no-highlight">87</i>&nbsp;    }
+<i class="no-highlight">88</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 17:55</div>
+</div>
+</body>
+</html>

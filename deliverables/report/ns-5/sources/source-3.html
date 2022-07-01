@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Character11</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.model.character.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: Character11 (it.polimi.ingsw.model.character.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Character11</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.model.character.impl;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.model.IllegalMoveException;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.model.Match;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.model.PawnColor;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.model.Player;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.model.character.ColorCharacter;
+<i class="no-highlight">8</i>&nbsp;import it.polimi.ingsw.model.character.StudentCharacter;
+<i class="no-highlight">9</i>&nbsp;
+<i class="no-highlight">10</i>&nbsp;public class Character11 extends StudentCharacter implements ColorCharacter {
+<i class="no-highlight">11</i>&nbsp;    public Character11() {
+<b class="fc"><i class="no-highlight">12</i>&nbsp;        super(10, 2, &quot;Take 1 student from this card and place it in your dining room. &quot; +</b>
+<i class="no-highlight">13</i>&nbsp;                &quot;Then, draw a new student from the bag and place it on this card.&quot;);
+<i class="no-highlight">14</i>&nbsp;    }
+<i class="no-highlight">15</i>&nbsp;
+<i class="no-highlight">16</i>&nbsp;    /**
+<i class="no-highlight">17</i>&nbsp;     * Uses the ability: &quot;Take 1 student from this card and place it in your dining room.
+<i class="no-highlight">18</i>&nbsp;     * Then, draw a new student from the bag and place it on this card.&quot;
+<i class="no-highlight">19</i>&nbsp;     * @param match Match
+<i class="no-highlight">20</i>&nbsp;     * @param playerName The username of a player
+<i class="no-highlight">21</i>&nbsp;     * @param color PawnColor of a student
+<i class="no-highlight">22</i>&nbsp;     * @throws IllegalMoveException When there aren&#39;t any players with the given name.
+<i class="no-highlight">23</i>&nbsp;     * When the given player doesn&#39;t have enough coins to play the character.
+<i class="no-highlight">24</i>&nbsp;     * When there aren&#39;t any student of the given color on the character
+<i class="no-highlight">25</i>&nbsp;     */
+<i class="no-highlight">26</i>&nbsp;    public void use(Match match, String playerName, PawnColor color) throws IllegalMoveException {
+<b class="fc"><i class="no-highlight">27</i>&nbsp;        Player player = match.getPlayerFromName(playerName);</b>
+<i class="no-highlight">28</i>&nbsp;
+<i class="no-highlight">29</i>&nbsp;        //Checks the coins of the player
+<b class="fc"><i class="no-highlight">30</i>&nbsp;        checkCost(player);</b>
+<i class="no-highlight">31</i>&nbsp;
+<i class="no-highlight">32</i>&nbsp;        //Checks the number of students on the character
+<b class="fc"><i class="no-highlight">33</i>&nbsp;        if (getStudentsColorCount(color) == 0) {</b>
+<b class="fc"><i class="no-highlight">34</i>&nbsp;            throw new IllegalMoveException(&quot;There are no students with color &quot; + color.name() + &quot; on this character&quot;);</b>
+<i class="no-highlight">35</i>&nbsp;        }
+<i class="no-highlight">36</i>&nbsp;
+<i class="no-highlight">37</i>&nbsp;        //Adds a student from the character to the player dining room
+<b class="fc"><i class="no-highlight">38</i>&nbsp;        player.getSchool().addStudentsToTable(removeStudentsByColor(color, 1));</b>
+<b class="fc"><i class="no-highlight">39</i>&nbsp;        match.checkNumberStudents(playerName, color);</b>
+<b class="fc"><i class="no-highlight">40</i>&nbsp;        match.checkProfessors(playerName, color);</b>
+<b class="fc"><i class="no-highlight">41</i>&nbsp;        addStudents(match.extractStudents(1));</b>
+<i class="no-highlight">42</i>&nbsp;
+<b class="fc"><i class="no-highlight">43</i>&nbsp;        player.removeCoins(cost);</b>
+<b class="fc"><i class="no-highlight">44</i>&nbsp;        incrementCost();</b>
+<i class="no-highlight">45</i>&nbsp;
+<i class="no-highlight">46</i>&nbsp;        //Updates the state of game for the view
+<b class="fc"><i class="no-highlight">47</i>&nbsp;        match.updateView();</b>
+<i class="no-highlight">48</i>&nbsp;    }
+<i class="no-highlight">49</i>&nbsp;
+<i class="no-highlight">50</i>&nbsp;    /**
+<i class="no-highlight">51</i>&nbsp;     * Gets the initial student number on the character (4)
+<i class="no-highlight">52</i>&nbsp;     * @return The initial student number on the character (4)
+<i class="no-highlight">53</i>&nbsp;     */
+<i class="no-highlight">54</i>&nbsp;    @Override
+<i class="no-highlight">55</i>&nbsp;    public int getInitialStudentsNumber() {
+<b class="fc"><i class="no-highlight">56</i>&nbsp;        return 4;</b>
+<i class="no-highlight">57</i>&nbsp;    }
+<i class="no-highlight">58</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 17:56</div>
+</div>
+</body>
+</html>

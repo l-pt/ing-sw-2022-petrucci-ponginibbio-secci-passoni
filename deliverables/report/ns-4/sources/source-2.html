@@ -1,0 +1,191 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > StudentCharacter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.model.character</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentCharacter (it.polimi.ingsw.model.character)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StudentCharacter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.model.character;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.model.Match;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.model.PawnColor;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.model.Student;
+<i class="no-highlight">6</i>&nbsp;
+<i class="no-highlight">7</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">8</i>&nbsp;import java.util.Iterator;
+<i class="no-highlight">9</i>&nbsp;import java.util.List;
+<i class="no-highlight">10</i>&nbsp;
+<i class="no-highlight">11</i>&nbsp;public abstract class StudentCharacter extends Character {
+<i class="no-highlight">12</i>&nbsp;    private final List&lt;Student&gt; students;
+<i class="no-highlight">13</i>&nbsp;
+<i class="no-highlight">14</i>&nbsp;    public StudentCharacter(int id, int cost, String description) {
+<b class="fc"><i class="no-highlight">15</i>&nbsp;        super(id, cost, description);</b>
+<b class="fc"><i class="no-highlight">16</i>&nbsp;        students = new ArrayList&lt;&gt;(getInitialStudentsNumber());</b>
+<i class="no-highlight">17</i>&nbsp;    }
+<i class="no-highlight">18</i>&nbsp;
+<i class="no-highlight">19</i>&nbsp;    /**
+<i class="no-highlight">20</i>&nbsp;     * Adds the amount of students given by getInitialStudentsNumber() on the character
+<i class="no-highlight">21</i>&nbsp;     * @param match Match
+<i class="no-highlight">22</i>&nbsp;     */
+<i class="no-highlight">23</i>&nbsp;    public void setup(Match match) {
+<b class="fc"><i class="no-highlight">24</i>&nbsp;        addStudents(match.extractStudents(getInitialStudentsNumber()));</b>
+<i class="no-highlight">25</i>&nbsp;    }
+<i class="no-highlight">26</i>&nbsp;
+<i class="no-highlight">27</i>&nbsp;    /**
+<i class="no-highlight">28</i>&nbsp;     * Removes n students of a certain color form the character
+<i class="no-highlight">29</i>&nbsp;     * @param color PawnColor of the students
+<i class="no-highlight">30</i>&nbsp;     * @param n number of students
+<i class="no-highlight">31</i>&nbsp;     * @return N students of the given color
+<i class="no-highlight">32</i>&nbsp;     * @throws IllegalArgumentException When there aren&#39;t enough students of the given color on the character
+<i class="no-highlight">33</i>&nbsp;     */
+<i class="no-highlight">34</i>&nbsp;    public List&lt;Student&gt; removeStudentsByColor(PawnColor color, int n) throws IllegalArgumentException {
+<b class="fc"><i class="no-highlight">35</i>&nbsp;        List&lt;Student&gt; result = new ArrayList&lt;&gt;(n);</b>
+<b class="fc"><i class="no-highlight">36</i>&nbsp;        Iterator&lt;Student&gt; it = students.iterator();</b>
+<b class="fc"><i class="no-highlight">37</i>&nbsp;        while (it.hasNext()) {</b>
+<b class="fc"><i class="no-highlight">38</i>&nbsp;            Student student = it.next();</b>
+<b class="fc"><i class="no-highlight">39</i>&nbsp;            if (student.getColor() == color) {</b>
+<b class="fc"><i class="no-highlight">40</i>&nbsp;                result.add(student);</b>
+<b class="fc"><i class="no-highlight">41</i>&nbsp;                it.remove();</b>
+<b class="fc"><i class="no-highlight">42</i>&nbsp;                if (result.size() == n) {</b>
+<b class="fc"><i class="no-highlight">43</i>&nbsp;                    return result;</b>
+<i class="no-highlight">44</i>&nbsp;                }
+<i class="no-highlight">45</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">46</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">47</i>&nbsp;        throw new IllegalArgumentException(&quot;There are not enough students with color &quot; + color.name() + &quot; on this character&quot;);</b>
+<i class="no-highlight">48</i>&nbsp;    }
+<i class="no-highlight">49</i>&nbsp;
+<i class="no-highlight">50</i>&nbsp;    /**
+<i class="no-highlight">51</i>&nbsp;     * Gets the number of students of a certain color on the character
+<i class="no-highlight">52</i>&nbsp;     * @param color PawnColor of the students
+<i class="no-highlight">53</i>&nbsp;     * @return The number of students of a certain color on the character
+<i class="no-highlight">54</i>&nbsp;     */
+<i class="no-highlight">55</i>&nbsp;    public int getStudentsColorCount(PawnColor color) {
+<b class="fc"><i class="no-highlight">56</i>&nbsp;        int count = 0;</b>
+<b class="fc"><i class="no-highlight">57</i>&nbsp;        for (Student student : students) {</b>
+<b class="fc"><i class="no-highlight">58</i>&nbsp;            if (student.getColor() == color) {</b>
+<b class="fc"><i class="no-highlight">59</i>&nbsp;                ++count;</b>
+<i class="no-highlight">60</i>&nbsp;            }
+<b class="fc"><i class="no-highlight">61</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">62</i>&nbsp;        return count;</b>
+<i class="no-highlight">63</i>&nbsp;    }
+<i class="no-highlight">64</i>&nbsp;
+<i class="no-highlight">65</i>&nbsp;    /**
+<i class="no-highlight">66</i>&nbsp;     * getStudents()
+<i class="no-highlight">67</i>&nbsp;     * @return The students on the character
+<i class="no-highlight">68</i>&nbsp;     */
+<i class="no-highlight">69</i>&nbsp;    public List&lt;Student&gt; getStudents() {
+<b class="fc"><i class="no-highlight">70</i>&nbsp;        return students;</b>
+<i class="no-highlight">71</i>&nbsp;    }
+<i class="no-highlight">72</i>&nbsp;
+<i class="no-highlight">73</i>&nbsp;    /**
+<i class="no-highlight">74</i>&nbsp;     * Adds a list of students on the character
+<i class="no-highlight">75</i>&nbsp;     * @param students List of students
+<i class="no-highlight">76</i>&nbsp;     */
+<i class="no-highlight">77</i>&nbsp;    public void addStudents(List&lt;Student&gt; students) {
+<b class="fc"><i class="no-highlight">78</i>&nbsp;        this.students.addAll(students);</b>
+<i class="no-highlight">79</i>&nbsp;    }
+<i class="no-highlight">80</i>&nbsp;
+<i class="no-highlight">81</i>&nbsp;    /**
+<i class="no-highlight">82</i>&nbsp;     * Gets the number of students that have to be put on the character during the setup phase
+<i class="no-highlight">83</i>&nbsp;     * @return The number of students that have to be put on the character during the setup phase
+<i class="no-highlight">84</i>&nbsp;     */
+<i class="no-highlight">85</i>&nbsp;    public abstract int getInitialStudentsNumber();
+<i class="no-highlight">86</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 17:56</div>
+</div>
+</body>
+</html>
