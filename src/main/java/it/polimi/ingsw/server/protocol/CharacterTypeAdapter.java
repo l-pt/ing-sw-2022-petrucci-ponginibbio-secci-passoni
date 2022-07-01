@@ -37,6 +37,13 @@ public class CharacterTypeAdapter implements JsonDeserializer<Character>, JsonSe
         return jsonDeserializationContext.deserialize(jsonElement, characterClass);
     }
 
+    /**
+     * Serializes data from Character.java object and casts it into the outgoing JSON format.
+     * @param character Character.java
+     * @param type casting type
+     * @param jsonSerializationContext
+     * @return JsonElement, which is a JSON encoded version of the Character
+     */
     @Override
     public JsonElement serialize(Character character, Type type, JsonSerializationContext jsonSerializationContext) {
         Class<? extends Character> characterClass;
