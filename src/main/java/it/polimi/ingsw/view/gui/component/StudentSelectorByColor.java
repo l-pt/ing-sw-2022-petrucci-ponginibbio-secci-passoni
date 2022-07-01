@@ -12,7 +12,7 @@ import java.util.Map;
  * Panel for selecting from a list of students.
  */
 public class StudentSelectorByColor extends JPanel {
-    private Map<PawnColor, Integer> selections = new HashMap<>(PawnColor.values().length);
+    private final Map<PawnColor, Integer> selections = new HashMap<>(PawnColor.values().length);
 
     /**
      * Constructor

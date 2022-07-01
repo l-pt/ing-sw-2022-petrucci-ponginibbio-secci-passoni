@@ -12,9 +12,7 @@ import java.util.List;
  * Panel for the school board. This contains  entrance students, table students and team towers.
  */
 public class SchoolPanel extends JPanel {
-    private static final int rows = 19;
-    private static final int columns = 53;
-    private ImageProvider imageProvider;
+    private final ImageProvider imageProvider;
 
     /**
      * Constructor

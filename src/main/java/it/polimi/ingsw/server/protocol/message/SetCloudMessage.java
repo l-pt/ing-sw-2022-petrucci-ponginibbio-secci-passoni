@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Message sent by client to update cloud based on AskCloudMessage
  */
 public class SetCloudMessage extends Message {
-    private int cloud;
+    private final int cloud;
 
     public SetCloudMessage(int cloud) {
         super(MessageId.SET_CLOUD);

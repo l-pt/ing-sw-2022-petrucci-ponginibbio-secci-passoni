@@ -21,18 +21,18 @@ public class Server {
     /**
      * ExecutorService for Thread Management
      */
-    private ExecutorService executor = Executors.newFixedThreadPool(64); //define executor for Controller commands onto Model
+    private final ExecutorService executor = Executors.newFixedThreadPool(64); //define executor for Controller commands onto Model
 
     /**
      * ServerSocketThread for Port Listening
      */
-    private ServerSocketThread serverSocketThread; //listens on TCP for new connections
+    private final ServerSocketThread serverSocketThread; //listens on TCP for new connections
 
     /**
      * Client Connections Management
      */
-    private List<Connection> connections = new ArrayList<>(); //all active connections to the server
-    private List<Connection> waitingConnections = new ArrayList<>(); //all connections waiting in the lobby
+    private final List<Connection> connections = new ArrayList<>(); //all active connections to the server
+    private final List<Connection> waitingConnections = new ArrayList<>(); //all connections waiting in the lobby
     private Connection firstConnection;
 
     /**
@@ -44,7 +44,7 @@ public class Server {
      * Match & Controller Management
      */
     private MatchParameters matchParameters; //implemented locally in this Server.java class; contains (numberOfPlayers, isExpertMode)
-    private Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
+    private final Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
 
     /**
      * Eryantis Server
@@ -257,7 +257,6 @@ public class Server {
      * @throws IOException If there are failed or interrupted I/O operations
      */
     public void run() throws InterruptedException, IOException {
-
         //loop message handler
         while (true) {
 
@@ -333,8 +332,8 @@ public class Server {
      */
     private class ServerSocketThread implements Runnable {
 
-        private ServerSocket serverSocket;
-        private int port;
+        private final ServerSocket serverSocket;
+        private final int port;
         private boolean active;
 
         public ServerSocketThread(int port) throws IOException {
@@ -343,10 +342,10 @@ public class Server {
             active = true;
         }
 
-        @Override
         /**
          * Main loop that handles connection requests
          */
+        @Override
         public void run() {
 
             //server status update to console
@@ -407,8 +406,8 @@ public class Server {
      */
     static class MessageQueueEntry {
 
-        private Connection connection;
-        private Message message;
+        private final Connection connection;
+        private final Message message;
 
         public MessageQueueEntry(Connection connection, Message message) {
             this.connection = connection;
@@ -437,8 +436,8 @@ public class Server {
      * They are requested to the first player that connects to the lobby
      */
     public static class MatchParameters {
-        private int playerNumber;
-        private boolean expert;
+        private final int playerNumber;
+        private final boolean expert;
 
         public MatchParameters(int playerNumber, boolean expert) {
             this.playerNumber = playerNumber;

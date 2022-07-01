@@ -5,11 +5,11 @@ package it.polimi.ingsw.server.protocol;
  * All subclasses are in the package it.polimi.ingsw.protocol.message
  */
 public abstract class Message {
-    private MessageId messageId;
+    private final MessageId messageId;
 
     /**
-     * Contructor for abstract Message class
-     * @param messageId
+     * Constructor for abstract Message class
+     * @param messageId ID of a message
      */
     public Message(MessageId messageId) {
         this.messageId = messageId;

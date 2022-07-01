@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Message sent by the client to state its username
  */
 public class SetUsernameMessage extends Message {
-    private String username;
+    private final String username;
 
     public SetUsernameMessage(String username) {
         super(MessageId.SET_USERNAME);

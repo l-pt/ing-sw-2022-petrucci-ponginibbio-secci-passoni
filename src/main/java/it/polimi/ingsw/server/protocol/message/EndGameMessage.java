@@ -8,7 +8,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Game Over: Message sent by the server
  */
 public class EndGameMessage extends Message {
-    private Team winner;
+    private final Team winner;
 
     public EndGameMessage(Team winner) {
         super(MessageId.END_GAME);

@@ -14,7 +14,7 @@ public final class GsonSingleton {
     }
 
     /**
-     * Builds Gson object from Message and MessageAdapter objects.
+     * Builds Gson objects from Message and MessageAdapter objects.
      * @return Gson object
      */
     public static Gson get() {

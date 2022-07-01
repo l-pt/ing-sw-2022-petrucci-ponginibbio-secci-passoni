@@ -24,9 +24,9 @@ public class ImageProvider {
     private Map<PawnColor, BufferedImage> students;
     private Map<TowerColor, BufferedImage> towers;
     private BufferedImage cloud;
-    private BufferedImage[] assistants;
-    private BufferedImage[] characters;
-    private Map<Wizard, BufferedImage> wizards;
+    private final BufferedImage[] assistants;
+    private final BufferedImage[] characters;
+    private final Map<Wizard, BufferedImage> wizards;
     private BufferedImage coin;
     private BufferedImage motherNature;
     private BufferedImage noEntry;

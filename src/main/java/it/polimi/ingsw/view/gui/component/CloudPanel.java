@@ -15,7 +15,7 @@ public class CloudPanel extends JPanel {
      * Size of the grid layout
      */
     private static final int DIM = 8;
-    private ImageProvider imageProvider;
+    private final ImageProvider imageProvider;
 
     /**
      * Constructor

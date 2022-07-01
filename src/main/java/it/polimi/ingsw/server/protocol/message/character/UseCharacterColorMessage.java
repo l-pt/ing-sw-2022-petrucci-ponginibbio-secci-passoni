@@ -8,8 +8,8 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Message sent by the client in case a color character will be used
  */
 public class UseCharacterColorMessage extends Message {
-    private int characterId;
-    private PawnColor color;
+    private final int characterId;
+    private final PawnColor color;
 
     public UseCharacterColorMessage(int characterId, PawnColor color) {
         super(MessageId.USE_CHARACTER_COLOR);

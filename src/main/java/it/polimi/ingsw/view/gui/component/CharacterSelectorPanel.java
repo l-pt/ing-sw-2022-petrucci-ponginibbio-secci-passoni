@@ -15,7 +15,7 @@ public class CharacterSelectorPanel extends JPanel {
     /**
      * Maps character number [1-12] to character index [0, characters.size())
      */
-    private Map<Integer, Integer> characterMap = new HashMap<>(3);
+    private final Map<Integer, Integer> characterMap = new HashMap<>(3);
     private int selection = SELECTION_NONE;
 
     /**

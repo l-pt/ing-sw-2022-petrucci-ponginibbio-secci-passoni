@@ -14,15 +14,15 @@ public class ThreePlayersViewGUI extends ViewGUI {
     /**
      * Panel with player information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel playerPanel;
+    private final JPanel playerPanel;
     /**
      * Panel with opponent information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel opponent1Panel;
+    private final JPanel opponent1Panel;
     /**
      * Panel with opponent information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel opponent2Panel;
+    private final JPanel opponent2Panel;
 
     /**
      * @see ViewGUI#ViewGUI

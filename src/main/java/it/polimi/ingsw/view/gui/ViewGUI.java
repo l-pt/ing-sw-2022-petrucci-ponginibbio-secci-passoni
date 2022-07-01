@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.List;
 
 public abstract class ViewGUI extends View<ClientGUI> {
-    private ImageProvider imageProvider;
+    private final ImageProvider imageProvider;
 
     /**
      * The main panel of the frame that contains all the view elements (player boards, clouds, islands, etc.)

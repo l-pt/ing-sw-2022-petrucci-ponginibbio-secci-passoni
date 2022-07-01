@@ -11,16 +11,16 @@ import java.util.List;
  * UpdateViewMessage Class
  */
 public class UpdateViewMessage extends Message {
-    private List<Team> teams;
-    private List<Island> islands;
-    private List<Player> playersOrder;
-    private int posMotherNature;
-    private List<Cloud> clouds;
-    private List<Professor> professors;
-    private int coinReserve;
-    private List<Character> characters;
-    private boolean expert;
-    private String currentPlayer;
+    private final List<Team> teams;
+    private final List<Island> islands;
+    private final List<Player> playersOrder;
+    private final int posMotherNature;
+    private final List<Cloud> clouds;
+    private final List<Professor> professors;
+    private final int coinReserve;
+    private final List<Character> characters;
+    private final boolean expert;
+    private final String currentPlayer;
 
     /**
      * Constructor for UpdateViewMessage which carries all the information of the current state of a match from server to client.

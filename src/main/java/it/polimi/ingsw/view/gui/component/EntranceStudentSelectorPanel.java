@@ -13,7 +13,7 @@ import java.util.List;
 public class EntranceStudentSelectorPanel extends JPanel {
     public static final int SELECTION_NONE = -2;
     public static final int SELECTION_TABLE = -1;
-    private Student student;
+    private final Student student;
     private int selection = SELECTION_NONE;
 
     /**

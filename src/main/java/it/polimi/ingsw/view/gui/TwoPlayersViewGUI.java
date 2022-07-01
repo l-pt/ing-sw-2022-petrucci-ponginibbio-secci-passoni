@@ -12,11 +12,11 @@ public class TwoPlayersViewGUI extends ViewGUI {
     /**
      * Panel with player information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel playerPanel;
+    private final JPanel playerPanel;
     /**
      * Panel with opponent information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel opponentPanel;
+    private final JPanel opponentPanel;
 
     /**
      * @see ViewGUI#ViewGUI

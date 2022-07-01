@@ -8,7 +8,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * expert mode for the upcoming match
  */
 public class SetExpertMessage extends Message {
-    private boolean expert;
+    private final boolean expert;
 
     public SetExpertMessage(boolean expert) {
         super(MessageId.SET_EXPERT);

@@ -8,8 +8,8 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Only used for Character1
  */
 public class UseCharacterColorIslandMessage extends Message {
-    private PawnColor color;
-    private int island;
+    private final PawnColor color;
+    private final int island;
 
     public UseCharacterColorIslandMessage(PawnColor color, int island) {
         super(MessageId.USE_CHARACTER_COLOR_ISLAND);

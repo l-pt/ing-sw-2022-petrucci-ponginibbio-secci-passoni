@@ -34,11 +34,11 @@ public enum MessageId {
     ASK_CHARACTER(AskCharacterMessage.class),
     USE_NO_CHARACTER(UseNoCharacterMessage.class);
 
-    private Class<? extends Message> messageClass;
+    private final Class<? extends Message> messageClass;
 
     /**
-     * Contructor that takes in messageClass to generate unique MessageId
-     * @param messageClass java metatype for Message
+     * Constructor that takes in messageClass to generate unique MessageId
+     * @param messageClass java meta type for Message
      */
     MessageId(Class<? extends Message> messageClass) {
         this.messageClass = messageClass;

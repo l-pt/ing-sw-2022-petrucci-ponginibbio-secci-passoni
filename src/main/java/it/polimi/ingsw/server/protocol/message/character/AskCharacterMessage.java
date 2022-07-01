@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Message sent by the server to ask about playing characters
  */
 public class AskCharacterMessage extends Message {
-    private int characterId;
+    private final int characterId;
 
     public AskCharacterMessage(int characterId) {
         super(MessageId.ASK_CHARACTER);

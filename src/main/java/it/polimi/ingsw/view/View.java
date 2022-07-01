@@ -128,14 +128,6 @@ public abstract class View<T extends Client> {
     }
 
     /**
-     * getCoinReserve()
-     * @return The number of coins in the coin reserve
-     */
-    public int getCoinReserve() {
-        return coinReserve;
-    }
-
-    /**
      * getCharacters()
      * @return The list of characters
      */
@@ -149,13 +141,5 @@ public abstract class View<T extends Client> {
      */
     public boolean isExpert() {
         return expert;
-    }
-
-    /**
-     * getCurrentPlayer()
-     * @return The username of the player who is playing
-     */
-    public String getCurrentPlayer() {
-        return currentPlayer;
     }
 }

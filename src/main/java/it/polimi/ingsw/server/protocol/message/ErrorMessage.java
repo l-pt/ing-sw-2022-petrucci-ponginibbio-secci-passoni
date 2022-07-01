@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Signal an error to the client
  */
 public class ErrorMessage extends Message {
-    private String error;
+    private final String error;
 
     public ErrorMessage(String error) {
         super(MessageId.ERROR);

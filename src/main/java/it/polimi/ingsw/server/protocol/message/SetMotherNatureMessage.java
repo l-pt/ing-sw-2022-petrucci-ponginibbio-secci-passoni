@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Message sent by client to update mother nature based on AskMotherNatureMessage
  */
 public class SetMotherNatureMessage extends Message {
-    private int motherNatureMoves;
+    private final int motherNatureMoves;
 
     public SetMotherNatureMessage(int motherNatureMoves) {
         super(MessageId.SET_MOTHER_NATURE);

@@ -15,7 +15,7 @@ import java.util.List;
  * When a new message is available, it calls {@link it.polimi.ingsw.client.ClientGUI#processMessage}
  */
 public class ClientSocketWorker extends SwingWorker<Void, Message> {
-    private ClientGUI client;
+    private final ClientGUI client;
     private boolean running;
     /**
      * Number of seconds since last message from the server

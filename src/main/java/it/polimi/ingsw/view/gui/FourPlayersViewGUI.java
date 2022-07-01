@@ -15,19 +15,19 @@ public class FourPlayersViewGUI extends ViewGUI {
     /**
      * Panel with player information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel playerPanel;
+    private final JPanel playerPanel;
     /**
-     * Panel with team mate information (board, coins, number of assistants, last played assistant)
+     * Panel with teammate information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel teamMatePanel;
-    /**
-     * Panel with opponent information (board, coins, number of assistants, last played assistant)
-     */
-    private JPanel opponent1Panel;
+    private final JPanel teamMatePanel;
     /**
      * Panel with opponent information (board, coins, number of assistants, last played assistant)
      */
-    private JPanel opponent2Panel;
+    private final JPanel opponent1Panel;
+    /**
+     * Panel with opponent information (board, coins, number of assistants, last played assistant)
+     */
+    private final JPanel opponent2Panel;
 
     /**
      * @see ViewGUI#ViewGUI

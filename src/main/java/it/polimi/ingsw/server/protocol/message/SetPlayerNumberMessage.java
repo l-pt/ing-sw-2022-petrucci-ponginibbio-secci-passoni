@@ -8,7 +8,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * players for the upcoming match
  */
 public class SetPlayerNumberMessage extends Message {
-    private int playersNumber;
+    private final int playersNumber;
 
     public SetPlayerNumberMessage(int playersNumber) {
         super(MessageId.SET_PLAYER_NUMBER);

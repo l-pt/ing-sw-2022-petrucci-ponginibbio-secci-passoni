@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.protocol.MessageId;
  * Used for characters without parameters like Character2
  */
 public class UseCharacterMessage extends Message {
-    private int characterId;
+    private final int characterId;
 
     public UseCharacterMessage(int characterId) {
         super(MessageId.USE_CHARACTER);

@@ -15,8 +15,8 @@ import java.util.stream.IntStream;
  * Character card panel. Also draws students and no entry tiles when appropriate.
  */
 public class CharacterPanel extends JPanel {
-    private Character character;
-    private ImageProvider imageProvider;
+    private final Character character;
+    private final ImageProvider imageProvider;
 
     /**
      * Constructor
