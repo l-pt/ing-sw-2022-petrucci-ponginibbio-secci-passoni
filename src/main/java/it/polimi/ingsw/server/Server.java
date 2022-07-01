@@ -278,9 +278,6 @@ public class Server {
                 handleClientMessage(connection, message);
             }
         }
-
-        //TODO call this when the match finishes
-        //serverSocketThread.close();
     }
 
     /**

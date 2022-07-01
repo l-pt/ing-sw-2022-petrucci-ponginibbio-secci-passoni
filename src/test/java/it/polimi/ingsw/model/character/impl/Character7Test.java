@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +25,7 @@ public class Character7Test extends TestCase {
 
         //Get a color which is not present on the card
         List<PawnColor> absentColors = new ArrayList<>(List.of(PawnColor.values()));
-        PawnColor characterColor = null;
         for (Student student : character.getStudents()) {
-            characterColor = student.getColor();
             absentColors.remove(student.getColor());
         }
         if (absentColors.size() == 0) {

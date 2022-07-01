@@ -20,9 +20,9 @@ import java.util.Map;
 public class ImageProvider {
     private BufferedImage school;
     private BufferedImage island;
-    private Map<PawnColor, BufferedImage> professors;
-    private Map<PawnColor, BufferedImage> students;
-    private Map<TowerColor, BufferedImage> towers;
+    private final Map<PawnColor, BufferedImage> professors;
+    private final Map<PawnColor, BufferedImage> students;
+    private final Map<TowerColor, BufferedImage> towers;
     private BufferedImage cloud;
     private final BufferedImage[] assistants;
     private final BufferedImage[] characters;
@@ -72,7 +72,6 @@ public class ImageProvider {
      */
     public BufferedImage getIsland() {
         if (island == null) {
-            //TODO support dim = 2 and dim = 3
             island = getImage("/island/" + 1 + ".png");
         }
         return island;

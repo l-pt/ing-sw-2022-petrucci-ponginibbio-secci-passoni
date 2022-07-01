@@ -5,8 +5,6 @@ import it.polimi.ingsw.model.character.impl.Character1;
 import it.polimi.ingsw.model.character.impl.Character2;
 import it.polimi.ingsw.model.character.impl.Character3;
 import it.polimi.ingsw.model.character.impl.Character4;
-import it.polimi.ingsw.model.observer.Observer;
-import it.polimi.ingsw.server.protocol.message.UpdateViewMessage;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -571,12 +569,7 @@ public class MatchTest extends TestCase {
         Team team3 = new Team(List.of(player3), TowerColor.GRAY);
         Match match = new ThreePlayersMatch(List.of(team1, team2, team3), List.of(player1, player2, player3), true);
 
-        match.addObserver(new Observer<UpdateViewMessage>() {
-            @Override
-            public void notifyObserver(UpdateViewMessage param) {
-
-            }
-        });
+        match.addObserver(param -> {});
         match.updateView();
     }
 }
