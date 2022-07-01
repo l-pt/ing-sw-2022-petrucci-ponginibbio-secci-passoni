@@ -412,7 +412,7 @@ public class Match extends Observable<UpdateViewMessage> {
             // 2) player doesn't have tower at index
             if (!draw && max > 0 && (islands.get(index).getTowers().isEmpty() || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
 
-                //if island has less towers than the team
+                //if island has fewer towers than the team
                 if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
 
                     //if no towers on island AND team has one tower
@@ -426,7 +426,7 @@ public class Match extends Observable<UpdateViewMessage> {
                         //pop all towers from island to a temporary list t
                         List<Tower> t = islands.get(index).removeAllTowers();
 
-                        //check if t wasnt empty
+                        //check if t wasn't empty
                         if (t.size() > 0) {
 
                             //add colored tower to respective team
