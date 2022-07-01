@@ -17,10 +17,12 @@ import java.util.List;
 public class ClientSocketWorker extends SwingWorker<Void, Message> {
     private ClientGUI client;
     private boolean running;
+    private int delay;
 
     public ClientSocketWorker(ClientGUI client) {
         this.client = client;
         running = true;
+        delay = 0;
     }
 
     public synchronized boolean isRunning() {
@@ -43,8 +45,15 @@ public class ClientSocketWorker extends SwingWorker<Void, Message> {
             //Wait for a server message
             try {
                 msg = client.readMessage();
+                delay = 0;
             } catch (SocketTimeoutException e) {
-                continue;
+                delay += 2;
+                //2 min 30 sec timeout
+                if (delay >= 150) {
+                    msg = null;
+                } else {
+                    continue;
+                }
             } catch (JsonSyntaxException | IOException e) {
                 msg = null;
             }
