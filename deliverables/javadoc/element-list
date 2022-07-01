@@ -1,0 +1,13 @@
+it.polimi.ingsw.client
+it.polimi.ingsw.controller
+it.polimi.ingsw.model
+it.polimi.ingsw.model.character
+it.polimi.ingsw.model.character.impl
+it.polimi.ingsw.model.observer
+it.polimi.ingsw.server
+it.polimi.ingsw.server.protocol
+it.polimi.ingsw.server.protocol.message
+it.polimi.ingsw.server.protocol.message.character
+it.polimi.ingsw.view
+it.polimi.ingsw.view.gui
+it.polimi.ingsw.view.gui.component
