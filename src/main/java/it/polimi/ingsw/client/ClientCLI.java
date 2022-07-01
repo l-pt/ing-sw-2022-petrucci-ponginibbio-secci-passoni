@@ -34,7 +34,7 @@ public class ClientCLI extends Client{
 
     /**
      * Main client loop that processes all messages received
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     @Override
     public void run() throws IOException {
@@ -50,7 +50,7 @@ public class ClientCLI extends Client{
     /**
      * Loop executed when the client is inside the lobby
      * Client waits for server questions about username, max player number and expert mode
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void lobby() throws IOException {
         Message msg;

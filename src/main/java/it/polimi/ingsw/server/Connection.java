@@ -38,7 +38,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
      * Initializes isActive to true, setPlayersAndExpert to false.
      * @param socket stored as this.socket
      * @param server stored as this.server
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public Connection(Socket socket, Server server) throws IOException {
         this.socket = socket;
@@ -68,7 +68,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
     /**
      * Takes Message msg as input, converts msg to a JSON object, then outputs the msg_json to the DataOutputStream this.out
      * @param msg outgoing message
-     * @throws IOException
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     public void sendMessage(Message msg) throws IOException {
         String msg_json = GsonSingleton.get().toJson(msg);
@@ -83,8 +83,8 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
      * The method then converts the JSON into a java object, specifically a Message.class object.
      * The Message object is then returned
      * @return Message read from input stream
-     * @throws JsonSyntaxException
-     * @throws IOException
+     * @throws JsonSyntaxException If the message received contains json syntax errors
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     private Message readMessage() throws JsonSyntaxException, IOException {
         String json = in.readUTF();
@@ -96,8 +96,8 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
      * @param messageClass
      * @param <T>
      * @return <T extends Message> T
-     * @throws JsonSyntaxException
-     * @throws IOException
+     * @throws JsonSyntaxException If the message received contains json syntax errors
+     * @throws IOException If there are failed or interrupted I/O operations
      */
     private <T extends Message> T readMessage(Class<T> messageClass) throws JsonSyntaxException, IOException {
         return messageClass.cast(readMessage());
@@ -226,7 +226,7 @@ public class Connection implements Runnable, Observer<UpdateViewMessage> {
 
     /**
      * When connection is lost, send a message to the player's interface
-     * @param msg
+     * @param msg The update message to send
      */
     @Override
     public void notifyObserver(UpdateViewMessage msg) {
