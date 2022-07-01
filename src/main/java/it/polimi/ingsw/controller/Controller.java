@@ -16,12 +16,24 @@ import java.util.stream.Collectors;
  * Controller Class
  */
 public class Controller {
+
+    /**
+     * Controller object controls the Match
+     * A controller is associated to a match and server
+     * The controller keeps track of usedCharacter, lastMassage, nextMessage for the given match.
+     */
     private Match match;
     private Server server;
     private boolean usedCharacter = false;
     private boolean lastMessage = false;
     private Map<String, Message> nextMessage = new HashMap<>();
 
+    /**
+     * Constructor for Controller object takes in a Server and List<String> connectionNames
+     * @param server assigned Eryantis server
+     * @param connectionsNames list of names connected to this.match
+     * @throws IllegalMoveException
+     */
     public Controller(Server server, List<String> connectionsNames) throws IllegalMoveException {
 
         //sets this server to the passed arg
@@ -31,7 +43,11 @@ public class Controller {
         List<Player> players = new ArrayList<>(server.getMatchParameters().getPlayerNumber());
         List<Team> teams = new ArrayList<>(server.getMatchParameters().getPlayerNumber() == 4 ? 2 : server.getMatchParameters().getPlayerNumber());
         switch (server.getMatchParameters().getPlayerNumber()) {
+
+            //control match of 4 players
             case 4 -> {
+
+                //establish teams
                 List<Player> white = List.of(
                         new Player(connectionsNames.get(0), TowerColor.WHITE, Wizard.values()[0]),
                         new Player(connectionsNames.get(1), TowerColor.WHITE, Wizard.values()[1])
@@ -40,44 +56,76 @@ public class Controller {
                         new Player(connectionsNames.get(2), TowerColor.BLACK, Wizard.values()[2]),
                         new Player(connectionsNames.get(3), TowerColor.BLACK, Wizard.values()[3])
                 );
+
+                //sync players to match controller
                 players.addAll(white);
                 players.addAll(black);
                 teams.add(new Team(white, TowerColor.WHITE));
                 teams.add(new Team(black, TowerColor.BLACK));
+
+                //init new match
                 match = new Match(teams, players, server.getMatchParameters().isExpert());
             }
+
+            //control match of 3 players
             case 3 -> {
+
+                //sync players to match controller
                 for (int i = 0; i < server.getMatchParameters().getPlayerNumber(); ++i) {
                     players.add(new Player(connectionsNames.get(i), TowerColor.values()[i], Wizard.values()[i]));
                 }
+
                 //3 player matches have teams made of just one player
                 for (Player player : players) {
                     teams.add(new Team(List.of(player), player.getTowerColor()));
                 }
+
+                //init new match
                 match = new ThreePlayersMatch(teams, players, server.getMatchParameters().isExpert());
             }
+
+            //control match of 2 players
             case 2 -> {
+
+                //sync players to match controller
                 for (int i = 0; i < server.getMatchParameters().getPlayerNumber(); ++i) {
                     players.add(new Player(connectionsNames.get(i), TowerColor.values()[i], Wizard.values()[i]));
                 }
+
                 //2 player matches have teams made of just one player
                 for (Player player : players) {
                     teams.add(new Team(List.of(player), player.getTowerColor()));
                 }
+
+                //init new match
                 match = new Match(teams, players, server.getMatchParameters().isExpert());
             }
             default -> throw new IllegalMoveException("The players number must be 2, 3 or 4");
         }
     }
 
+    /**
+     * Gets Match associated to this Controller
+     * @return this.match
+     */
     public Match getMatch() {
         return match;
     }
 
+    /**
+     * Gets NextMessage Map associated to this Controller
+     * @return this.nextMessage
+     */
     public Map<String, Message> getNextMessage() {
         return nextMessage;
     }
 
+    /**
+     *
+     * @param name player name
+     * @param message to push or pull information from the match server through controller
+     * @return Map<String, List<Message>> map of message requests queue from each player
+     */
     public Map<String, List<Message>> handleMessage(String name, Message message) {
         switch (message.getMessageId()) {
             case SET_ASSISTANT -> {
@@ -242,12 +290,24 @@ public class Controller {
         return Collections.emptyMap();
     }
 
+    /**
+     * Pops next message from this.nextMessage
+     * @param name player name
+     * @return Message from nextMessage queue
+     */
     private Message consumeNextMessage(String name) {
         Message message = nextMessage.get(name);
         nextMessage.remove(name);
         return message;
     }
 
+    /**
+     * Finalizes a players turn and updates the match accordingly on the server.
+     * Updates turn to next player after sending match status update message.
+     * @param name of player
+     * @return Map<String, List<Message>> map of player name to list of associated messages
+     * @throws IllegalMoveException
+     */
     public Map<String, List<Message>> endTurn(String name) throws IllegalMoveException {
         int pos = match.getPosFromName(name);
         usedCharacter = false;
