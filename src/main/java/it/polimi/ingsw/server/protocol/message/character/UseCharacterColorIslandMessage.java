@@ -17,10 +17,18 @@ public class UseCharacterColorIslandMessage extends Message {
         this.island = island;
     }
 
+    /**
+     * getColor()
+     * @return The student color
+     */
     public PawnColor getColor() {
         return color;
     }
 
+    /**
+     * getIsland()
+     * @return The index of the island
+     */
     public int getIsland() {
         return island;
     }

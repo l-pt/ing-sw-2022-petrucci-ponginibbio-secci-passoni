@@ -16,10 +16,18 @@ public class UseCharacterIslandMessage extends Message {
         this.island = island;
     }
 
+    /**
+     * getCharacterId()
+     * @return The character id
+     */
     public int getCharacterId() {
         return characterId;
     }
 
+    /**
+     * getIsland()
+     * @return The index of the island
+     */
     public int getIsland() {
         return island;
     }

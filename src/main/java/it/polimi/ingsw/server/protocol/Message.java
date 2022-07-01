@@ -15,6 +15,10 @@ public abstract class Message {
         this.messageId = messageId;
     }
 
+    /**
+     * getMessageId()
+     * @return The message id
+     */
     public MessageId getMessageId() {
         return messageId;
     }

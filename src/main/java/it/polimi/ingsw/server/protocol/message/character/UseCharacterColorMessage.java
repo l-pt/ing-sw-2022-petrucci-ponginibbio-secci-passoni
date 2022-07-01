@@ -17,10 +17,18 @@ public class UseCharacterColorMessage extends Message {
         this.color = color;
     }
 
+    /**
+     * getCharacterId()
+     * @return The character id
+     */
     public int getCharacterId() {
         return characterId;
     }
 
+    /**
+     * getColor()
+     * @return The student color
+     */
     public PawnColor getColor() {
         return color;
     }

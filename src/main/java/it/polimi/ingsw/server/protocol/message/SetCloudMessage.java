@@ -14,6 +14,10 @@ public class SetCloudMessage extends Message {
         this.cloud = cloud;
     }
 
+    /**
+     * getCloud()
+     * @return The cloud index
+     */
     public int getCloud() {
         return cloud;
     }

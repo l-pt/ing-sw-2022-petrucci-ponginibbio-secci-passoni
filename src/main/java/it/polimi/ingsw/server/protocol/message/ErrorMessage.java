@@ -14,6 +14,10 @@ public class ErrorMessage extends Message {
         this.error = error;
     }
 
+    /**
+     * getError()
+     * @return The error string
+     */
     public String getError() {
         return error;
     }

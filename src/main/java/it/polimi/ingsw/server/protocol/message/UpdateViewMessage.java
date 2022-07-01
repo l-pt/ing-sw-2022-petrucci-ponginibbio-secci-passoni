@@ -24,16 +24,16 @@ public class UpdateViewMessage extends Message {
 
     /**
      * Constructor for UpdateViewMessage which carries all the information of the current state of a match from server to client.
-     * @param teams
-     * @param islands
-     * @param playersOrder
-     * @param posMotherNature
-     * @param clouds
-     * @param professors
-     * @param coinReserve
-     * @param characters
-     * @param expert
-     * @param currentPlayer
+     * @param teams The list of teams
+     * @param islands The list of islands
+     * @param playersOrder The list of players in order of play
+     * @param posMotherNature The index of the island where mother nature is
+     * @param clouds The list of clouds
+     * @param professors The list of professors
+     * @param coinReserve The number of coins in the player coin reserve
+     * @param characters The list of characters
+     * @param expert The boolean expert mode
+     * @param currentPlayer The username of the player who is playing
      */
     public UpdateViewMessage(
         List<Team> teams,
@@ -60,40 +60,80 @@ public class UpdateViewMessage extends Message {
         this.currentPlayer = currentPlayer;
     }
 
+    /**
+     * getTeams()
+     * @return The list of teams
+     */
     public List<Team> getTeams() {return teams;}
 
+    /**
+     * getIslands()
+     * @return The list of islands
+     */
     public List<Island> getIslands() {
         return islands;
     }
 
+    /**
+     * getPlayersOrder()
+     * @return The list of players in order of play
+     */
     public List<Player> getPlayersOrder() {
         return playersOrder;
     }
 
+    /**
+     * getPosMotherNature()
+     * @return The index of the island where mother nature is
+     */
     public int getPosMotherNature() {
         return posMotherNature;
     }
 
+    /**
+     * getClouds()
+     * @return The list of clouds
+     */
     public List<Cloud> getClouds() {
         return clouds;
     }
 
+    /**
+     * getProfessors()
+     * @return The list of professors in the player school
+     */
     public List<Professor> getProfessors() {
         return professors;
     }
 
+    /**
+     * getCoinReserve()
+     * @return The number of coins owned by the player
+     */
     public int getCoinReserve() {
         return coinReserve;
     }
 
+    /**
+     * getCharacters()
+     * @return The list of characters
+     */
     public List<Character> getCharacters() {
         return characters;
     }
 
+    /**
+     * isExpert()
+     * @return The boolean expert mode
+     */
     public boolean isExpert() {
         return expert;
     }
 
+    /**
+     * getCurrentPlayer()
+     * @return The username of the player who is playing
+     */
     public String getCurrentPlayer() {
         return currentPlayer;
     }

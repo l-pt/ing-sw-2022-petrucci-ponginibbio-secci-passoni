@@ -15,6 +15,10 @@ public class SetExpertMessage extends Message {
         this.expert = expert;
     }
 
+    /**
+     * getExpert()
+     * @return The boolean expert mode
+     */
     public boolean getExpert() {
         return expert;
     }

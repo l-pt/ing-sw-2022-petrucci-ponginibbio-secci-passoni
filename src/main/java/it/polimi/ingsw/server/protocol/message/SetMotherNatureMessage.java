@@ -14,6 +14,10 @@ public class SetMotherNatureMessage extends Message {
         this.motherNatureMoves = motherNatureMoves;
     }
 
+    /**
+     * getMotherNatureMoves()
+     * @return The number of mother nature moves
+     */
     public int getMotherNatureMoves() {
         return motherNatureMoves;
     }

@@ -19,10 +19,18 @@ public class SetEntranceStudentMessage extends Message {
         this.tableStudents = tableStudents;
     }
 
+    /**
+     * getIslandStudents()
+     * @return The map of students on the island
+     */
     public Map<Integer, Map<PawnColor, Integer>> getIslandStudents() {
         return islandStudents;
     }
 
+    /**
+     * getTableStudents()
+     * @return The map of students at the table
+     */
     public Map<PawnColor, Integer> getTableStudents() {
         return tableStudents;
     }

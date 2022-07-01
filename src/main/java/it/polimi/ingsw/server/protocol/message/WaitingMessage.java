@@ -14,6 +14,10 @@ public class WaitingMessage extends Message {
         this.message = message;
     }
 
+    /**
+     * getMessage()
+     * @return The message string
+     */
     public String getMessage() {
             return message;
         }

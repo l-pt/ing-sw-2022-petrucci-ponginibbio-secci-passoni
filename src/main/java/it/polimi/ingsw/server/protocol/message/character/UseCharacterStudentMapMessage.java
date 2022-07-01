@@ -21,14 +21,26 @@ public class UseCharacterStudentMapMessage extends Message {
         this.outMap = outMap;
     }
 
+    /**
+     * getCharacterId()
+     * @return The character id
+     */
     public int getCharacterId() {
         return characterId;
     }
 
+    /**
+     * getInMap()
+     * @return The in-map of the students to move
+     */
     public Map<PawnColor, Integer> getInMap() {
         return inMap;
     }
 
+    /**
+     * getOutMap()
+     * @return The out-map of the students to move
+     */
     public Map<PawnColor, Integer> getOutMap() {
         return outMap;
     }

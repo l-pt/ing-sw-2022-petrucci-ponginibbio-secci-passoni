@@ -14,6 +14,10 @@ public class SetUsernameMessage extends Message {
         this.username = username;
     }
 
+    /**
+     * getUsername()
+     * @return The player username
+     */
     public String getUsername() {
         return username;
     }

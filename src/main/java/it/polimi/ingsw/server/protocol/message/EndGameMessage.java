@@ -15,6 +15,10 @@ public class EndGameMessage extends Message {
         this.winner = winner;
     }
 
+    /**
+     * getWinner()
+     * @return The winning Team
+     */
     public Team getWinner() {
         return winner;
     }

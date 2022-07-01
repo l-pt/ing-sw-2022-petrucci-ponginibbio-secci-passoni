@@ -15,6 +15,10 @@ public class SetPlayerNumberMessage extends Message {
         this.playersNumber = playersNumber;
     }
 
+    /**
+     * getPlayerNumber()
+     * @return The number of the players
+     */
     public int getPlayersNumber() {
         return playersNumber;
     }

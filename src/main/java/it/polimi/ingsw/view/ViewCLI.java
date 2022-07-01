@@ -258,7 +258,7 @@ public class ViewCLI extends View<ClientCLI> {
         formatter.format(moveCursor + "\u001b[97mYOUR ASSISTANTS \u001b[0m\n");
         for (Assistant assistant : assistants) {
             moveCursor = "\u001b[" + curRow + ";1H";
-            formatter.format("\u001b[97mValue: %1$d  Moves: %2$d\u001b[0m\n", assistant.getValue(), assistant.getMoves());
+            formatter.format(moveCursor + "\u001b[97mValue: %1$d  Moves: %2$d\u001b[0m\n", assistant.getValue(), assistant.getMoves());
             ++curRow;
         }
 

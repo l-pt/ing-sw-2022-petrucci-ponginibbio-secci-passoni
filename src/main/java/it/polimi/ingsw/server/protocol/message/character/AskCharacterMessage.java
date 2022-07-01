@@ -19,6 +19,10 @@ public class AskCharacterMessage extends Message {
         characterId = -1;
     }
 
+    /**
+     * getCharacterId()
+     * @return The character id
+     */
     public int getCharacterId() {
         return characterId;
     }

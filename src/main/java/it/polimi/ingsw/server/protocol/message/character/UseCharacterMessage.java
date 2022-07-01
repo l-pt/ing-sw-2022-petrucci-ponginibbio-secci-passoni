@@ -14,6 +14,10 @@ public class UseCharacterMessage extends Message {
         this.characterId = characterId;
     }
 
+    /**
+     * getCharacterId()
+     * @return The character id
+     */
     public int getCharacterId() {
         return characterId;
     }

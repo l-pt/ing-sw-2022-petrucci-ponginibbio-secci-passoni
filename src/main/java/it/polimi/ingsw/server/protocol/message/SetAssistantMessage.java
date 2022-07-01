@@ -14,6 +14,10 @@ public class SetAssistantMessage extends Message {
         this.assistant = assistant;
     }
 
+    /**
+     * getAssistant()
+     * @return The assistant value
+     */
     public int getAssistant() {
         return assistant;
     }
