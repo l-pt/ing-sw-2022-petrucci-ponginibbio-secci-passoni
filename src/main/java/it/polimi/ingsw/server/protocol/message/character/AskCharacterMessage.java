@@ -3,6 +3,9 @@ package it.polimi.ingsw.server.protocol.message.character;
 import it.polimi.ingsw.server.protocol.Message;
 import it.polimi.ingsw.server.protocol.MessageId;
 
+/**
+ * Message sent by the server to ask about playing characters
+ */
 public class AskCharacterMessage extends Message {
     private int characterId;
 
