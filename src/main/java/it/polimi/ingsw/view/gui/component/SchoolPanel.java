@@ -16,6 +16,12 @@ public class SchoolPanel extends JPanel {
     private static final int columns = 53;
     private ImageProvider imageProvider;
 
+    /**
+     * Constructor
+     * @param player Player whose school belongs to
+     * @param towers Towers of the player
+     * @param imageProvider Image object provider
+     */
     public SchoolPanel(Player player, List<Tower> towers, ImageProvider imageProvider) {
         super(new GridBagLayout());
         this.imageProvider = imageProvider;
@@ -146,6 +152,9 @@ public class SchoolPanel extends JPanel {
         ));
     }
 
+    /**
+     * @see JPanel#paintComponent(Graphics)
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

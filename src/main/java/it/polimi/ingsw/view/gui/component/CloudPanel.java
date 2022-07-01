@@ -17,6 +17,11 @@ public class CloudPanel extends JPanel {
     private static final int DIM = 8;
     private ImageProvider imageProvider;
 
+    /**
+     * Constructor
+     * @param students List of students on the cloud
+     * @param imageProvider Image objects provider
+     */
     public CloudPanel(List<Student> students, ImageProvider imageProvider) {
         super(new GridLayout(DIM, DIM));
         this.imageProvider = imageProvider;
@@ -37,6 +42,9 @@ public class CloudPanel extends JPanel {
         }
     }
 
+    /**
+     * @see JPanel#paintComponent(Graphics)
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

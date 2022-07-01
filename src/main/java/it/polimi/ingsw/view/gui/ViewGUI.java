@@ -112,6 +112,9 @@ public abstract class ViewGUI extends View<ClientGUI> {
         client.getFrame().repaint();
     }
 
+    /**
+     * Display a message that says "Waiting for username" if it's not the player's turn
+     */
     private void printWaitingFor() {
         if (!client.getName().equals(currentPlayer)) {
             JLabel lbl = new JLabel("Waiting for " + currentPlayer);

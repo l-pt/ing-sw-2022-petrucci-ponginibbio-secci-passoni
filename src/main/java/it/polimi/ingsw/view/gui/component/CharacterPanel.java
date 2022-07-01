@@ -18,6 +18,11 @@ public class CharacterPanel extends JPanel {
     private Character character;
     private ImageProvider imageProvider;
 
+    /**
+     * Constructor
+     * @param character Character to draw
+     * @param imageProvider Image objects provider
+     */
     public CharacterPanel(Character character, ImageProvider imageProvider) {
         super(new GridBagLayout());
         this.character = character;
@@ -63,6 +68,9 @@ public class CharacterPanel extends JPanel {
         ));
     }
 
+    /**
+     * @see JPanel#paintComponent(Graphics)
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

@@ -706,7 +706,7 @@ public class ClientGUI extends Client {
             frame.repaint();
 
             if (socketWorker != null) {
-                socketWorker.setRunning(false);
+                socketWorker.stop();
                 try {
                     socketWorkerThread.join();
                 } catch (InterruptedException ignored) {

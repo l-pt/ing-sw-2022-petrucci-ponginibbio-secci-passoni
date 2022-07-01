@@ -12,20 +12,34 @@ import javax.swing.ImageIcon;
  * An ImageIcon that adapts to the size of its container
  */
 public class DynamicIcon extends ImageIcon {
+    /**
+     * @see ImageIcon#ImageIcon(Image)  
+     */
     public DynamicIcon(Image image) {
         super(image);
     }
 
+    /**
+     * getIconWidth()
+     * @return Always zero (the image adapts to the size of its container)
+     */
     @Override
     public int getIconWidth() {
         return 0;
     }
 
+    /**
+     * getIconHeight()
+     * @return Always zero (the image adapts to the size of its container)
+     */
     @Override
     public int getIconHeight() {
         return 0;
     }
 
+    /**
+     * @see ImageIcon#paintIcon(Component, Graphics, int, int) 
+     */
     @Override
     public synchronized void paintIcon(Component c, Graphics g, int _x, int _y) {
         Image image = getImage();

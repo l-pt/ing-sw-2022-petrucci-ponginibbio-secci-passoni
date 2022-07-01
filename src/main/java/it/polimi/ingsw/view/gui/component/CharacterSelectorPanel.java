@@ -18,6 +18,10 @@ public class CharacterSelectorPanel extends JPanel {
     private Map<Integer, Integer> characterMap = new HashMap<>(3);
     private int selection = SELECTION_NONE;
 
+    /**
+     * Constructor
+     * @param characters List of characters to select from
+     */
     public CharacterSelectorPanel(List<Character> characters) {
         super();
         JComboBox<String> comboBox = new JComboBox<>();

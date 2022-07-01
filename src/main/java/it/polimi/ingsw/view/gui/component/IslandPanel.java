@@ -18,12 +18,18 @@ public class IslandPanel extends JPanel {
      * Size of the grid layout
      */
     private static final int DIM = 8;
-    private int islandSize;
     private ImageProvider imageProvider;
 
+    /**
+     * Constructor
+     * @param island Island object
+     * @param motherNature Whether mother nature is on the island
+     * @param index Index of the island (used in the title)
+     * @param imageProvider Image objects provider
+     */
     public IslandPanel(Island island, boolean motherNature, int index, ImageProvider imageProvider) {
         super(new GridLayout(DIM, DIM));
-        this.islandSize = Math.max(island.getTowers().size(), 1);
+        int islandSize = Math.max(island.getTowers().size(), 1);
         this.imageProvider = imageProvider;
         String title = "Island " + (index + 1);
         if (islandSize > 1) {
@@ -67,9 +73,12 @@ public class IslandPanel extends JPanel {
         }
     }
 
+    /**
+     * @see JPanel#paintComponent(Graphics) 
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(imageProvider.getIsland(islandSize).getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+        g.drawImage(imageProvider.getIsland().getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
     }
 }

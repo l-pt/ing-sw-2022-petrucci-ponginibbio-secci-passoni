@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ImageProvider {
     private BufferedImage school;
-    private BufferedImage[] island;
+    private BufferedImage island;
     private Map<PawnColor, BufferedImage> professors;
     private Map<PawnColor, BufferedImage> students;
     private Map<TowerColor, BufferedImage> towers;
@@ -32,7 +32,6 @@ public class ImageProvider {
     private BufferedImage noEntry;
 
     public ImageProvider() {
-        island = new BufferedImage[3];
         professors = new HashMap<>(PawnColor.values().length);
         students = new HashMap<>(PawnColor.values().length);
         towers = new HashMap<>(TowerColor.values().length);
@@ -41,6 +40,11 @@ public class ImageProvider {
         wizards = new HashMap<>(Wizard.values().length);
     }
 
+    /**
+     * Load an image from the resources directory
+     * @param path Path of the image relative to the resources directory
+     * @return A {@link BufferedImage} object containing the image data
+     */
     private BufferedImage getImage(String path) {
         BufferedImage res;
         try {
@@ -51,6 +55,10 @@ public class ImageProvider {
         return res;
     }
 
+    /**
+     * getSchool()
+     * @return The school board image
+     */
     public BufferedImage getSchool() {
         if (school == null) {
             school = getImage("/Plancia_DEF.png");
@@ -58,17 +66,23 @@ public class ImageProvider {
         return school;
     }
 
-    public BufferedImage getIsland(int dim) {
-        if (dim < 1 || dim > 3) {
-            throw new IllegalArgumentException("dim must be between 1 and 3");
-        }
-        if (island[dim - 1] == null) {
+    /**
+     * getIsland()
+     * @return The island card image
+     */
+    public BufferedImage getIsland() {
+        if (island == null) {
             //TODO support dim = 2 and dim = 3
-            island[dim - 1] = getImage("/island/" + 1 + ".png");
+            island = getImage("/island/" + 1 + ".png");
         }
-        return island[dim - 1];
+        return island;
     }
 
+    /**
+     * getProfessor()
+     * @param color Color of the professor
+     * @return Professor image with the given color
+     */
     public BufferedImage getProfessor(PawnColor color) {
         BufferedImage res = professors.get(color);
         if (res == null) {
@@ -77,6 +91,11 @@ public class ImageProvider {
         return res;
     }
 
+    /**
+     * getStudent()
+     * @param color Student color
+     * @return Student image with the given color
+     */
     public BufferedImage getStudent(PawnColor color) {
         BufferedImage res = students.get(color);
         if (res == null) {
@@ -85,6 +104,11 @@ public class ImageProvider {
         return res;
     }
 
+    /**
+     * getTower()
+     * @param color Tower color
+     * @return Tower image with the given color
+     */
     public BufferedImage getTower(TowerColor color) {
         BufferedImage res = towers.get(color);
         if (res == null) {
@@ -93,6 +117,10 @@ public class ImageProvider {
         return res;
     }
 
+    /**
+     * getCloud()
+     * @return Cloud card image
+     */
     public BufferedImage getCloud() {
         if (cloud == null) {
             cloud = getImage("/cloud_card.png");
@@ -100,6 +128,11 @@ public class ImageProvider {
         return cloud;
     }
 
+    /**
+     * getAssistant()
+     * @param assistant {@link Assistant} object
+     * @return Image for the given assistant
+     */
     public BufferedImage getAssistant(Assistant assistant) {
         if (assistants[assistant.getValue() - 1] == null) {
             assistants[assistant.getValue() - 1] = getImage("/assistants/" + assistant.getValue() + ".png");
@@ -107,6 +140,11 @@ public class ImageProvider {
         return assistants[assistant.getValue() - 1];
     }
 
+    /**
+     * getCharacter()
+     * @param character {@link Character} object
+     * @return Image for the given character
+     */
     public BufferedImage getCharacter(Character character) {
         if (characters[character.getId()] == null) {
             characters[character.getId()] = getImage("/characters/" + character.getId() + ".jpg");
@@ -114,6 +152,11 @@ public class ImageProvider {
         return characters[character.getId()];
     }
 
+    /**
+     * getWizard()
+     * @param wizard {@link Wizard} object
+     * @return Image for the given wizard
+     */
     public BufferedImage getWizard(Wizard wizard) {
         BufferedImage res = wizards.get(wizard);
         if (res == null) {
@@ -122,6 +165,10 @@ public class ImageProvider {
         return res;
     }
 
+    /**
+     * getCoin()
+     * @return Coin image
+     */
     public BufferedImage getCoin() {
         if (coin == null) {
             coin = getImage("/Moneta_base.png");
@@ -129,6 +176,10 @@ public class ImageProvider {
         return coin;
     }
 
+    /**
+     * getMotherNature()
+     * @return Mother nature image
+     */
     public BufferedImage getMotherNature() {
         if (motherNature == null) {
             motherNature = getImage("/mother_nature.png");
@@ -136,6 +187,10 @@ public class ImageProvider {
         return motherNature;
     }
 
+    /**
+     * getNoEntry()
+     * @return No Entry card image
+     */
     public BufferedImage getNoEntry() {
         if (noEntry == null) {
             noEntry = getImage("/noentry.png");

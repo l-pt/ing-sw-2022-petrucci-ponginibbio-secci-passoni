@@ -11,26 +11,40 @@ import java.util.List;
 
 /**
  * The ClientSocketWorker runs in the background and fetches new messages from the server
- * until it is stopped with {@link ClientSocketWorker#setRunning}.
+ * until it is stopped with {@link ClientSocketWorker#stop}.
  * When a new message is available, it calls {@link it.polimi.ingsw.client.ClientGUI#processMessage}
  */
 public class ClientSocketWorker extends SwingWorker<Void, Message> {
     private ClientGUI client;
     private boolean running;
+    /**
+     * Number of seconds since last message from the server
+     */
     private int delay;
 
+    /**
+     * Constructor
+     * @param client The client to send new messages to
+     */
     public ClientSocketWorker(ClientGUI client) {
         this.client = client;
         running = true;
         delay = 0;
     }
 
+    /**
+     * isRunning()
+     * @return True if the worker has not been stopped yet, false otherwise
+     */
     public synchronized boolean isRunning() {
         return running;
     }
 
-    public synchronized void setRunning(boolean running) {
-        this.running = running;
+    /**
+     * Stop the worker
+     */
+    public synchronized void stop() {
+        this.running = false;
     }
 
     /**

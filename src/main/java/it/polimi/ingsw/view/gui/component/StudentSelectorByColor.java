@@ -14,6 +14,12 @@ import java.util.Map;
 public class StudentSelectorByColor extends JPanel {
     private Map<PawnColor, Integer> selections = new HashMap<>(PawnColor.values().length);
 
+    /**
+     * Constructor
+     * @param students List of student to select from
+     * @param max Maximum number of selectable students
+     * @param title Title of the panel
+     */
     public StudentSelectorByColor(List<Student> students, int max, String title) {
         super();
         add(new JLabel(title));

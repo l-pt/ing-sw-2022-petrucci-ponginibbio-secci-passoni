@@ -16,6 +16,12 @@ public class EntranceStudentSelectorPanel extends JPanel {
     private Student student;
     private int selection = SELECTION_NONE;
 
+    /**
+     * Constructor
+     * @param student The student to move
+     * @param islands List of available islands
+     * @param player Player that owns the student
+     */
     public EntranceStudentSelectorPanel(Student student, List<Island> islands, Player player) {
         super();
         this.student = student;
@@ -40,6 +46,10 @@ public class EntranceStudentSelectorPanel extends JPanel {
         add(comboBox);
     }
 
+    /**
+     * getStudent()
+     * @return The student to move
+     */
     public Student getStudent() {
         return student;
     }
