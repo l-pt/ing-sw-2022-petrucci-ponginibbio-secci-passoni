@@ -401,30 +401,55 @@ public class Match extends Observable<UpdateViewMessage> {
                 }
             }
 
-            if (!draw && max > 0 && (islands.get(index).getTowers().isEmpty() ||
-                    !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
+            //confirm that
+            // 1) player wins the draw
+            // 2) player doesn't have tower at index
+            if (!draw && max > 0 && (islands.get(index).getTowers().isEmpty() || !playerOrder.get(pos).getTowerColor().equals(islands.get(index).getTowers().get(0).getColor()))) {
+
+                //if island has less towers than the team
                 if(islands.get(index).getTowers().size() < getTeamFromPlayer(playerOrder.get(pos)).getTowers().size()) {
+
+                    //if no towers on island AND team has one tower
                     if (islands.get(index).getTowers().isEmpty() && getTeamFromPlayer(playerOrder.get(pos)).getTowers().size() == 1) {
+
+                        //Game Over
                         gameFinished = true;
+
                     } else {
+
+                        //pop all towers from island to a temporary list t
                         List<Tower> t = islands.get(index).removeAllTowers();
+
+                        //check if t wasnt empty
                         if (t.size() > 0) {
+
+                            //add colored tower to respective team
                             getTeamFromColor(t.get(0).getColor()).addTowers(t);
+
+                            //add team towers to island, and remove old team towers from island
                             islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(t.size()));
+
                         } else {
+
+                            //add team towers to island
                             islands.get(index).addTowers(getTeamFromPlayer(playerOrder.get(pos)).removeTowers(1));
                         }
+
+                        //check to see if adjacent islands should be merged
                         checkIslands(index, noMotherNatureMoves);
                     }
                 } else {
+
+                    //Game Over
                     gameFinished = true;
                 }
             }
         }else {
-            //Removes 1 no entry from the island
+
+            //removes 1 no entry from the island
             islands.get(index).removeNoEntry();
 
-            //Adds 1 no entry to the Character5
+            //add 1 no entry to the Character5
             for (Character character : characters) {
                 if (character instanceof Character5) {
                     ((Character5) character).addNoEntry();
@@ -439,12 +464,19 @@ public class Match extends Observable<UpdateViewMessage> {
      * @param noMotherNatureMoves True if mother nature won't move, false otherwise
      */
     public void checkIslands(int index, boolean noMotherNatureMoves) {
+
+        //check if island adjacent to the right needs to be merged
         if (!islands.get(islandIndex(index + 1)).getTowers().isEmpty() &&
                 islands.get(islandIndex(index + 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
+
+            //merge islands
             uniteIslands(Math.min(index, islandIndex(index + 1)), Math.max(index, islandIndex(index + 1)), noMotherNatureMoves);
         }
+        //check if island adjacent to the left needs to be merged
         if (!islands.get(islandIndex(index - 1)).getTowers().isEmpty() &&
                 islands.get(islandIndex(index - 1)).getTowers().get(0).getColor().equals(islands.get(index).getTowers().get(0).getColor())) {
+
+            //merge islands
             uniteIslands(Math.min(index, islandIndex(index - 1)), Math.max(index, islandIndex(index - 1)), noMotherNatureMoves);
         }
     }
@@ -465,10 +497,15 @@ public class Match extends Observable<UpdateViewMessage> {
      * @param noMotherNatureMoves True if mother nature won't move, false otherwise
      */
     public void uniteIslands(int min, int max, boolean noMotherNatureMoves) {
+
+        //transfer all the data to one island: (min)
         islands.get(min).addStudents(islands.get(max).getStudents());
         islands.get(min).addTowers(islands.get(max).getTowers());
         islands.get(min).addNoEntry(islands.get(max).getNoEntry());
+
+        //remove the island that doesn't hold all the data: (max)
         islands.remove(max);
+
         if(!noMotherNatureMoves) {
             posMotherNature = min;
         }
@@ -496,13 +533,19 @@ public class Match extends Observable<UpdateViewMessage> {
      */
     public void moveStudentsFromCloud(String playerName, int cloudIndex) throws IllegalMoveException {
         if (cloudIndex >= 0 && cloudIndex < clouds.size()) {
+
+            //if cloud has no students, it has already been selected
             if (clouds.get(cloudIndex).getStudents().isEmpty()) {
                 throw new IllegalMoveException("Cloud already chosen by another player this turn");
             } else {
+
+                //move students from selected cloud to students entrance
                 getPlayerFromName(playerName).getSchool().addStudentsToEntrance(clouds.get(cloudIndex).removeStudents());
+
+                //update game view
                 updateView();
             }
-        } else throw new IllegalMoveException("Island number must be between 1 and " + getClouds().size());
+        } else throw new IllegalMoveException("Island number must be between 1 and " + getClouds().size()); //out of bounds
     }
 
     /**
@@ -513,9 +556,15 @@ public class Match extends Observable<UpdateViewMessage> {
      */
     public void moveMotherNature(String playerName, int moves) throws IllegalMoveException {
         Player player = getPlayerFromName(playerName);
+
+        //check legality of mother nature move request
         if ((player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()) >= moves && moves >= 1) {
+
+            //move mother nature the requested number of islands (int moves)
             posMotherNature = (posMotherNature + moves) % islands.size();
             islandInfluence(posMotherNature, false);
+
+            //update game view
             updateView();
         } else throw new IllegalMoveException("Mother nature moves must be between 1 and " + (player.getCurrentAssistant().getMoves() + player.getAdditionalMoves()));
     }
@@ -602,10 +651,18 @@ public class Match extends Observable<UpdateViewMessage> {
      * @return The winning team, or null in case of a draw
      */
     public Team getWinningTeam() {
+
+        //set maxTowers to undefined value: -1, and allocate memory to order teams by maxTowers
         int maxTowers = -1;
         List<Team> teamsWithMaxTowers = new ArrayList<>(teams.size());
+
+        //traverse teams
         for (Team t : teams) {
+
+            //counter for towers associated to each team
             int teamTowers = getTowersByColor(t.getTowerColor());
+
+            //sort teamsWithMaxTowers based on tower count
             if (teamTowers > maxTowers) {
                 maxTowers = teamTowers;
                 teamsWithMaxTowers.clear();
@@ -614,13 +671,25 @@ public class Match extends Observable<UpdateViewMessage> {
                 teamsWithMaxTowers.add(t);
             }
         }
+
+        //if only one team in teamsWithMaxTowers
         if (teamsWithMaxTowers.size() == 1) {
-            return teamsWithMaxTowers.get(0);
+            return teamsWithMaxTowers.get(0); //return that team
         }
+
+        //set maxProfessors to undefined value: -1, and allocate memory to order teams by maxProfessors
         int maxProfessors = -1;
         List<Team> teamsWithMaxProfessors = new ArrayList<>(teams.size());
+
+        //travers teams ordered by tower count! higher tower count goes first
         for (Team t : teamsWithMaxTowers) {
+
+            //get professors associated to each team
             int teamProfessors = t.getPlayers().stream().mapToInt(p -> p.getSchool().getProfessors().size()).sum();
+
+            //find team with max professors
+            //check if current team has strictly more professors than the previous teams
+            //tie goes to the team with more maxTowers
             if (teamProfessors > maxProfessors) {
                 maxProfessors = teamProfessors;
                 teamsWithMaxProfessors.clear();
@@ -629,6 +698,8 @@ public class Match extends Observable<UpdateViewMessage> {
                 teamsWithMaxProfessors.add(t);
             }
         }
+
+        //return team with max professor count
         return teamsWithMaxProfessors.size() == 1 ? teamsWithMaxProfessors.get(0) : null;
     }
 
@@ -658,7 +729,7 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     * Let's uses an assistant to a player if available
+     * Allows a player to use an assistant if available. Sets turn order of players via assistants played.
      * @param playerName The username of a player
      * @param value Value of the assistant that the player wants to use
      * @throws IllegalMoveException When the given assistant value is less than 1 or more than 10.
@@ -666,26 +737,44 @@ public class Match extends Observable<UpdateViewMessage> {
      * When an assistant with the given value has already been played this turn and the player with the given name has other options
      */
     public void useAssistant(String playerName, int value) throws IllegalMoveException {
+
+        //get player data from name
         Player player = getPlayerFromName(playerName);
         int playerPos = getPosFromName(playerName);
+
+        //check if requested assistant index is inBounds
         if (value < 1 || value > 10) {
             throw new IllegalMoveException("The value must be between 1 and 10");
         }
+
+        //check if player has an assistant with requested index
         if (player.getAssistantFromValue(value) == null) {
             throw new IllegalMoveException("You don't have an assistant with value " + value);
         }
+
+        //traverse all players
         for(int i = 0; i < playerPos; ++i) {
+
+            //see if player has played assistant
             if (playerOrder.get(i).getCurrentAssistant().getValue() == value) {
+
+                //allocate space for assistants players
                 List<Assistant> assistants = new ArrayList<>();
+
+                //collect all played assistants
                 for (int j = 0; j < playerPos; ++j) {
                     assistants.add(playerOrder.get(j).getCurrentAssistant());
                 }
+
+                //check for duplicate assistants
                 if (!assistants.containsAll(player.getAssistants())) {
                     throw new IllegalMoveException("You can't use this assistant because another player already used it this turn");
                 }
                 break;
             }
         }
+
+        //set turn order of players via assistants played
         getPlayerFromName(playerName).setCurrentAssistant(getPlayerFromName(playerName).getAssistantFromValue(value));
         if(getPlayerFromName(playerName).getAssistants().isEmpty()) {
             lastTurn = true;
@@ -730,7 +819,7 @@ public class Match extends Observable<UpdateViewMessage> {
     }
 
     /**
-     * Updates the status of the match
+     * Updates the status of the match, and push updated match data to the View
      */
     public void updateView() {
         notifyObservers(new UpdateViewMessage(
