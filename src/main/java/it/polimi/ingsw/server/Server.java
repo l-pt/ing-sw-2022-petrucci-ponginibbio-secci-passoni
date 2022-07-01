@@ -41,7 +41,7 @@ public class Server {
     private final Queue<MessageQueueEntry> messageQueue = new LinkedList<>(); //creates queue for incoming "to be handled" messages
 
     /**
-     * Match & Controller Management
+     * Match and Controller Management
      */
     private MatchParameters matchParameters; //implemented locally in this Server.java class; contains (numberOfPlayers, isExpertMode)
     private final Map<Connection, Controller> connectionControllerMap = new HashMap<>(); //map of live connections to its associated controller
@@ -58,7 +58,7 @@ public class Server {
 
     /**
      * getWaitingConnections()
-     * @return List<Connection> waiting in the Eryantis lobby.
+     * @return List of connections waiting in the Eryantis lobby.
      */
     public synchronized List<Connection> getWaitingConnections(){return waitingConnections;}
 
@@ -112,7 +112,7 @@ public class Server {
     /**
      * Gets list of clients associated to given controller. Note: association is by connectionControllerMap.
      * @param controller game controller
-     * @return List<Connection> of clients with given controller.
+     * @return List of clients with given controller.
      */
     public List<Connection> getConnectionsFromController(Controller controller) {
         return connectionControllerMap.entrySet().stream().filter(e -> e.getValue() == controller).map(Map.Entry::getKey).toList();
