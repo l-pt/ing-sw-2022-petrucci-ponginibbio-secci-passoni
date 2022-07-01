@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.character.Character;
 import it.polimi.ingsw.model.character.StudentCharacter;
 import it.polimi.ingsw.model.character.impl.Character5;
-import it.polimi.ingsw.view.View;
 
 import java.util.Formatter;
 

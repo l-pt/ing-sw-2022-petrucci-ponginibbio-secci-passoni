@@ -1,23 +1,16 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.server.Server;
-
 import java.io.IOException;
 
 public class ServerApp {
     /**
      * Main Method of ServerApp
-     * @param args
+     * @param args Terminal argument
      */
-    public static void main( String[] args ) {
-        Server server;
+    public static void main(String[] args) {
         try {
-            if (args.length == 0) {
-                server = new Server(61863);
-            }else {
-                server = new Server(Integer.parseInt(args[0]));
-            }
-            server.run();
+            //Sets 61863 if the server port isn't specified in args
+            new Server(args.length == 0 ? 61863 : Integer.parseInt(args[0])).run();
         } catch(IOException e){
             System.err.println("Impossible to start the server!\n" + e.getMessage());
         } catch (InterruptedException e) {
