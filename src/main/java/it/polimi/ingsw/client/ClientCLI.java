@@ -26,8 +26,8 @@ public class ClientCLI extends Client{
         this.port = port;
         stdin = new Scanner(System.in);
         socket = new Socket(ip, port);
-        //2 min 30 sec timeout
-        socket.setSoTimeout(150000);
+        //2 min timeout
+        socket.setSoTimeout(120000);
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
     }

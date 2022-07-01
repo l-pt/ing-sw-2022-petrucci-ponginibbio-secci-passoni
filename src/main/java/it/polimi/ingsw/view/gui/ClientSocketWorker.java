@@ -48,8 +48,8 @@ public class ClientSocketWorker extends SwingWorker<Void, Message> {
                 delay = 0;
             } catch (SocketTimeoutException e) {
                 delay += 2;
-                //2 min 30 sec timeout
-                if (delay >= 150) {
+                //2 min timeout
+                if (delay >= 120) {
                     msg = null;
                 } else {
                     continue;
