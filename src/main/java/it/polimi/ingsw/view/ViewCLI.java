@@ -94,7 +94,7 @@ public class ViewCLI extends View<ClientCLI> {
 
         printToScreen(eryantis);
         try {
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -117,7 +117,7 @@ public class ViewCLI extends View<ClientCLI> {
         printToScreen(description);
 
         try{
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
@@ -142,7 +142,7 @@ public class ViewCLI extends View<ClientCLI> {
         moveCursor = "\u001b[32;1H";
         curRow = 33;
         counter = 1;
-        formatter.format(moveCursor + "\u001b[97mISLANDS \u001b[0m\n");
+        formatter.format(moveCursor + "\u001b[97mISLANDS \u001b[0m");
         for (Island island : islands) {
             moveCursor = "\u001b[" + curRow + ";1H";
             formatter.format(moveCursor + "\u001b[97m" + counter + "°ISLAND ->\u001b[0m");
@@ -172,9 +172,7 @@ public class ViewCLI extends View<ClientCLI> {
                 formatter.format("\u001b[97m M\u001b[0m");
             }
             if ((expert) && (island.getNoEntry() > 0)) {
-                formatter.format("\u001b[1;31m X\u001b[0m\n");
-            } else {
-                formatter.format("\n");
+                formatter.format("\u001b[1;31m X\u001b[0m");
             }
             ++counter;
             ++curRow;
@@ -184,7 +182,7 @@ public class ViewCLI extends View<ClientCLI> {
         moveCursor = "\u001b[1;1H";
         curRow = 2;
         counter = 1;
-        formatter.format(moveCursor + "\u001b[97mCLOUDS \u001b[0m\n");
+        formatter.format(moveCursor + "\u001b[97mCLOUDS \u001b[0m");
         for (Cloud cloud : clouds) {
             moveCursor = "\u001b[" + curRow + ";1H";
             formatter.format(moveCursor + "\u001b[97m" + counter + "°CLOUD ->\u001b[0m");
@@ -201,7 +199,6 @@ public class ViewCLI extends View<ClientCLI> {
                     formatter.format("\u001b[1;95m S\u001b[0m");
                 }
             }
-            formatter.format("\n");
             ++counter;
             ++curRow;
         }
@@ -209,7 +206,7 @@ public class ViewCLI extends View<ClientCLI> {
         //Print characters
         if (expert) {
             moveCursor = "\u001b[1;161H";
-            formatter.format(moveCursor + "\u001b[97mCHARACTERS \u001b[0m\n");
+            formatter.format(moveCursor + "\u001b[97mCHARACTERS \u001b[0m");
             curRow = 2;
             for (Character character : characters) {
                 moveCursor = "\u001b[" + curRow + ";161H";
@@ -236,7 +233,6 @@ public class ViewCLI extends View<ClientCLI> {
                         formatter.format("\u001b[1;91m Ꭓ\u001b[0m");
                     }
                 }
-                formatter.format("\n");
                 ++curRow;
             }
         }
@@ -248,37 +244,37 @@ public class ViewCLI extends View<ClientCLI> {
             moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
             formatter.format(moveCursor);
             for (Character character : characters) {
-                formatter.format("%1$d°CHARACTER -> %2$s\n", character.getId() + 1, character.getDescription());
+                formatter.format("\u001b[97m%1$d°CHARACTER -> %2$s\u001b[0m", character.getId() + 1, character.getDescription());
             }
         }
 
         //Print assistants
         moveCursor = "\u001b[8;1H";
         curRow = 9;
-        formatter.format(moveCursor + "\u001b[97mYOUR ASSISTANTS \u001b[0m\n");
+        formatter.format(moveCursor + "\u001b[97mYOUR ASSISTANTS \u001b[0m");
         for (Assistant assistant : assistants) {
             moveCursor = "\u001b[" + curRow + ";1H";
-            formatter.format(moveCursor + "\u001b[97mValue: %1$d  Moves: %2$d\u001b[0m\n", assistant.getValue(), assistant.getMoves());
+            formatter.format(moveCursor + "\u001b[97mValue: %1$d  Moves: %2$d\u001b[0m", assistant.getValue(), assistant.getMoves());
             ++curRow;
         }
 
         //Print current assistants
         moveCursor = "\u001b[8;81H";
         curRow = 9;
-        formatter.format(moveCursor + "\u001b[97mASSISTANTS PLAYED IN THIS ROUND \u001b[0m\n");
+        formatter.format(moveCursor + "\u001b[97mASSISTANTS PLAYED IN THIS ROUND \u001b[0m");
         for (Player player : playersOrder) {
             moveCursor = "\u001b[" + curRow + ";81H";
             if (player.getCurrentAssistant() == null) {
                 if (player.getName().equals(client.getName())) {
-                    formatter.format(moveCursor + "\u001b[97mYOU HAVEN'T PLAYED AN ASSISTANT YET\u001b[0m\n");
+                    formatter.format(moveCursor + "\u001b[97mYOU HAVEN'T PLAYED AN ASSISTANT YET\u001b[0m");
                 } else {
-                    formatter.format(moveCursor + "\u001b[97m%1$s HASN'T PLAYED AN ASSISTANT YET\u001b[0m\n", player.getName().toUpperCase());
+                    formatter.format(moveCursor + "\u001b[97m%1$s HASN'T PLAYED AN ASSISTANT YET\u001b[0m", player.getName().toUpperCase());
                 }
             } else {
                 if (player.getName().equals(client.getName())) {
-                    formatter.format(moveCursor + "\u001b[97mYOU HAVE PLAYED AN ASSISTANT ->  VALUE: %1$d  MOVES: %2$d\u001b[0m\n", player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+                    formatter.format(moveCursor + "\u001b[97mYOU HAVE PLAYED AN ASSISTANT ->  VALUE: %1$d  MOVES: %2$d\u001b[0m", player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
                 } else {
-                    formatter.format(moveCursor + "\u001b[97m%1$s HAS PLAYED AN ASSISTANT ->  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
+                    formatter.format(moveCursor + "\u001b[97m%1$s HAS PLAYED AN ASSISTANT ->  VALUE: %2$d  MOVES: %3$d\u001b[0m", player.getName().toUpperCase(), player.getCurrentAssistant().getValue(), player.getCurrentAssistant().getMoves());
                 }
             }
             ++curRow;
@@ -287,20 +283,20 @@ public class ViewCLI extends View<ClientCLI> {
         //Print discard piles
         moveCursor = "\u001b[8;161H";
         curRow = 9;
-        formatter.format(moveCursor + "\u001b[97mDISCARD PILES \u001b[0m\n");
+        formatter.format(moveCursor + "\u001b[97mDISCARD PILES \u001b[0m");
         for (Player player : playersOrder) {
             moveCursor = "\u001b[" + curRow + ";161H";
             if (player.getDiscardPile() == null) {
                 if (player.getName().equals(client.getName())) {
-                    formatter.format(moveCursor + "\u001b[97mYOUR DISCARD PILE IS EMPTY\u001b[0m\n");
+                    formatter.format(moveCursor + "\u001b[97mYOUR DISCARD PILE IS EMPTY\u001b[0m");
                 } else {
-                    formatter.format(moveCursor + "\u001b[97m%1$s'S DISCARD PILE IS EMPTY\u001b[0m\n", player.getName().toUpperCase());
+                    formatter.format(moveCursor + "\u001b[97m%1$s'S DISCARD PILE IS EMPTY\u001b[0m", player.getName().toUpperCase());
                 }
             } else {
                 if (player.getName().equals(client.getName())) {
-                    formatter.format(moveCursor + "\u001b[97mYOUR LAST ASSISTANT PLAYED ->  VALUE: %1$d  MOVES: %2$d\u001b[0m\n", player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+                    formatter.format(moveCursor + "\u001b[97mYOUR LAST ASSISTANT PLAYED ->  VALUE: %1$d  MOVES: %2$d\u001b[0m", player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
                 } else {
-                    formatter.format(moveCursor + "\u001b[97mLAST ASSISTANT PLAYED BY %1$s ->  VALUE: %2$d  MOVES: %3$d\u001b[0m\n", player.getName().toUpperCase(), player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
+                    formatter.format(moveCursor + "\u001b[97mLAST ASSISTANT PLAYED BY %1$s ->  VALUE: %2$d  MOVES: %3$d\u001b[0m", player.getName().toUpperCase(), player.getDiscardPile().getValue(), player.getDiscardPile().getMoves());
                 }
             }
             ++curRow;
@@ -313,9 +309,9 @@ public class ViewCLI extends View<ClientCLI> {
                 curRow = 21;
                 moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
                 if (player.getName().equals(client.getName())) {
-                    formatter.format(moveCursor + "\u001b[97mYOUR SCHOOL \u001b[0m\n");
+                    formatter.format(moveCursor + "\u001b[97mYOUR SCHOOL \u001b[0m");
                 } else {
-                    formatter.format(moveCursor + "\u001b[97m" + player.getName().toUpperCase() + "'S SCHOOL \u001b[0m\n");
+                    formatter.format(moveCursor + "\u001b[97m" + player.getName().toUpperCase() + "'S SCHOOL \u001b[0m");
                 }
                 ++curRow;
                 moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
@@ -333,7 +329,6 @@ public class ViewCLI extends View<ClientCLI> {
                         formatter.format("\u001b[1;95m S\u001b[0m");
                     }
                 }
-                formatter.format("\n");
                 ++curRow;
                 for (PawnColor pawncolor : player.getSchool().getTables().keySet()) {
                     moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
@@ -373,7 +368,6 @@ public class ViewCLI extends View<ClientCLI> {
                         }
                         ++counter;
                     }
-                    formatter.format("\n");
                     ++curRow;
                 }
                 moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
@@ -391,7 +385,6 @@ public class ViewCLI extends View<ClientCLI> {
                         formatter.format("\u001b[1;95m ■\u001b[0m");
                     }
                 }
-                formatter.format("\n");
                 if (playersOrder.size() != 4) {
                     ++curRow;
                     moveCursor = "\u001b[" + curRow + ";" + curColumn + "H";
@@ -415,7 +408,7 @@ public class ViewCLI extends View<ClientCLI> {
             if (playersOrder.size() == 4) {
                 curRow += 2;
                 moveCursor = "\u001b[" + curRow + ";" + (curColumn - 105) + "H";
-                formatter.format(moveCursor + "%1$s AND %2$s'S TOWERS ->", team.getPlayers().get(0).getName().toUpperCase(), team.getPlayers().get(1).getName().toUpperCase());
+                formatter.format(moveCursor + "\u001b[97m%1$s AND %2$s'S TOWERS ->\u001b[0m", team.getPlayers().get(0).getName().toUpperCase(), team.getPlayers().get(1).getName().toUpperCase());
                 for (Tower tower : team.getTowers()) {
                     if (tower.getColor().equals(TowerColor.BLACK)) {
                         formatter.format("\u001b[1;90m █\u001b[0m");
@@ -432,7 +425,7 @@ public class ViewCLI extends View<ClientCLI> {
         if (expert) {
             moveCursor = "\u001b[1;81H";
             curRow = 2;
-            formatter.format(moveCursor + "\u001b[97mCOIN RESERVES \u001b[0m\n");
+            formatter.format(moveCursor + "\u001b[97mCOIN RESERVES \u001b[0m");
             for (Player player : playersOrder) {
                 moveCursor = "\u001b[" + curRow + ";81H";
                 if (player.getName().equals(client.getName())) {
@@ -443,7 +436,6 @@ public class ViewCLI extends View<ClientCLI> {
                 for (counter = 1; counter <= player.getCoins(); ++counter) {
                     formatter.format("\u001b[1;92m $\u001b[0m");
                 }
-                formatter.format("\n");
                 ++curRow;
             }
         }
